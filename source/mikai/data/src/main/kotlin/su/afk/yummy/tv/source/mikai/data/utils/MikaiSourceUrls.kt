@@ -1,3 +1,4 @@
+// Part of YummyTV — https://github.com/Helandy/YummyTV (CC BY-NC 4.0, see NOTICE)
 package su.afk.yummy.tv.source.mikai.data.utils
 
 private const val ASHDI_PREFIX = "source://mikai/ashdi/"
