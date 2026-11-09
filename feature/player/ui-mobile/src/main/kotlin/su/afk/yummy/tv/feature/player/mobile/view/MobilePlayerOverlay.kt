@@ -30,7 +30,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -147,7 +147,7 @@ internal fun MobilePlayerOverlay(
                     onHoldHint = { holdHintTick++ },
                 )
                 MobilePlayerActionButton(
-                    icon = Icons.AutoMirrored.Filled.VolumeUp,
+                    icon = Icons.Filled.RecordVoiceOver,
                     contentDescription = stringResource(R.string.player_mobile_track_settings_title),
                     onClick = onTrackSettings,
                 )
