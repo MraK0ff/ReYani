@@ -100,45 +100,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Sign APK with the ReYani release key
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        env:
-          REYANI_KEYSTORE_BASE64: ${{ secrets.REYANI_KEYSTORE_BASE64 }}
-          REYANI_KEYSTORE_PASSWORD: ${{ secrets.REYANI_KEYSTORE_PASSWORD }}
-          REYANI_KEY_ALIAS: ${{ secrets.REYANI_KEY_ALIAS }}
-          REYANI_KEY_PASSWORD: ${{ secrets.REYANI_KEY_PASSWORD }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          : "${REYANI_KEYSTORE_BASE64:?Missing REYANI_KEYSTORE_BASE64 Actions secret}"
-          : "${REYANI_KEYSTORE_PASSWORD:?Missing REYANI_KEYSTORE_PASSWORD Actions secret}"
-          : "${REYANI_KEY_ALIAS:?Missing REYANI_KEY_ALIAS Actions secret}"
-          : "${REYANI_KEY_PASSWORD:?Missing REYANI_KEY_PASSWORD Actions secret}"
-
-          key_dir="$RUNNER_TEMP/reyani-signing"
-          mkdir -p "$key_dir"
-          printf '%s' "$REYANI_KEYSTORE_BASE64" | base64 --decode > "$key_dir/reyani-release.jks"
-
-          apksigner="$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name apksigner | sort -V | tail -n 1)"
-          test -n "$apksigner"
-
-          shopt -s nullglob
-          apks=(app/build/outputs/apk/releaseDebug/*.apk)
-          test "${#apks[@]}" -gt 0
-
-          for apk in "${apks[@]}"; do
-            "$apksigner" sign \
-              --ks "$key_dir/reyani-release.jks" \
-              --ks-key-alias "$REYANI_KEY_ALIAS" \
-              --ks-pass "env:REYANI_KEYSTORE_PASSWORD" \
-              --key-pass "env:REYANI_KEY_PASSWORD" \
-              "$apk"
-            "$apksigner" verify --verbose --print-certs "$apk"
-          done
-
       - name: Re-sign APK with the standard Android testkey
-        if: github.ref != 'refs/heads/main' || github.event_name == 'pull_request'
         shell: bash
         run: |
           set -euo pipefail

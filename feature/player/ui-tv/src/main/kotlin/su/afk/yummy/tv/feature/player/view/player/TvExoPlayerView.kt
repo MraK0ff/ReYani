@@ -505,6 +505,7 @@ internal fun TvExoPlayerView(
         TvPlayerNameBadge(
             visible = controllerVisible,
             playerName = playback.activeBalancerLabel,
+            episodeFlags = playback.activeEpisodeFlags,
             modifier = Modifier.align(Alignment.TopEnd),
         )
 
@@ -682,9 +683,9 @@ internal fun TvExoPlayerView(
             animeId = state.animeId,
             posterUrl = state.posterUrl,
             modifier = Modifier.align(Alignment.BottomCenter),
-            onEpisodeSelected = { index ->
+            onEpisodeSelected = { number ->
                 panels.close(PanelReturnFocusTarget.Episodes)
-                onPlayerEvent(PlayerState.Event.EpisodeSelected(index))
+                onPlayerEvent(PlayerState.Event.EpisodeSelected(number))
                 onInteraction()
             },
             onExitUp = { exitPanelDown(PanelReturnFocusTarget.Episodes) },

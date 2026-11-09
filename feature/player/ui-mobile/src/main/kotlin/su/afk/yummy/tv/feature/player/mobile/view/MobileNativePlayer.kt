@@ -602,6 +602,7 @@ internal fun MobileNativePlayer(
             episode = ui.activeEpisode,
             dubbing = ui.activeDubbing,
             playerName = ui.activeBalancerLabel,
+            episodeFlags = ui.activeEpisodeFlags,
             onBack = {
                 if (activity == null || !MobilePlayerPipController.enterOnBack(activity)) {
                     onEvent(PlayerState.Event.Back)
@@ -695,9 +696,9 @@ internal fun MobileNativePlayer(
                     currentEpisodeIndex = ui.currentEpisodeIndex,
                     animeId = state.animeId,
                     posterUrl = state.posterUrl,
-                    onEpisodeSelected = { index ->
+                    onEpisodeSelected = { number ->
                         onEpisodesExpandedChange(false)
-                        onEvent(PlayerState.Event.EpisodeSelected(index))
+                        onEvent(PlayerState.Event.EpisodeSelected(number))
                         overlay.show()
                     },
                 )
