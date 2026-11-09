@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -70,6 +71,12 @@ fun EpisodesMobileScreen(
     onEvent: (EpisodesState.Event) -> Unit,
 ) {
     val context = LocalContext.current
+    val episodeListState = rememberLazyListState()
+    LaunchedEffect(state.scrollAnchorEpisode, state.visibleEpisodeGroups) {
+        val anchor = state.scrollAnchorEpisode ?: return@LaunchedEffect
+        val index = state.visibleEpisodeGroups.indexOfFirst { it.episode == anchor }
+        if (index >= 0) episodeListState.scrollToItem(index)
+    }
     val notificationPermissionGate = rememberNotificationPermissionGate()
     LaunchedEffect(Unit) {
         effect.collect { event ->
@@ -90,7 +97,11 @@ fun EpisodesMobileScreen(
                     if (state.videosState is VideosUiState.Content) {
                         EpisodeWatchFilterAction(
                             selected = state.watchFilter,
-                            onSelected = { onEvent(EpisodesState.Event.WatchFilterSelected(it)) },
+                            onSelected = {
+                                val anchor = state.visibleEpisodeGroups
+                                    .getOrNull(episodeListState.firstVisibleItemIndex)?.episode
+                                onEvent(EpisodesState.Event.WatchFilterSelected(it, anchor))
+                            },
                         )
                     }
                 },
@@ -122,6 +133,7 @@ fun EpisodesMobileScreen(
                     )
                 }
                 LazyColumn(
+                    state = episodeListState,
                     modifier = Modifier
                         .weight(1f)
                         .navigationBarsPadding(),

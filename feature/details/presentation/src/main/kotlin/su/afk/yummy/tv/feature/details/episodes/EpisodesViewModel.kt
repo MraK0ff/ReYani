@@ -51,6 +51,7 @@ import su.afk.yummy.tv.domain.anime.usecase.RefreshAnimeVideosUseCase
 import su.afk.yummy.tv.domain.videodownload.usecase.ObserveVideoDownloadStatusesUseCase
 import su.afk.yummy.tv.domain.watchlater.usecase.ObserveWatchLaterEpisodesUseCase
 import su.afk.yummy.tv.feature.details.DetailsAnalytics
+import su.afk.yummy.tv.feature.details.episodes.model.EpisodeWatchFilter
 import su.afk.yummy.tv.feature.details.episodes.model.EpisodeWatchStatus
 import su.afk.yummy.tv.feature.details.episodes.utils.watchStatus
 import su.afk.yummy.tv.feature.details.details.handler.DetailsPlayerNavigationHandler
@@ -145,6 +146,14 @@ class EpisodesViewModel @AssistedInject internal constructor(
         viewModelScope.launch { loadMeta() }
         viewModelScope.launch { loadVideos() }
         viewModelScope.launch { loadEpisodeInfo() }
+        appearanceSettingsStore.episodeWatchFilter
+            .distinctUntilChanged()
+            .onEach { stored ->
+                val filter = EpisodeWatchFilter.entries.firstOrNull { it.name == stored }
+                    ?: EpisodeWatchFilter.All
+                setState { copy(watchFilter = filter).withVisibleGroups() }
+            }
+            .launchIn(viewModelScope)
         appearanceSettingsStore.showEpisodeFlags
             .distinctUntilChanged()
             .onEach { enabled -> applyEpisodeFlags(enabled) }
@@ -203,8 +212,16 @@ class EpisodesViewModel @AssistedInject internal constructor(
 
             EpisodesState.Event.BackSelected -> nav.back()
             EpisodesState.Event.RetryVideosSelected -> viewModelScope.launch { loadVideos() }
-            is EpisodesState.Event.WatchFilterSelected -> setState {
-                copy(watchFilter = event.filter).withVisibleGroups()
+            is EpisodesState.Event.WatchFilterSelected -> {
+                setState {
+                    copy(
+                        watchFilter = event.filter,
+                        scrollAnchorEpisode = event.anchorEpisode ?: scrollAnchorEpisode,
+                    ).withVisibleGroups()
+                }
+                viewModelScope.launch {
+                    appearanceSettingsStore.setEpisodeWatchFilter(event.filter.name)
+                }
             }
 
             is EpisodesState.Event.EpisodeDescriptionToggled -> setState {

@@ -113,6 +113,8 @@ class EpisodesViewModelTest : BaseUnitTest() {
         coEvery { animeRepository.getAnimeEpisodeInfo(ANIME_ID) } returns emptyMap()
         every { animeRepository.observeAnimeEpisodeFlags(ANIME_ID) } returns flowOf(emptyMap())
         every { appearanceSettingsStore.showEpisodeFlags } returns flowOf(true)
+        every { appearanceSettingsStore.episodeWatchFilter } returns flowOf("All")
+        coEvery { appearanceSettingsStore.setEpisodeWatchFilter(any()) } just Runs
     }
 
     private fun createViewModel(pendingEpisode: String? = null): EpisodesViewModel = EpisodesViewModel(

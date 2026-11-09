@@ -48,6 +48,8 @@ class EpisodesState {
         val episodeGroups: ImmutableList<EpisodeGroup> = persistentListOf(),
         /** Выбранный фильтр по статусу просмотра (только мобильный список). */
         val watchFilter: EpisodeWatchFilter = EpisodeWatchFilter.All,
+        /** Серия-якорь для сохранения позиции при смене фильтра. */
+        val scrollAnchorEpisode: String? = null,
         /** [episodeGroups] после применения [watchFilter]. */
         val visibleEpisodeGroups: ImmutableList<EpisodeGroup> = persistentListOf(),
         /** Озвучка с наибольшим числом просмотров среди kodik-источников. */
@@ -181,7 +183,7 @@ class EpisodesState {
         data class EpisodeDescriptionToggled(val episode: String) : Event
 
         /** Пользователь выбрал фильтр серий по статусу просмотра. */
-        data class WatchFilterSelected(val filter: EpisodeWatchFilter) : Event
+        data class WatchFilterSelected(val filter: EpisodeWatchFilter, val anchorEpisode: String?) : Event
 
         /** Пользователь выбрал серию из списка. */
         data class EpisodeSelected(val video: AnimeVideo) : Event

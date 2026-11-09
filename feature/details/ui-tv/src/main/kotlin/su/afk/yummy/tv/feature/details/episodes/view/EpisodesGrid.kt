@@ -66,6 +66,8 @@ internal fun EpisodesGrid(
     bestDubbing: String,
     watchProgress: DetailsWatchProgressIndex,
     restoreFocusRequest: Int,
+    scrollAnchorEpisode: String?,
+    onAnchorEpisodeChanged: (String) -> Unit,
     episodeInfo: Map<String, AnimeEpisodeInfo>,
     episodeFlags: Map<String, EpisodeFlags>,
     onVideoSelected: (AnimeVideo) -> Unit,
@@ -100,6 +102,11 @@ internal fun EpisodesGrid(
                 isRestoringFocus = false
             }
         }
+    }
+
+    LaunchedEffect(scrollAnchorEpisode, episodeKeys) {
+        val anchorIndex = scrollAnchorEpisode?.let(episodeKeys::indexOf)?.takeIf { it >= 0 }
+        if (anchorIndex != null) requestEpisodeFocus(anchorIndex)
     }
 
     LaunchedEffect(restoreFocusRequest) {
@@ -237,6 +244,7 @@ internal fun EpisodesGrid(
                                 .onFocusChanged {
                                     if (it.hasFocus && !isRestoringFocus) {
                                         lastFocusedIndex = index
+                                        onAnchorEpisodeChanged(episode)
                                     }
                                 },
                         )

@@ -84,10 +84,12 @@ internal fun TvPlayerNameBadge(
     episodeFlags: EpisodeFlags?,
     modifier: Modifier = Modifier,
 ) {
-    val flagLabel = when {
+    val fillerColor = Color(0xFFFFC107)
+    val recapColor = Color(0xFF90CAF9)
+    val flagLabel: Pair<String, Color>? = when {
         episodeFlags == null -> null
-        episodeFlags.filler -> stringResource(R.string.player_episode_flag_filler) to TvFlagFillerColor
-        episodeFlags.recap -> stringResource(R.string.player_episode_flag_recap) to TvFlagRecapColor
+        episodeFlags.filler -> Pair(stringResource(R.string.player_episode_flag_filler), fillerColor)
+        episodeFlags.recap -> Pair(stringResource(R.string.player_episode_flag_recap), recapColor)
         else -> null
     }
     AnimatedVisibility(
