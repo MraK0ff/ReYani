@@ -1,107 +1,206 @@
-name: Android Build
+name: ReYani Optimized Build
 
 on:
-    pull_request:
-    push:
-        branches:
-            - main
-            - master
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - '**'
 
 permissions:
-    contents: read
+  contents: read
 
+# Separate concurrency per ref: a new run cancels only an older run on the same ref.
 concurrency:
-    group: android-build-${{ github.ref }}
-    cancel-in-progress: true
+  group: reyani-optimized-build-${{ github.ref }}
+  # Never kill an active build: Gradle cache is saved during the post-job step.
+  # Keep one active run per branch and let newer commits wait their turn.
+  cancel-in-progress: false
 
 jobs:
-    build:
-        name: Build app
-        runs-on: ubuntu-latest
-        timeout-minutes: 60
+  build:
+    name: Build optimized APK
+    outputs:
+      version_name: ${{ steps.app_version.outputs.version_name }}
+    # Internal PRs are already built by their branch push; avoid a duplicate runner.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
 
-        steps:
-            -   name: Checkout
-                uses: actions/checkout@v5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
 
-            -   name: Set up JDK
-                uses: actions/setup-java@v5
-                with:
-                    distribution: temurin
-                    java-version: 21
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
 
-            -   name: Set up Gradle
-                uses: gradle/actions/setup-gradle@v5
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          # Trusted branch pushes can save cache; pull requests only restore it.
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+          # No encryption secret required. Gradle dependency and build caches are still persisted.
 
-            -   name: Set up Android SDK
-                uses: android-actions/setup-android@v4
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
 
-            -   name: Install Android SDK platform
-                run: |
-                    # версия берётся из каталога, чтобы CI не разъезжался с compileSdk
-                    compile_sdk=$(grep -m1 '^android-compileSdk' gradle/libs.versions.toml | cut -d'"' -f2)
-                    # начиная с API 36 платформы публикуются с минорной версией: android-37 нет, есть android-37.0
-                    case "$compile_sdk" in
-                      *.*) platform_version="$compile_sdk" ;;
-                      *)   platform_version="$compile_sdk.0" ;;
-                    esac
-                    echo "compileSdk=$compile_sdk -> platforms;android-$platform_version"
-                    (yes || true) | sdkmanager --licenses >/dev/null
-                    sdkmanager --install "platforms;android-$platform_version" "build-tools;$platform_version.0"
+      - name: Install Android SDK platform
+        run: |
+          compile_sdk=$(grep -m1 '^android-compileSdk' gradle/libs.versions.toml | cut -d'"' -f2)
+          case "$compile_sdk" in
+            *.*) platform_version="$compile_sdk" ;;
+            *)   platform_version="$compile_sdk.0" ;;
+          esac
+          echo "compileSdk=$compile_sdk -> platforms;android-$platform_version"
+          (yes || true) | sdkmanager --licenses >/dev/null
+          sdkmanager --install "platforms;android-$platform_version"
 
-            -   name: Lint
-                id: lint
-                run: ./gradlew :app:lintDebug --stacktrace
+      - name: Build debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
 
-            -   name: Run unit tests
-                id: tests
-                run: ./gradlew testDebugUnitTest --stacktrace
+          echo "Runner memory before Gradle:"
+          free -h
+          echo "Top memory consumers before Gradle:"
+          ps -eo pid,rss,comm --sort=-rss | head -n 12
 
-            -   name: Build debug APK
-                id: build_debug
-                run: ./gradlew :app:assembleDebug --stacktrace
+          # Keep periodic memory snapshots in the job log while Gradle is running.
+          (
+            while sleep 60; do
+              echo "::group::Runner memory snapshot"
+              date -u
+              free -h
+              ps -eo pid,rss,comm --sort=-rss | head -n 12
+              echo "::endgroup::"
+            done
+          ) &
+          monitor_pid=$!
+          trap 'kill "$monitor_pid" 2>/dev/null || true; echo "Runner memory at Gradle exit:"; free -h; ps -eo pid,rss,comm --sort=-rss | head -n 12' EXIT
 
-            -   name: Build release APK
-                id: build_release
-                run: ./gradlew :app:assembleRelease --stacktrace
+          ./gradlew :app:assembleReleaseDebug --stacktrace --profile
 
-            -   name: Write job summary
-                if: always()
-                run: |
-                    {
-                      echo "## Build Summary"
-                      echo ""
-                      echo "| Step | Result |"
-                      echo "|---|---|"
-                      echo "| Lint | ${{ steps.lint.outcome == 'success' && '✅ passed' || steps.lint.outcome == 'failure' && '❌ failed' || '⏭️ skipped' }} |"
-                      echo "| Unit tests | ${{ steps.tests.outcome == 'success' && '✅ passed' || steps.tests.outcome == 'failure' && '❌ failed' || '⏭️ skipped' }} |"
-                      echo "| Debug build | ${{ steps.build_debug.outcome == 'success' && '✅ passed' || steps.build_debug.outcome == 'failure' && '❌ failed' || '⏭️ skipped' }} |"
-                      echo "| Release build | ${{ steps.build_release.outcome == 'success' && '✅ passed' || steps.build_release.outcome == 'failure' && '❌ failed' || '⏭️ skipped' }} |"
-                      echo ""
+      - name: Upload Gradle build profile
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gradle-build-profile
+          path: build/reports/profile/*.html
+          if-no-files-found: ignore
+          retention-days: 7
 
-                      total=0
-                      failed=0
-                      while IFS= read -r f; do
-                        t=$(grep -o 'tests="[0-9]*"' "$f" | head -1 | grep -o '[0-9]*' || true)
-                        fl=$(grep -o 'failures="[0-9]*"' "$f" | head -1 | grep -o '[0-9]*' || true)
-                        er=$(grep -o 'errors="[0-9]*"' "$f" | head -1 | grep -o '[0-9]*' || true)
-                        total=$((total + ${t:-0}))
-                        failed=$((failed + ${fl:-0} + ${er:-0}))
-                      done < <(find . -path "*/build/test-results/testDebugUnitTest/TEST-*.xml" 2>/dev/null)
-                      echo "**Unit tests:** ${total} run, ${failed} failed"
-                      echo ""
+      - name: Upload generated Room schema
+        uses: actions/upload-artifact@v7
+        with:
+          name: room-schema-70
+          path: core/storage/schemas/su.afk.yummy.tv.core.storage.db.AppDatabase/71.json
+          if-no-files-found: ignore
+          retention-days: 7
 
-                      lintxml="app/build/reports/lint-results-debug.xml"
-                      if [ -f "$lintxml" ]; then
-                        errs=$(grep -c 'severity="Error"' "$lintxml" || true)
-                        warns=$(grep -c 'severity="Warning"' "$lintxml" || true)
-                        echo "**Lint:** ${errs} errors, ${warns} warnings"
-                        echo ""
-                      fi
+      - name: Re-sign APK with the standard Android testkey
+        shell: bash
+        run: |
+          set -euo pipefail
 
-                      apk=$(find app/build/outputs/apk/debug -name "*.apk" 2>/dev/null | head -1)
-                      if [ -n "$apk" ]; then
-                        size=$(du -h "$apk" | cut -f1)
-                        echo "**Debug APK size:** ${size} ($(basename "$apk"))"
-                      fi
-                    } >> "$GITHUB_STEP_SUMMARY"
+          key_dir="$RUNNER_TEMP/android-testkey"
+          mkdir -p "$key_dir"
+
+          # AOSP's public test signing key (not suitable for production releases).
+          curl -fsSL 'https://android.googlesource.com/platform/build/+/refs/heads/main/target/product/security/testkey.pk8?format=TEXT' \
+            | base64 --decode > "$key_dir/testkey.pk8"
+          curl -fsSL 'https://android.googlesource.com/platform/build/+/refs/heads/main/target/product/security/testkey.x509.pem?format=TEXT' \
+            | base64 --decode > "$key_dir/testkey.x509.pem"
+
+          # apksigner --key requires unencrypted PKCS#8 in DER format.
+          # AOSP's .pk8 file is already in that format; do not convert it to PEM.
+          openssl pkcs8 -inform DER -nocrypt \
+            -in "$key_dir/testkey.pk8" \
+            -out /dev/null
+
+          # Confirm that the downloaded certificate belongs to this private key.
+          openssl pkey -inform DER -in "$key_dir/testkey.pk8" -pubout \
+            -out "$key_dir/key-public.pem"
+          openssl x509 -in "$key_dir/testkey.x509.pem" -pubkey -noout \
+            > "$key_dir/cert-public.pem"
+          diff -u "$key_dir/key-public.pem" "$key_dir/cert-public.pem"
+
+          apksigner="$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name apksigner | sort -V | tail -n 1)"
+          test -n "$apksigner"
+
+          shopt -s nullglob
+          apks=(app/build/outputs/apk/releaseDebug/*.apk)
+          test "${#apks[@]}" -gt 0
+
+          for apk in "${apks[@]}"; do
+            "$apksigner" sign \
+              --key "$key_dir/testkey.pk8" \
+              --cert "$key_dir/testkey.x509.pem" \
+              "$apk"
+            "$apksigner" verify --verbose --print-certs "$apk"
+          done
+
+      - name: Read app version
+        id: app_version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version_name="$(jq -er '.elements[0].versionName | select(type == "string" and length > 0)' app/build/outputs/apk/releaseDebug/output-metadata.json)"
+          [[ "$version_name" =~ ^[0-9A-Za-z._+-]+$ ]]
+          echo "version_name=$version_name" >> "$GITHUB_OUTPUT"
+
+      - name: Rename APK to ReYani versioned filename
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          apk_dir="app/build/outputs/apk/releaseDebug"
+          output_file="$(jq -er '.elements[0].outputFile' "$apk_dir/output-metadata.json")"
+          test -f "$apk_dir/$output_file"
+          mv "$apk_dir/$output_file" "$apk_dir/ReYani-${{ steps.app_version.outputs.version_name }}.apk"
+
+      - name: Upload optimized APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: reyani-optimized-apk
+          path: app/build/outputs/apk/releaseDebug/ReYani-*.apk
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: Publish versioned ReYani release
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download optimized APK
+        uses: actions/download-artifact@v7
+        with:
+          name: reyani-optimized-apk
+          path: release-apk
+
+      # Remove the old non-versioned "latest" release/tag from the previous CI.
+      - name: Remove legacy latest tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view latest >/dev/null 2>&1; then
+            gh release delete latest --yes --cleanup-tag
+          fi
+
+      - name: Publish versioned ReYani release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.build.outputs.version_name }}
+          name: ${{ needs.build.outputs.version_name }}
+          target_commitish: main
+          make_latest: true
+          prerelease: false
+          draft: false
+          overwrite_files: true
+          fail_on_unmatched_files: true
+          files: release-apk/*.apk

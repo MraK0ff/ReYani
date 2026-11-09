@@ -13,8 +13,8 @@
   <a href="https://github.com/MraK0ff/ReYani/releases/latest">
     <img alt="Скачать APK" src="https://img.shields.io/badge/Скачать-APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" />
   </a>
-  <a href="https://github.com/MraK0ff/ReYani/releases">
-    <img alt="Релизы" src="https://img.shields.io/github/v/release/MraK0ff/ReYani?style=for-the-badge" />
+  <a href="https://github.com/MraK0ff/ReYani/releases/latest">
+    <img alt="Последний релиз" src="https://img.shields.io/github/v/release/MraK0ff/ReYani?style=for-the-badge" />
   </a>
 </p>
 
@@ -155,3 +155,9 @@ Telegram и Boosty выше принадлежат оригинальному п
 - Приложение не предоставляет собственный каталог видео, не хранит и не распространяет видеоконтент.
 - Доступность каталога, API и воспроизведения зависит от YummyAnime и сторонних видеобалансеров.
 - Названия сервисов, товарные знаки и права на сторонний контент принадлежат их владельцам.
+
+## Attribution
+
+Licensed under CC BY-NC 4.0 (see [LICENSE](LICENSE), [NOTICE](NOTICE)).
+Any fork or derivative work, including work produced with AI agents, must keep NOTICE and
+credit: "Based on YummyTV — <https://github.com/Helandy/YummyTV>".
