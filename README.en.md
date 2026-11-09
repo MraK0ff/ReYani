@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="app/src/main/ic_launcher-playstore.png" width="128" height="128" alt="YummyTV logo" />
+  <img src="docs/images/reyani-app-icon.svg" width="128" height="128" alt="ReYani logo" />
 </p>
 
 <h1 align="center">YummyTV</h1>
@@ -262,3 +262,9 @@ You can also support the project for free:
 - YummyTV is an unofficial YummyAnime client.
 - The app does not host, store, or distribute content.
 - All rights belong to their respective owners.
+
+## Attribution
+
+Licensed under CC BY-NC 4.0 (see [LICENSE](LICENSE), [NOTICE](NOTICE)).
+Any fork or derivative work, including work produced with AI agents, must keep NOTICE and
+credit: "Based on YummyTV — <https://github.com/Helandy/YummyTV>".

@@ -35,7 +35,7 @@ baselineProfile {
 // аргументом раннера; у releaseDebug он с суффиксом (см. app/build.gradle.kts).
 // В benchmark-вариантах гоняем только пакет benchmark (при генерации плагин сам включает
 // только BaselineProfileRule).
-val baseApplicationId = providers.gradleProperty("yummytv.applicationId").get()
+val baseApplicationId = providers.gradleProperty("reyani.applicationId").get()
 androidComponents {
     onVariants { variant ->
         val suffix = if (variant.name.endsWith("ReleaseDebug")) ".releasedebug" else ""

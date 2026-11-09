@@ -6,7 +6,7 @@ plugins {
     id("yummytv.android.application.baselineprofile")
 }
 
-val baseApplicationId = providers.gradleProperty("yummytv.applicationId").get()
+val baseApplicationId = providers.gradleProperty("reyani.applicationId").get()
 val appVersionName = providers.gradleProperty("yummytv.versionName").get()
 val appVersionCode = providers.gradleProperty("yummytv.versionCode").get().toInt()
 
@@ -68,7 +68,7 @@ android {
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
-            val fileName = "YummyTV-${output.versionName.orNull ?: "1.0"}-${variant.buildType}.apk"
+            val fileName = "ReYani-${output.versionName.orNull ?: "1.0"}-${variant.buildType}.apk"
             (output as? com.android.build.api.variant.impl.VariantOutputImpl)?.outputFileName?.set(fileName)
         }
     }

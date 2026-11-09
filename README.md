@@ -1,260 +1,150 @@
 <p align="center">
-  <img src="app/src/main/ic_launcher-playstore.png" width="128" height="128" alt="YummyTV logo" />
+  <img src="docs/images/reyani-app-icon.svg" width="112" height="112" alt="ReYani logo" />
 </p>
 
-<h1 align="center">YummyTV</h1>
+<h1 align="center">ReYani</h1>
 
 <p align="center">
-  Неофициальный клиент <a href="https://yummyani.me/">YummyAnime</a> для Android TV и Android.<br/>
-  Нативный интерфейс, встроенный плеер, библиотека, подписки и удобное управление с пульта.
-</p>
-
-<p align="center">
-  <a href="README.en.md">English</a> · <a href="README.md">Русский</a>
+  Неофициальный клиент <a href="https://yummyani.me/">YummyAnime</a> для Android и Android TV,
+  основанный на <a href="https://github.com/Helandy/YummyTV">YummyTV</a> и дополненный собственными улучшениями.
 </p>
 
 <p align="center">
-  <a href="https://github.com/Helandy/YummyTV/releases/latest">
-    <img alt="Download APK" src="https://img.shields.io/badge/Download-APK-2ea44f?style=for-the-badge" />
+  <a href="https://github.com/MraK0ff/ReYani/releases/latest">
+    <img alt="Скачать APK" src="https://img.shields.io/badge/Скачать-APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" />
   </a>
-  <a href="https://github.com/Helandy/YummyTV/releases/latest">
-    <img alt="Latest release" src="https://img.shields.io/github/v/release/Helandy/YummyTV?style=for-the-badge" />
-  </a>
-  <a href="https://github.com/Helandy/YummyTV/releases">
-    <img alt="Total downloads" src="https://img.shields.io/github/downloads/Helandy/YummyTV/total?style=for-the-badge" />
-  </a>
-  <a href="https://github.com/Helandy/YummyTV/stargazers">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/Helandy/YummyTV?style=for-the-badge" />
+  <a href="https://github.com/MraK0ff/ReYani/releases/latest">
+    <img alt="Последний релиз" src="https://img.shields.io/github/v/release/MraK0ff/ReYani?style=for-the-badge" />
   </a>
 </p>
-
-<p align="center">
-  <img alt="Android" src="https://img.shields.io/badge/Android-7.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white" />
-  <img alt="Android TV" src="https://img.shields.io/badge/Android%20TV-supported-4285F4?style=flat-square&logo=androidtv&logoColor=white" />
-  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Compose-7F52FF?style=flat-square&logo=kotlin&logoColor=white" />
-  <img alt="Media3" src="https://img.shields.io/badge/Player-Media3%20%2F%20ExoPlayer-orange?style=flat-square" />
-</p>
-
----
-
-> [!TIP]
-> 💬 Комьюнити приложения в Telegram: [@etozhesandy_dev](https://t.me/etozhesandy_dev) — новости,
-> обновления и обсуждение.
 
 > [!IMPORTANT]
-> 💼 В поиске работы: [@Etozhesandy](https://t.me/Etozhesandy) (Android, Compose, Kotlin).
-> С вопросами по программе туда не пишите — для этого есть
-> [Issues](https://github.com/Helandy/YummyTV/issues).
-
-## Что это
-
-**YummyTV** — нативное Android-приложение для просмотра аниме с YummyAnime. Проект поддерживает два
-отдельных интерфейса: удобный TV-режим для Android TV / приставок и мобильный режим для смартфонов.
-
-Помимо просмотра, встроенного плеера и библиотеки, приложение включает сообщество (комментарии,
-отзывы, новости, блогеры), социальные функции (профили, поиск пользователей, личные сообщения) и
-скачивание серий для офлайн-просмотра.
-
-На телевизоре приложение рассчитано на пульт, D-pad и крупные элементы интерфейса. На телефоне
-доступны нижняя навигация, жесты в плеере и Picture-in-Picture.
-
-<p align="center">
-  <a href="https://github.com/Helandy/YummyTV/releases/latest"><b>Скачать APK</b></a>
-  ·
-  <a href="#скриншоты"><b>Скриншоты</b></a>
-  ·
-  <a href="#возможности"><b>Возможности</b></a>
-  ·
-  <a href="#для-разработчиков"><b>Для разработчиков</b></a>
-</p>
+> ReYani — независимый форк оригинального [YummyTV](https://github.com/Helandy/YummyTV), который разрабатывает Helandy.
+> Предложения по оригинальному приложению направляйте в [Helandy Issues](https://github.com/Helandy/YummyTV/issues), а вопросы и предложения по ReYani — в [ReYani Issues](https://github.com/MraK0ff/ReYani/issues).
+>
+> Если предложение не планируется к реализации в оригинале, его можно отдельно предложить для ReYani. Каждая идея рассматривается отдельно и не принимается автоматически.
 
 ---
 
-## Скриншоты
+## Особенности форка
 
-### Android TV
+Ниже — ключевые дополнения и изменения ReYani, уже реализованные в основном приложении.
 
-<table>
-  <tr>
-    <td align="center"><b>Главная</b></td>
-    <td align="center"><b>Страница тайтла</b></td>
-    <td align="center"><b>Топ</b></td>
-  </tr>
-  <tr>
-    <td><img src="site/screenshots/tv/home.webp" width="320" alt="TV home screen" /></td>
-    <td><img src="site/screenshots/tv/details.webp" width="320" alt="TV details screen" /></td>
-    <td><img src="site/screenshots/tv/top.webp" width="320" alt="TV top screen" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Серии</b></td>
-    <td align="center"><b>Балансеры</b></td>
-    <td align="center"><b>Порядок просмотра</b></td>
-  </tr>
-  <tr>
-    <td><img src="site/screenshots/tv/episodes.webp" width="320" alt="TV episodes screen" /></td>
-    <td><img src="site/screenshots/tv/balancers.webp" width="320" alt="TV balancers screen" /></td>
-    <td><img src="site/screenshots/tv/viewing-order.webp" width="320" alt="TV viewing order screen" /></td>
-  </tr>
-</table>
+<details>
+<summary><strong>Плеер</strong></summary>
 
-<p align="center">
-  <b>Плеер</b><br/>
-  <img src="site/screenshots/tv/player.webp" width="640" alt="TV player screen" />
-</p>
+- **Более понятная иконка пункта «Озвучка и плеер».**  
+  Вместо <img src="docs/images/VolumeUp.svg" alt="VolumeUp" width="24" height="24" align="middle" /> (VolumeUp), которая ассоциируется с регулировкой громкости, используется <img src="docs/images/RecordVoiceOver.svg" alt="RecordVoiceOver" width="24" height="24" align="middle" /> (RecordVoiceOver) — иконка, точнее отражающая назначение выбора озвучки и плеера.
 
-### Android Mobile
-
-<table>
-  <tr>
-    <td align="center"><b>Главная</b></td>
-    <td align="center"><b>Страница тайтла</b></td>
-    <td align="center"><b>Топ</b></td>
-    <td align="center"><b>Библиотека</b></td>
-  </tr>
-  <tr>
-    <td><img src="site/screenshots/mobile/home.webp" width="210" alt="Mobile home screen" /></td>
-    <td><img src="site/screenshots/mobile/details.webp" width="210" alt="Mobile details screen" /></td>
-    <td><img src="site/screenshots/mobile/top.webp" width="210" alt="Mobile top screen" /></td>
-    <td><img src="site/screenshots/mobile/library.webp" width="210" alt="Mobile library screen" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Серии</b></td>
-    <td align="center"><b>Загрузки</b></td>
-    <td align="center"><b>Профиль</b></td>
-    <td align="center"><b>Балансеры</b></td>
-  </tr>
-  <tr>
-    <td><img src="site/screenshots/mobile/episodes.webp" width="210" alt="Mobile episodes screen" /></td>
-    <td><img src="site/screenshots/mobile/downloads.webp" width="210" alt="Mobile downloads screen" /></td>
-    <td><img src="site/screenshots/mobile/profile.webp" width="210" alt="Mobile profile screen" /></td>
-    <td><img src="site/screenshots/mobile/balancers.webp" width="210" alt="Mobile balancers screen" /></td>
-  </tr>
-</table>
-
-<p align="center">
-  <b>Плеер</b><br/>
-  <img src="site/screenshots/mobile/player.webp" width="640" alt="Mobile player screen" />
-</p>
+</details>
 
 ---
 
-## Возможности
+## Планы форка
 
-### Интерфейс
+<details>
+<summary><strong>Серии и история просмотра</strong></summary>
 
-- 📺 Отдельные интерфейсы для Android TV и Android Mobile.
-- 🎮 Навигация с пульта, D-pad и сенсорного экрана.
-- 🏠 Главная страница с подборками и быстрым продолжением просмотра.
-- 🔎 Поиск по каталогу с фильтрами (жанр, тип, статус, год, сезон, рейтинг, сортировка), а также по
-  студии и режиссёру.
-- 🏆 Топ сериалов и фильмов, расписание выхода серий.
-- 🖼️ Просмотр постеров и скриншотов внутри приложения.
+- **Умное отслеживание новых серий и расширенная лента карточек.**  
+  Локальная история последних известных эпизодов помогает отображать больше карточек аниме, не ограничиваясь только теми тайтлами, которые попали в текущую выдачу. При этом аниме поднимается в списке только при обнаружении действительно новой регулярной серии: повторные публикации, альтернативные озвучки и уже известные серии не вызывают повторного перемещения карточки.
 
-### Библиотека и аккаунт
+- **Фактическое время выхода эпизодов.**  
+  В MY_NEW_EPISODES и CALENDAR используется время фактической публикации видео на YummyAnime, а не время японского эфира. Это позволяет ориентироваться на момент, когда серию действительно можно посмотреть.
 
-- 🔐 Авторизация в аккаунте YummyAnime.
-- 📚 Библиотека: продолжить просмотр, любимые, смотрю, в планах, просмотрено, отложено и брошено.
-- 🔔 Подписки на новые серии выбранных озвучек с предложением подписаться на выходящие тайтлы.
-- ⭐ Избранное, пользовательские списки и оценки.
-- 📄 Страница тайтла: описание, рейтинги, серии с названиями, трейлеры, похожие, порядок просмотра,
-  скриншоты, коллекции и таймер до выхода следующей серии.
 
-### Сообщество и социальное
+- **Фильтр списка серий с сохранением состояния.**  
+  Доступны режимы «Все», «Непросмотренное» и «Просмотренное» как на Android, так и на Android TV. Выбранный режим сохраняется между запусками приложения. При переключении фильтра и возвращении к режиму «Все» сохраняется текущая позиция списка: например, если пользователь просматривал серии 126–130, временно включил фильтр «Непросмотренное», а затем вернулся к «Все», список должен восстановиться около серий 126–130, а не сбрасываться к началу.
 
-- 💬 Комментарии с ответами, сортировкой, голосованием и скрытием спойлеров.
-- 📝 Отзывы на тайтлы с оценками, реакциями и статусом модерации.
-- 📰 Новости и публикации сайта, а также видео блогеров с подписками.
-- 👤 Профили пользователей, поиск, друзья и личные сообщения (на мобильных устройствах).
+</details>
 
-### Скачивание и офлайн
+<details>
+<summary><strong>Плеер</strong></summary>
 
-- ⬇️ Скачивание серий для офлайна, менеджер загрузок и экспорт в MP4 (на мобильных).
+- **Лента эпизодов с офлайн-поддержкой.**  
+  Список серий остаётся доступным при просмотре офлайн-видео. В этом режиме из ленты также можно удалять загруженные серии.
 
-### Плеер
+- **Быстрое управление скоростью.**  
+  Кнопка в плеере показывает текущую скорость и позволяет быстро переключать её. При удержании открывается расширенная панель с вариантами скорости.
 
-Встроенный плеер на **Media3 / ExoPlayer** поддерживает:
+- **Управление яркостью в плеере.**  
+  По умолчанию при запуске каждой серии включается автоматическая яркость. Яркость, изменённая жестами, не переносится на следующее видео, если не включена соответствующая настройка сохранения. При включённой настройке возврата системной яркости достижение нулевого уровня ручной яркости возвращает управление яркостью Android.
 
-- выбор качества, озвучки и балансера (Kodik, Aksor, Alloha, CVH, VK, Rutube, Sibnet, Zedfilm,
-  Aniboom, Anistar, Amedia, AniLibria, AniDub, AiLiberty, Studio MIR, Sameband, AnimeVost, Animebesst, Ashdi,
-  Fenix, Dream Cast, 4K);
-- скорость, масштаб и зум, автопропуск опенинга/эндинга;
-- переход между сериями и автовоспроизведение следующей;
-- жесты на мобильных (яркость, громкость, перемотка, зум) и управление мышью на TV;
-- Picture-in-Picture, воспроизведение локальных файлов и предложение оценить тайтл.
+- **Улучшенная блокировка от случайных касаний.**  
+  Возвращён стандартный размер кнопки блокировки вместо увеличенного варианта из оригинального приложения; обновлены её оформление и поведение. Кнопка выделена полупрозрачной подложкой и контрастной обводкой. Если включена защита удержанием, для разблокировки необходимо удерживать кнопку. Повторное нажатие на экран при активной блокировке скрывает элементы управления, а не продлевает их отображение.
 
-### Настройки и интеграции
+- **Удаление скачанной серии.**  
+  При просмотре загруженного эпизода его можно удалить прямо из меню «Ещё» плеера.
 
-- 🎨 Темы оформления и режим фона (светлый / тёмный / системный).
-- 🧩 Размеры карточек, качество постеров, язык контента.
-- 🏡 TV Home (Preview Channel, Watch Next), FAQ и обновления через GitHub Releases.
+- **Система разметки и пропуска фрагментов по типу SponsorBlock.**  
+  Пользователи смогут предлагать временные интервалы и голосовать за разметку опенингов, эндингов, рекламы, заставок и других фрагментов. Подтверждённые отметки будут отображаться на таймлайне и позволят автоматически пропускать такие участки.
+
+</details>
+
+<details>
+<summary><strong>Интерфейс и навигация</strong></summary>
+
+- **Настраиваемая навигация.**  
+  Пользователь может самостоятельно выбирать элементы и их расположение в шапке и нижнем меню.
+
+- **Отдельная страница уведомлений.**  
+  Уведомления доступны из выбранного пользователем места — отдельной кнопкой в шапке или через счётчик поверх аватара профиля в нижнем меню. Счётчик показывает количество непрочитанных уведомлений.
+
+- **Офлайн-управление уведомлениями.**  
+  Удаление уведомлений, отметка прочитанными и другие действия доступны без подключения к интернету.
+
+</details>
+
+<details>
+<summary><strong>Настройки</strong></summary>
+
+- **Удалена Яндекс Метрика (AppMetrica).**  
+  Интеграция сбора аналитики оригинального приложения исключена из ReYani.
+
+- **Язык интерфейса.**  
+  Настройка меняет язык не только интерфейса приложения, но и элементов управления и меню плеера.
+
+- **Мгновенное применение темы и фона.**  
+  Выбранные пользователем тема и цвет фона применяются уже при запуске приложения. Больше не возникает кратковременного отображения стандартного оформления перед загрузкой пользовательских настроек.
+
+- **Улучшенная первоначальная настройка.**  
+  При первом запуске собраны самые важные параметры приложения, а значения по умолчанию пересмотрены и выбраны разработчиком форка как наиболее оптимальные.
+
+</details>
 
 ---
 
 ## Скачать
 
-Последняя версия доступна в разделе **GitHub Releases**:
+Готовые APK публикуются в разделе **[Releases](https://github.com/MraK0ff/ReYani/releases)**.
 
-<p align="center">
-  <a href="https://github.com/Helandy/YummyTV/releases/latest">
-    <img alt="Download latest APK" src="https://img.shields.io/badge/Download%20latest%20APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" />
-  </a>
-</p>
+1. Откройте [последний релиз](https://github.com/MraK0ff/ReYani/releases/latest).
+2. Скачайте APK-файл из списка Assets.
+3. Установите его на Android-устройство или передайте APK на Android TV.
 
-Скачай APK, передай его на Android TV, приставку или Android-устройство и открой файл для установки.
-
-### Как установить на Android TV
-
-Самый простой способ передать APK на телевизор — через [LocalSend](https://localsend.org/):
-
-1. Установи LocalSend на телефон или компьютер.
-2. Установи LocalSend на Android TV.
-3. Подключи оба устройства к одной Wi-Fi сети.
-4. Отправь APK на телевизор.
-5. Открой APK на TV и разреши установку из этого источника, если Android попросит подтверждение.
 
 ---
 
-## Для разработчиков
+## Благодарности
 
-Проект построен на Kotlin и модульной архитектуре.
-
-### Структура
-
-- `core/*` — общие подсистемы: навигация, дизайн-система, сеть, хранилище, настройки, обновления,
-  deep links, аналитика и TV-интеграции.
-- `feature/*` — пользовательские сценарии: main, home, search, top, library, details, player,
-  settings, account, collection, schedule, а также comments, reviews, posts, bloggers, messages,
-  video-download, faq, pages, watching и commonScreen.
-- `ui-tv` и `ui-mobile` — отдельные UI-модули для телевизора и мобильных устройств.
-
-## Ограничения
-
-YummyTV зависит от доступности YummyAnime и сторонних видеобалансеров. Если сайт, API, плеер или
-источник временно недоступны, часть функций или воспроизведение видео могут не работать.
-
-Для пользователей за пределами СНГ часть видеобалансеров может быть недоступна из-за региональных
-ограничений или блокировок IP-адресов.
+Спасибо [Helandy](https://github.com/Helandy) за создание YummyTV и развитие оригинального проекта.
 
 ---
 
-## ☕ Поддержать проект
+## Лицензия
 
-YummyTV разрабатывается и поддерживается независимо.
-
-Если вам нравится приложение и вы хотите помочь его дальнейшему развитию:
-
-[![Поддержать на Boosty](https://img.shields.io/badge/Поддержать%20на-Boosty-orange?style=for-the-badge)](https://boosty.to/etozhesandy)
-
-Также можно поддержать проект бесплатно:
-
-* ⭐ **Поставить Star репозиторию** — это помогает другим узнать о проекте
-* 🐞 **Сообщить об ошибке** через [Issues](https://github.com/Helandy/YummyTV/issues)
-* 💡 **Предложить улучшение** через [Issues](https://github.com/Helandy/YummyTV/issues)
+В репозитории размещён файл [LICENSE](LICENSE) с условиями **CC BY-NC 4.0**. Перед использованием, распространением или созданием производных материалов ознакомьтесь с полным текстом лицензии и сохраняйте необходимые указания авторства.
 
 ---
 
-## Disclaimer
+## Отказ от ответственности
 
-- YummyTV — неофициальный клиент YummyAnime.
-- Приложение не хранит и не распространяет контент.
-- Все права принадлежат их владельцам.
+- ReYani — неофициальный форк клиента YummyAnime; проект не связан с владельцами сервиса и не одобряется ими.
+- Приложение не предоставляет собственный каталог видео, не хранит и не распространяет видеоконтент.
+- Доступность каталога, API и воспроизведения зависит от YummyAnime и сторонних видеобалансеров.
+- Названия сервисов, товарные знаки и права на сторонний контент принадлежат их владельцам.
+
+## Attribution
+
+Licensed under CC BY-NC 4.0 (see [LICENSE](LICENSE), [NOTICE](NOTICE)).
+Any fork or derivative work, including work produced with AI agents, must keep NOTICE and
+credit: "Based on YummyTV — <https://github.com/Helandy/YummyTV>".

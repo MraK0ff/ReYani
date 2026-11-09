@@ -1,58 +1,88 @@
-# Project Instructions
+# Project Guidelines
 
-- Stick to clean architecture.
+These guidelines describe the conventions used in ReYani. Follow the existing
+codebase and the original YummyTV project when making changes.
 
-## Domain Structure
+## General
 
-- Keep every public domain model, enum, sealed contract, repository contract, and use case in its
-  own same-named Kotlin file.
-- Split each feature's `.domain` package into `.domain.model`, `.domain.repository`, and
-  `.domain.usecase`. Never leave files directly in `.domain`.
-    - `.domain.model` — domain models, enums, sealed contracts, and their extension helpers
-      (e.g. sorting).
-    - `.domain.repository` — repository interfaces only (`XxxRepository`).
-    - `.domain.usecase` — use cases only (`XxxUseCase`).
-    - Do not create a sub-package that would stay empty.
-- Add KDoc to every use case describing the domain operation it performs.
+- Read the relevant code and nearby implementations before changing a feature.
+- Prefer small, focused changes. Avoid unrelated refactoring and unnecessary
+  abstractions.
+- Preserve existing behavior and compatibility unless the task explicitly
+  requires a change.
+- Follow the architecture and naming conventions already used in the affected
+  module. Do not introduce a parallel pattern without a clear reason.
+- Keep business logic out of UI components.
+- Do not add dependencies when the existing project tools are sufficient.
 
-## Data Layer Structure
+## Domain Layer
 
-- Put all DTOs in the feature data module's `.dto` package.
-- Put DTO↔domain and domain↔DTO mappers in the `.mapper` package; cache/entity↔domain mappers in
-  `.storage.mapper`. Do not keep DTO→domain mapping inline in repositories.
-- Serializable cache-envelope types and their `toDomain()` live in a `.mapper` (or `.dto`) package,
-  not inside a repository.
-- Repositories orchestrate (network + cache + storage) and call mappers; they do not define them.
+- Keep domain code separate from Android, Compose, networking, and storage
+  implementation details.
+- Organize feature domain packages by responsibility:
+  - `.domain.model` — domain models, enums, and sealed contracts.
+  - `.domain.repository` — repository interfaces.
+  - `.domain.usecase` — use cases.
+- Do not leave domain types directly in the feature's `.domain` package.
+- Keep each public domain type in its own same-named Kotlin file.
+- Add KDoc to use cases explaining the domain operation they perform.
+- Avoid creating empty or unnecessary packages.
 
-## Compose UI Feature Structure
+## Data Layer
 
-- Keep `XxxMobileScreen.kt` and `XxxTvScreen.kt` as public screen entrypoints:
-  `@Composable fun XxxScreen(state, effect, onEvent)`.
-- Screen files must contain the real top-level screen assembly and event wiring; they must not be
-  empty pass-through wrappers to `XxxContent`.
-- Do not create generic `XxxContent` as a duplicated screen layer. Use a `Content` suffix only for a
-  real domain UI component, not as a default screen body.
-- Put child composable UI pieces in the feature UI module's `.view` package.
-- Prefer one significant composable component per file in `.view`; small local lambdas inside a
-  component are fine.
-- Put Handler classes next to the ViewModel in the feature module's `.handler` package.
-- `XxxState.kt` must contain only the `State`/`Event`/`Effect` declarations (plus types nested
-  strictly inside `State`, e.g. an enum that only makes sense as part of one screen's state). Any
-  other top-level `data class`/`enum class`/`sealed interface` declared alongside them — anything
-  referenced from a handler, the ViewModel, or UI — belongs in `.model` instead, one file per type,
-  file name matching the type name.
-- Put UI-only models in `.model`.
-- Put Domain/Data model → UI model mapper functions in a feature-specific `.mapper` package
-  (module-root-level, sibling to `.utils`/`.handler`/`.model`), one file per mapper, named
-  `XxxMapper.kt`. Do not define mapper functions inside ViewModel files — ViewModels only call them.
-- Put formatters and extension helpers in `.utils`.
-- Keep reusable formatting and error extensions out of Screen and `.view` files; place them in a
-  feature-specific `XxxUtils.kt` under `.utils`.
-- Keep reusable parsers, normalizers, and stateless extension helpers out of use cases, handlers,
-  and their companion objects; place them in a feature-specific `XxxUtils.kt` under `.utils`.
-- Import extension receiver types normally; do not use fully qualified receiver types in function
-  declarations.
-- Keep stateless private entity mappers used by only one class in that class's companion object;
-  move shared mappers to a dedicated mapper package.
-- Keep user-facing strings in Android resources and read them with `stringResource`.
-- Do not move business logic into UI components.
+- Keep API DTOs in the feature data module's `.dto` package.
+- Keep DTO-to-domain and domain-to-DTO mapping in `.mapper` packages.
+- Keep cache/entity-to-domain mapping in `.storage.mapper`.
+- Repositories should coordinate network, cache, and storage operations and
+  delegate mapping to mapper functions or classes.
+- Do not place shared mapping logic inline in repositories.
+- Keep serialization and cache-envelope implementation details outside
+  repository classes.
+
+## Compose UI
+
+- Keep screen entry points in clearly named files such as
+  `XxxMobileScreen.kt` and `XxxTvScreen.kt`.
+- Screen entry points should assemble the screen and connect state, effects,
+  and events. Avoid adding wrapper layers that only forward parameters.
+- Place reusable UI components in the feature UI module's `.view` package.
+- Prefer one significant reusable composable per file. Small private
+  composables and lambdas may stay next to the component that uses them.
+- Keep handlers next to the ViewModel in the feature's `.handler` package.
+- Keep UI state, events, and effects in the corresponding state file.
+  Move independently reusable UI models and other top-level types into
+  appropriately named files in `.model`.
+- Put domain/data-to-UI mapping in the feature's `.mapper` package. ViewModels
+  should call mappers rather than own reusable mapping implementations.
+- Put formatting and reusable extension helpers in `.utils`.
+- Keep user-facing strings in Android string resources and access them through
+  the appropriate resource APIs.
+- Do not introduce generic screen-content wrappers unless they represent a
+  genuinely reusable UI component.
+
+## Changes and Verification
+
+- Make the smallest change that fully addresses the task.
+- Update related documentation when behavior, architecture, configuration,
+  or developer workflows change.
+- Run the most relevant build, tests, and checks available for the change.
+- If a check cannot be run, state that clearly; do not imply that it passed.
+- Review the final diff for unrelated changes, accidental removals, and
+  formatting issues before committing.
+- Never commit credentials, signing keys, access tokens, or other secrets.
+
+## Commit Messages
+
+Use the commit message style established in the original YummyTV repository.
+Keep the prefix and description consistent with the type of change, for
+example:
+
+- `[FEATURE] Описание новой функции`
+- `[BUGFIX] Описание исправления`
+- `[UI] Описание изменения интерфейса`
+- `[CORE] Описание изменения общей логики или инфраструктуры`
+- `[DOCS] Описание изменения документации`
+
+Write a concise, specific description. Keep each commit focused on one
+logical change and avoid temporary or follow-up-only commits when the fix can
+be included in the original change.
