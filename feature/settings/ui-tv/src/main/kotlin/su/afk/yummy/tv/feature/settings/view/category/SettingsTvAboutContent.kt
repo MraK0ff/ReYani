@@ -34,7 +34,8 @@ internal fun SettingsTvAboutContent(
     tabContentFocusRequester: FocusRequester,
     onEvent: (SettingsState.Event) -> Unit,
 ) {
-    val repositoryUrl = stringResource(R.string.settings_repository_url)
+    val repositoryIssuesUrl = stringResource(R.string.settings_repository_url)
+    val forkIssuesUrl = stringResource(R.string.settings_fork_repository_url)
     val context = LocalContext.current
     val analyticsIdLabel = stringResource(R.string.settings_analytics_id_label)
     var showReleaseNotes by rememberSaveable { mutableStateOf(false) }
@@ -86,10 +87,16 @@ internal fun SettingsTvAboutContent(
     }
     SettingsDivider()
     AboutRow(
-        label = stringResource(R.string.settings_feedback_label),
-        hint = repositoryUrl,
+        label = stringResource(R.string.settings_about_original_section),
+        hint = stringResource(R.string.settings_about_original_hint),
         modifier = Modifier.restoreCategoryFocusOnLeft(tabFocusRequester),
-        onClick = { context.openExternalUri(repositoryUrl) },
+    )
+    SettingsDivider()
+    AboutRow(
+        label = stringResource(R.string.settings_feedback_label),
+        hint = repositoryIssuesUrl,
+        modifier = Modifier.restoreCategoryFocusOnLeft(tabFocusRequester),
+        onClick = { context.openExternalUri(repositoryIssuesUrl) },
     )
     SettingsDivider()
     AboutRow(
@@ -104,6 +111,19 @@ internal fun SettingsTvAboutContent(
         hint = BOOSTY_URL.removePrefix("https://"),
         modifier = Modifier.restoreCategoryFocusOnLeft(tabFocusRequester),
         onClick = { context.openExternalUri(BOOSTY_URL) },
+    )
+    SettingsDivider()
+    AboutRow(
+        label = stringResource(R.string.settings_about_fork_section),
+        hint = stringResource(R.string.settings_about_fork_hint),
+        modifier = Modifier.restoreCategoryFocusOnLeft(tabFocusRequester),
+    )
+    SettingsDivider()
+    AboutRow(
+        label = stringResource(R.string.settings_fork_repository_label),
+        hint = forkIssuesUrl,
+        modifier = Modifier.restoreCategoryFocusOnLeft(tabFocusRequester),
+        onClick = { context.openExternalUri(forkIssuesUrl) },
     )
 
     if (showReleaseNotes) {

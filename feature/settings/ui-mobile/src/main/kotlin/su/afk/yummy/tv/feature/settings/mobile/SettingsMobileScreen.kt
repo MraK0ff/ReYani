@@ -64,7 +64,14 @@ fun SettingsMobileScreen(
 ) {
     val context = LocalContext.current
     val analyticsIdLabel = stringResource(R.string.settings_analytics_id_label)
-    val repositoryUrl = stringResource(R.string.settings_repository_url)
+    val repositoryIssuesUrl = stringResource(R.string.settings_repository_url)
+    val forkIssuesUrl = stringResource(R.string.settings_fork_repository_url)
+    val originalSectionTitle = stringResource(R.string.settings_about_original_section)
+    val feedbackLabel = stringResource(R.string.settings_feedback_label)
+    val communityLabel = stringResource(R.string.settings_community_telegram_label)
+    val boostyLabel = stringResource(R.string.settings_boosty_label)
+    val forkSectionTitle = stringResource(R.string.settings_about_fork_section)
+    val forkRepositoryLabel = stringResource(R.string.settings_fork_repository_label)
     val firstCategoryFocusRequester = remember { FocusRequester() }
     var showReleaseNotes by rememberSaveable { mutableStateOf(false) }
 
@@ -144,7 +151,6 @@ fun SettingsMobileScreen(
                             hint = stringResource(R.string.settings_session_storage_fallback),
                         )
                     }
-                    // Логи пишутся только при включённой записи (Общие → «Запись логов»).
                     if (state.appLogRecordingEnabled) {
                         SettingsMobileAboutRow(
                             label = stringResource(R.string.settings_logs_label),
@@ -152,20 +158,33 @@ fun SettingsMobileScreen(
                             onClick = { onEvent(SettingsState.Event.ShareLogsClicked) },
                         )
                     }
+                }
+            }
+            item(key = "original-project-links") {
+                SettingsMobileSection(title = originalSectionTitle) {
                     SettingsMobileAboutRow(
-                        label = stringResource(R.string.settings_feedback_label),
-                        hint = repositoryUrl,
-                        onClick = { context.openExternalUri(repositoryUrl) },
+                        label = feedbackLabel,
+                        hint = stringResource(R.string.settings_repository_url),
+                        onClick = { context.openExternalUri(repositoryIssuesUrl) },
                     )
                     SettingsMobileAboutRow(
-                        label = stringResource(R.string.settings_community_telegram_label),
+                        label = communityLabel,
                         hint = COMMUNITY_TELEGRAM_HANDLE,
                         onClick = { context.openExternalUri(COMMUNITY_TELEGRAM_URL) },
                     )
                     SettingsMobileAboutRow(
-                        label = stringResource(R.string.settings_boosty_label),
+                        label = boostyLabel,
                         hint = BOOSTY_URL.removePrefix("https://"),
                         onClick = { context.openExternalUri(BOOSTY_URL) },
+                    )
+                }
+            }
+            item(key = "yanime-project-links") {
+                SettingsMobileSection(title = forkSectionTitle) {
+                    SettingsMobileAboutRow(
+                        label = forkRepositoryLabel,
+                        hint = stringResource(R.string.settings_fork_repository_url),
+                        onClick = { context.openExternalUri(forkIssuesUrl) },
                     )
                 }
             }
