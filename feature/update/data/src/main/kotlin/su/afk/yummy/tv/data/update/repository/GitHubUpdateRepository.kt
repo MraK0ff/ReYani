@@ -52,21 +52,43 @@ internal class GitHubUpdateRepository @Inject constructor(
     }
 
     private suspend fun latestStableRelease(currentVersion: String): AppRelease? {
-        val release = try {
+        val release = fetchLatestReleaseOrNull()?.toDomain()?.takeUnless { it.isPrerelease } ?: return null
+        return release.copy(updatesCount = if (isVersionNewer(currentVersion, release.version)) 1 else 0)
+    }
+
+    private suspend fun fetchLatestReleaseOrNull(): GitHubReleaseDto? =
+        try {
             withTimeoutOrNull(GITHUB_TIMEOUT_MS) { fetchLatestRelease() }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             null
-        }?.toDomain()?.takeUnless { it.isPrerelease } ?: return null
-        return release.copy(updatesCount = if (isVersionNewer(currentVersion, release.version)) 1 else 0)
-    }
+        }
 
-    override suspend fun releaseHistory(currentVersion: String, includePrerelease: Boolean): List<AppReleaseNotes> =
-        (fetchReleases() ?: throw ReleasesUnavailableException())
-            .mapNotNull { it.toReleaseNotes() }
-            .filter { (includePrerelease || !it.isPrerelease) && !isVersionNewer(currentVersion, it.version) }
-            .sortedWith { a, b -> compareVersions(b.version, a.version) }
+    private suspend fun fetchReleaseHistoryOrNull(): List<GitHubReleaseDto>? =
+        try {
+            withTimeoutOrNull(GITHUB_TIMEOUT_MS) { fetchReleases() }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            null
+        }
+
+    override suspend fun releaseHistory(currentVersion: String, includePrerelease: Boolean): List<AppReleaseNotes> {
+        val history = fetchReleaseHistoryOrNull()
+            ?.mapNotNull { it.toReleaseNotes() }
+            ?.filter { (includePrerelease || !it.isPrerelease) && !isVersionNewer(currentVersion, it.version) }
+            ?.sortedWith { a, b -> compareVersions(b.version, a.version) }
+            .orEmpty()
+        if (history.isNotEmpty()) return history
+
+        // Если список релизов временно недоступен (например, GitHub API rate limit),
+        // пробуем получить хотя бы последний опубликованный релиз отдельным endpoint.
+        val latest = fetchLatestReleaseOrNull()
+            ?.toReleaseNotes()
+            ?.takeIf { (includePrerelease || !it.isPrerelease) && !isVersionNewer(currentVersion, it.version) }
+        return latest?.let(::listOf) ?: throw ReleasesUnavailableException()
+    }
 
     /** Короче общего таймаута проверки в MainSideEffectsHandler, чтобы на резерв осталось время. */
     private suspend fun fetchReleasesOrNull(): List<GitHubReleaseDto>? =
@@ -95,6 +117,8 @@ internal class GitHubUpdateRepository @Inject constructor(
         val url = RELEASES_URL ?: return null
         val response: HttpResponse = httpClient.get(url) {
             header("Accept", GITHUB_ACCEPT)
+            header("User-Agent", GITHUB_USER_AGENT)
+            header("X-GitHub-Api-Version", GITHUB_API_VERSION)
             parameter("per_page", RELEASES_PER_PAGE)
         }
         if (!response.status.isSuccess()) return null
@@ -104,7 +128,11 @@ internal class GitHubUpdateRepository @Inject constructor(
     /** `/releases/latest` — последний опубликованный не-prerelease и не-draft релиз. */
     private suspend fun fetchLatestRelease(): GitHubReleaseDto? {
         val url = RELEASES_URL?.plus("/latest") ?: return null
-        val response: HttpResponse = httpClient.get(url) { header("Accept", GITHUB_ACCEPT) }
+        val response: HttpResponse = httpClient.get(url) {
+            header("Accept", GITHUB_ACCEPT)
+            header("User-Agent", GITHUB_USER_AGENT)
+            header("X-GitHub-Api-Version", GITHUB_API_VERSION)
+        }
         if (!response.status.isSuccess()) return null
         return response.body<GitHubReleaseDto>()
     }
@@ -112,6 +140,8 @@ internal class GitHubUpdateRepository @Inject constructor(
     private companion object {
         const val GITHUB_TIMEOUT_MS = 10_000L
         const val GITHUB_ACCEPT = "application/vnd.github+json"
+        const val GITHUB_USER_AGENT = "YANIME-Android"
+        const val GITHUB_API_VERSION = "2022-11-28"
 
         /** Максимум GitHub на страницу: беты идут часто и не должны вытеснять последний стабильный релиз. */
         const val RELEASES_PER_PAGE = 100
