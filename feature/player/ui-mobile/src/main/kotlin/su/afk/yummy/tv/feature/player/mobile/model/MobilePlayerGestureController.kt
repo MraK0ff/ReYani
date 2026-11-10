@@ -5,8 +5,8 @@ import android.content.Context
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -25,7 +25,7 @@ import su.afk.yummy.tv.feature.player.mobile.utils.readSystemBrightnessFraction
 import kotlin.math.roundToInt
 
 /** Шаг изменения яркости/громкости при вертикальном свайпе. */
-private const val VERTICAL_GESTURE_STEP = 0.05f
+private const val VERTICAL_GESTURE_STEP = 0.02f
 
 /**
  * Жесты мобильного плеера: яркость/громкость (вертикальный свайп),
@@ -52,6 +52,9 @@ internal class MobilePlayerGestureController(
         private set
     var brightnessLevel: Float by mutableFloatStateOf(0.5f)
         private set
+    /** `true`, пока ручной яркости нет и окно следует системной (авто). */
+    var autoBrightness: Boolean by mutableStateOf(true)
+        internal set
     var volumeGestureActive: Boolean by mutableStateOf(false)
         private set
     var volumeLevel: Float by mutableFloatStateOf(0.5f)
@@ -125,6 +128,18 @@ internal class MobilePlayerGestureController(
         }
     }
 
+    /** Включает автояркость или фиксирует текущую системную яркость как ручную. */
+    fun setAutoBrightness(auto: Boolean) {
+        if (auto) {
+            brightnessController.setAuto()
+        } else {
+            val current = activity?.window?.attributes?.screenBrightness
+                ?.takeIf { it in 0f..1f }
+                ?: readSystemBrightnessFraction(context)
+            brightnessController.setFraction(current)
+        }
+    }
+
     private fun Float.quantizeToGestureStep(): Float =
         (this / VERTICAL_GESTURE_STEP).roundToInt() * VERTICAL_GESTURE_STEP
 
@@ -194,10 +209,11 @@ internal fun rememberMobilePlayerGestureController(
             }
         }
     }
-    // Сохранённая яркость применяется поверх системной; пока её нет, окно остаётся на системной.
+    // Сохранённая яркость применяется поверх системной; без неё (авто) окно возвращается к системной.
     val savedBrightness by brightnessController.brightness.collectAsState()
     LaunchedEffect(activity, savedBrightness) {
-        val level = savedBrightness ?: return@LaunchedEffect
+        controller.autoBrightness = savedBrightness == null
+        val level = savedBrightness ?: WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         activity?.window?.let { window ->
             window.attributes = window.attributes.apply { screenBrightness = level }
         }

@@ -64,6 +64,8 @@
     <string name="details_mobile_show_comments">Показати коментарі</string>
     <string name="details_mobile_universe_show_all">Показати всі</string>
     <string name="details_screenshots_title">Скриншоти</string>
+    <string name="details_new_search">Пошук</string>
+    <string name="details_back_to_search">Повернутися до пошуку</string>
     <string name="details_kinopoisk_rating">КП %1$s</string>
     <string name="details_shikimori_rating">Shikimori %1$s</string>
     <string name="details_mal_rating">MAL %1$s</string>
@@ -235,6 +237,8 @@
     <string name="details_viewing_order_description">Пов\'язані тайтли в рекомендованій послідовності</string>
     <string name="details_views_thousands">%1$d тис.</string>
     <string name="details_tv_unmark_episode_watched">Прибрати позначку</string>
+    <string name="details_mark_episodes_up_to_watched">Позначити цю й усі попередні переглянутими</string>
+    <string name="details_unmark_episodes_up_to_watched">Прибрати позначку в цієї й усіх попередніх</string>
     <string name="details_trailer_player_error">Не вдалося відтворити трейлер</string>
     <string name="details_trailer_open_external">Відкрити у зовнішньому плеєрі</string>
     <string name="details_mobile_titles_japanese">Японська</string>
@@ -246,4 +250,13 @@
     <string name="details_mobile_recommended_title">Схожі тайтли</string>
     <string name="details_episode_flag_filler">Філер</string>
     <string name="details_episode_flag_recap">Рекап</string>
+
+    <string name="details_onboarding_watch_title">Почати перегляд</string>
+    <string name="details_onboarding_watch_text">Натисніть, щоб почати або продовжити. Озвучення та джерело відео можна обрати перед переглядом.</string>
+    <string name="details_onboarding_library_title">Додати до списку</string>
+    <string name="details_onboarding_library_text">Помістіть тайтл у «Дивлюся», «У планах» чи інший список — він з’явиться в бібліотеці.</string>
+    <string name="details_onboarding_episodes_title">Серії</string>
+    <string name="details_onboarding_episodes_text">Усі серії з позначками перегляду. Тут же можна обрати озвучення для конкретної серії.</string>
+    <string name="details_onboarding_subscriptions_title">Сповіщення про серії</string>
+    <string name="details_onboarding_subscriptions_text">Підпишіться на озвучення, щоб дізнаватися про вихід нової серії.</string>
 </resources>

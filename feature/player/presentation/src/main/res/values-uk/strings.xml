@@ -44,6 +44,9 @@
     <string name="player_dubbing_title">Озвучення</string>
         <string name="player_speed_title">Швидкість</string>
     <string name="player_resize_title">Масштаб</string>
+    <string name="player_brightness_title">Яскравість</string>
+    <string name="player_brightness_auto_title">Автояскравість</string>
+    <string name="player_brightness_auto_hint">Слідувати системній яскравості. Свайп по лівому краю задає її вручну.</string>
     <string name="player_volume_title">Гучність</string>
     <string name="player_audio_track_title">Alloha</string>
     <string name="player_subtitles_off">Вимкнено</string>
@@ -227,4 +230,5 @@
     <string name="player_problem_player_not_found">На сторінці джерела немає плеєра для цієї серії</string>
     <string name="player_problem_link_not_found">Плеєр знайдено, але посилання на відео в ньому немає</string>
     <string name="player_problem_ticket">Не вдалося отримати доступ до 4K-озвучення</string>
+    <string name="player_badge_downloaded">Завантажено</string>
 </resources>

@@ -64,6 +64,8 @@
     <string name="details_mobile_show_comments">Show comments</string>
     <string name="details_mobile_universe_show_all">Show all</string>
     <string name="details_screenshots_title">Screenshots</string>
+    <string name="details_new_search">Search</string>
+    <string name="details_back_to_search">Back to search</string>
     <string name="details_kinopoisk_rating">KP %1$s</string>
     <string name="details_shikimori_rating">Shikimori %1$s</string>
     <string name="details_mal_rating">MAL %1$s</string>
@@ -223,6 +225,8 @@
     <string name="details_viewing_order_description">Related titles in the recommended sequence</string>
     <string name="details_views_thousands">%1$dK</string>
     <string name="details_tv_unmark_episode_watched">Remove watched mark</string>
+    <string name="details_mark_episodes_up_to_watched">Mark this and all previous as watched</string>
+    <string name="details_unmark_episodes_up_to_watched">Remove mark from this and all previous</string>
     <string name="details_trailer_player_error">Couldn\'t play the trailer</string>
     <string name="details_trailer_open_external">Open in browser</string>
     <string name="details_mobile_titles_japanese">Japanese</string>
@@ -234,4 +238,13 @@
     <string name="details_mobile_recommended_title">Similar titles</string>
     <string name="details_episode_flag_filler">Filler</string>
     <string name="details_episode_flag_recap">Recap</string>
+
+    <string name="details_onboarding_watch_title">Start watching</string>
+    <string name="details_onboarding_watch_text">Tap here to start or continue. You can pick a dubbing and a video source before playback.</string>
+    <string name="details_onboarding_library_title">Add to a list</string>
+    <string name="details_onboarding_library_text">Put the title into Watching, Planned or another list — it will appear in your library.</string>
+    <string name="details_onboarding_episodes_title">Episodes</string>
+    <string name="details_onboarding_episodes_text">All episodes with watch marks. Choose a dubbing for a specific episode here.</string>
+    <string name="details_onboarding_subscriptions_title">New episode alerts</string>
+    <string name="details_onboarding_subscriptions_text">Subscribe to a dubbing to get notified when a new episode comes out.</string>
 </resources>
