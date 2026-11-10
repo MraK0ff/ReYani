@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/images/reyani-app-icon.svg" width="128" height="128" alt="ReYani logo" />
+  <img src="docs/images/yanime-app-icon.svg" width="128" height="128" alt="YAnime logo" />
 </p>
 
-<h1 align="center">YummyTV</h1>
+<h1 align="center">YAnime</h1>
 
 <p align="center">
   An unofficial <a href="https://yummyani.me/">YummyAnime</a> client for Android TV and Android.<br/>
@@ -46,9 +46,9 @@
 > Please don't message there with app questions — use
 > [Issues](https://github.com/Helandy/YummyTV/issues) instead.
 
-## What is YummyTV?
+## What is YAnime?
 
-**YummyTV** is a native Android app for watching anime from YummyAnime. The project includes two
+**YAnime** is a native Android app for watching anime from YummyAnime. The project includes two
 separate experiences: a TV-first interface for Android TV / set-top boxes and a mobile interface for
 Android phones.
 

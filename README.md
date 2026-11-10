@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/images/reyani-app-icon.svg" width="112" height="112" alt="ReYani logo" />
+  <img src="docs/images/yanime-app-icon.svg" width="112" height="112" alt="YAnime logo" />
 </p>
 
-<h1 align="center">ReYani</h1>
+<h1 align="center">YAnime</h1>
 
 <p align="center">
   Неофициальный клиент <a href="https://yummyani.me/">YummyAnime</a> для Android и Android TV,
@@ -19,16 +19,16 @@
 </p>
 
 > [!IMPORTANT]
-> ReYani — независимый форк оригинального [YummyTV](https://github.com/Helandy/YummyTV), который разрабатывает Helandy.
-> Предложения по оригинальному приложению направляйте в [Helandy Issues](https://github.com/Helandy/YummyTV/issues), а вопросы и предложения по ReYani — в [ReYani Issues](https://github.com/MraK0ff/ReYani/issues).
+> YAnime — независимый форк оригинального [YummyTV](https://github.com/Helandy/YummyTV), который разрабатывает Helandy.
+> Предложения по оригинальному приложению направляйте в [Helandy Issues](https://github.com/Helandy/YummyTV/issues), а вопросы и предложения по YAnime — в [YAnime Issues](https://github.com/MraK0ff/ReYani/issues).
 >
-> Если предложение не планируется к реализации в оригинале, его можно отдельно предложить для ReYani. Каждая идея рассматривается отдельно и не принимается автоматически.
+> Если предложение не планируется к реализации в оригинале, его можно отдельно предложить для YAnime. Каждая идея рассматривается отдельно и не принимается автоматически.
 
 ---
 
 ## Особенности форка
 
-Ниже — ключевые дополнения и изменения ReYani, уже реализованные в основном приложении.
+Ниже — ключевые дополнения и изменения YAnime, уже реализованные в основном приложении.
 
 <details>
 <summary><strong>Плеер</strong></summary>
@@ -132,7 +132,7 @@
 <summary><strong>Настройки</strong></summary>
 
 - **Удаление Яндекс Метрики (AppMetrica).**  
-  Планируется удалить интеграцию AppMetrica из ReYani.
+  Планируется удалить интеграцию AppMetrica из YAnime.
 
 </details>
 
@@ -163,7 +163,7 @@
 
 ## Отказ от ответственности
 
-- ReYani — неофициальный форк клиента YummyAnime; проект не связан с владельцами сервиса и не одобряется ими.
+- YAnime — неофициальный форк клиента YummyAnime; проект не связан с владельцами сервиса и не одобряется ими.
 - Приложение не предоставляет собственный каталог видео, не хранит и не распространяет видеоконтент.
 - Доступность каталога, API и воспроизведения зависит от YummyAnime и сторонних видеобалансеров.
 - Названия сервисов, товарные знаки и права на сторонний контент принадлежат их владельцам.

@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">ReYani</string>
+    <string name="app_name">YAnime</string>
     <string name="search_hint">Пошук аніме</string>
-    <string name="search_settings_description">Пошук у каталозі ReYani</string>
+    <string name="search_settings_description">Пошук у каталозі YAnime</string>
     <string name="interface_mode_title">Виберіть інтерфейс</string>
     <string name="interface_mode_message">Виберіть інтерфейс, яким буде зручно керувати на цьому пристрої.</string>
     <string name="interface_mode_tv">ТБ-інтерфейс</string>
