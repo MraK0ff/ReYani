@@ -393,7 +393,7 @@ adb logcat 'AllohaExtractor:D' 'PlayerBuffering:D' '*:S'
 Тестовый прогон (диплинк, см. [deeplinks.md](deeplinks.md)):
 
 ```bash
-adb shell am start -a android.intent.action.VIEW -d "yummytv://play/1468?balancer=alloha\&episode=5\&position=1" su.afk.yummy.tv.debug
+adb shell am start -a android.intent.action.VIEW -d "yanime://play/1468?balancer=alloha\&episode=5\&position=1" su.afk.yummy.tv.debug
 ```
 
 `position=0` не сбрасывает сохранённый прогресс, нужен `position=1`. Озвучка у yani «AniLibria», не

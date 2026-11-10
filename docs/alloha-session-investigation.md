@@ -17,7 +17,7 @@
 
 ## Как проверять (инструменты)
 
-- Диплинк `yummytv://play/{animeId}?balancer=alloha&episode=N&position=секунды` (см.
+- Диплинк `yanime://play/{animeId}?balancer=alloha&episode=N&position=секунды` (см.
   [deeplinks.md](deeplinks.md)). Озвучка у yani «AniLibria», не «AniLiberty». `position=0` не
   сбрасывает сохранённый прогресс, нужен `position=1`.
 - Логи: `adb logcat 'AllohaExtractor:D' 'PlayerBuffering:D' '*:S'`; на каждом новом эмуляторе

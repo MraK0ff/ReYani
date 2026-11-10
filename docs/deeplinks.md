@@ -19,18 +19,18 @@
 - Если числовой id отсутствует или не число, резолвер возвращает `null` и ничего не происходит.
 - `intent-filter` лежат в `app/src/main/AndroidManifest.xml` (строки 123-217), без `pathPattern`.
 
-## Схема `yummytv://`
+## Схема `yanime://`
 
 | URI                            | Параметры       | Резолвер                           | Что открывает                                                         |
 |--------------------------------|-----------------|------------------------------------|-----------------------------------------------------------------------|
-| `yummytv://home`               | нет             | `RootTabDeepLinkResolver`          | вкладка «Главная»                                                     |
-| `yummytv://details/{animeId}`  | `animeId` — Int | `DetailsDeepLinkResolver`          | детали тайтла                                                         |
-| `yummytv://episodes/{animeId}` | `animeId` — Int | `EpisodesDeepLinkResolver`         | экран выбора серии тайтла                                             |
-| `yummytv://collection/{id}`    | `id` — Int      | `CollectionDeepLinkResolver`       | подборка                                                              |
-| `yummytv://downloads`          | нет             | `VideoDownloadDeepLinkResolver`    | экран загрузок                                                        |
-| `yummytv://continue/{animeId}` | `animeId` — Int | `ContinueWatchingDeepLinkResolver` | «Продолжить»: плеер на записи просмотра, без записи или цели — детали |
+| `yanime://home`               | нет             | `RootTabDeepLinkResolver`          | вкладка «Главная»                                                     |
+| `yanime://details/{animeId}`  | `animeId` — Int | `DetailsDeepLinkResolver`          | детали тайтла                                                         |
+| `yanime://episodes/{animeId}` | `animeId` — Int | `EpisodesDeepLinkResolver`         | экран выбора серии тайтла                                             |
+| `yanime://collection/{id}`    | `id` — Int      | `CollectionDeepLinkResolver`       | подборка                                                              |
+| `yanime://downloads`          | нет             | `VideoDownloadDeepLinkResolver`    | экран загрузок                                                        |
+| `yanime://continue/{animeId}` | `animeId` — Int | `ContinueWatchingDeepLinkResolver` | «Продолжить»: плеер на записи просмотра, без записи или цели — детали |
 
-| `yummytv://play/{animeId}?episode=&balancer=&dubbing=&position=` | `animeId` — Int; `episode` —
+| `yanime://play/{animeId}?episode=&balancer=&dubbing=&position=` | `animeId` — Int; `episode` —
 номер серии (сравнивается по `episodeGroupKey`); `balancer` и `dubbing` — вхождение без учёта
 регистра (`alloha`, `AniLiberty`); `position` — секунды | `ContinueWatchingDeepLinkResolver` | плеер
 на заданной серии, балансере, озвучке и позиции; все параметры необязательные, нет подходящего
@@ -40,7 +40,7 @@
 для проверок:
 
 ```bash
-adb shell am start -a android.intent.action.VIEW -d "yummytv://play/12345?balancer=alloha&episode=4&position=900"
+adb shell am start -a android.intent.action.VIEW -d "yanime://play/12345?balancer=alloha&episode=4&position=900"
 ```
 
 ## Ссылки сайта
@@ -62,23 +62,23 @@ adb shell am start -a android.intent.action.VIEW -d "yummytv://play/12345?balanc
 |-----------------------------------------------------------|------------------------------|--------------------------------------------------------------------------|
 | `ACTION_VIEW` + `video/*`, схемы `content://` и `file://` | `LocalVideoDeepLinkResolver` | плеер с локальным файлом (имя из `DISPLAY_NAME` или последнего сегмента) |
 | `ACTION_SEARCH` (`SearchManager.QUERY`)                   | `SystemSearchIntentHandler`  | каталог с введённым запросом                                             |
-| Подсказки поиска (`SystemSearchProvider`)                 | `DetailsDeepLinkResolver`    | `yummytv://details/{id}`; от 2 символов, до 10 штук, таймаут 2,5 с       |
+| Подсказки поиска (`SystemSearchProvider`)                 | `DetailsDeepLinkResolver`    | `yanime://details/{id}`; от 2 символов, до 10 штук, таймаут 2,5 с       |
 
 ## Кто порождает ссылки
 
 | Источник                                               | Ссылка                                                                                                       | Платформа |
 |--------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|-----------|
 | Лаунчер (алиасы Default, Halloween, NewYear)           | `MAIN` + `LAUNCHER` / `LEANBACK_LAUNCHER` → `InterfaceRouterActivity`                                        | обе       |
-| ТВ-ряд «Смотреть далее» (`WatchNextManager`)           | `yummytv://details/{animeId}`                                                                                | ТВ        |
-| Каналы превью (`PreviewChannelManager`)                | программы — `yummytv://details/{animeId}`, app-link канала — `yummytv://home`                                | ТВ        |
-| Ярлыки (`AppShortcutsPublisher`)                       | `yummytv://continue/{id}`, `yummytv://downloads`, `ACTION_SEARCH` с пустым запросом                          | мобилка   |
-| Виджет «Продолжить» (`ContinueWatchingWidget`)         | `yummytv://continue/{id}` на карточке; шапка — просто открытие приложения                                    | мобилка   |
-| Push новой серии (`NewEpisodePushNotificationService`) | тап и «Смотреть» — `yummytv://continue/{id}`, «Детали» — `yummytv://details/{id}`, без id — `yummytv://home` | обе       |
-| Уведомления загрузок и экспорта                        | тап — `yummytv://downloads`; «Пауза» и «Продолжить» — broadcast, не диплинк                                  | обе       |
+| ТВ-ряд «Смотреть далее» (`WatchNextManager`)           | `yanime://details/{animeId}`                                                                                | ТВ        |
+| Каналы превью (`PreviewChannelManager`)                | программы — `yanime://details/{animeId}`, app-link канала — `yanime://home`                                | ТВ        |
+| Ярлыки (`AppShortcutsPublisher`)                       | `yanime://continue/{id}`, `yanime://downloads`, `ACTION_SEARCH` с пустым запросом                          | мобилка   |
+| Виджет «Продолжить» (`ContinueWatchingWidget`)         | `yanime://continue/{id}` на карточке; шапка — просто открытие приложения                                    | мобилка   |
+| Push новой серии (`NewEpisodePushNotificationService`) | тап и «Смотреть» — `yanime://continue/{id}`, «Детали» — `yanime://details/{id}`, без id — `yanime://home` | обе       |
+| Уведомления загрузок и экспорта                        | тап — `yanime://downloads`; «Пауза» и «Продолжить» — broadcast, не диплинк                                  | обе       |
 
 ## Не диплинк
 
-`yummytv://pair?d=<deviceId>&c=<code>` — только QR-payload привязки ТВ
+`yanime://pair?d=<deviceId>&c=<code>` — только QR-payload привязки ТВ
 (`LocalAuthPairingPayloadUtils`).
 `intent-filter` на него нет, приложение его по ссылке не открывает.
 См. [local-auth-session-transfer.md](local-auth-session-transfer.md).

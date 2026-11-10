@@ -186,7 +186,7 @@ KDoc `PlayerNavigationDelegate`: прогресс сохраняется в `ioS
 - Тип `WATCH_NEXT_TYPE_CONTINUE`, `TYPE_TV_SERIES`, позиция и длительность, `internal_provider_id` =
   `episodeUrl`.
 - Картинка: превью серии Kodik, иначе скриншот, иначе постер.
-- Интент: `yummytv://details/{animeId}`, то есть открывается экран деталей, а не плеер
+- Интент: `yanime://details/{animeId}`, то есть открывается экран деталей, а не плеер
   (см. [navigation.md](navigation.md), диплинки).
 - `ITvIntegration` защищён `DeviceAwareTvIntegration`: на телефоне всё no-op, потому что
   TvProvider/TvContract вне TV недоступны. Новый метод в интерфейсе нужно продублировать в guard.

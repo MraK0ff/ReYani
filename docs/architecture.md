@@ -6,14 +6,13 @@
 
 ## Одно приложение, два интерфейса
 
-В одном APK собраны оба интерфейса: телефонный и ТВ. `InterfaceRouterActivity` автоматически
-определяет тип устройства через единый `DeviceTypeDetector` и направляет исходный Intent в
-`MobileActivity` или `TvActivity`. Основной критерий — `UiModeManager.currentModeType` с типом
-`UI_MODE_TYPE_TELEVISION`; `PackageManager.FEATURE_LEANBACK` используется как дополнительный
-диагностический признак. Ручного выбора платформы нет.
+В одном APK собраны оба интерфейса: телефонный и ТВ. KDoc `InterfaceRouterActivity`: при первом
+запуске предлагается выбрать интерфейс, после выбора исходный Intent всегда направляется в
+`MobileActivity` или `TvActivity`, «не полагаясь на тип устройства из Configuration»; выбор хранит
+`AppInterfaceModePreferences`.
 
 ```
-InterfaceRouterActivity (трамплин, автоматическое определение типа устройства)
+InterfaceRouterActivity (трамплин, диалог выбора при первом запуске)
   ├─ MobileActivity → граф телефона (MobileNavigationHolder, feature/main/ui-mobile)
   └─ TvActivity     → граф ТВ      (TvNavigationHolder,     feature/main/ui-tv)
 ```
@@ -66,7 +65,7 @@ InterfaceRouterActivity (трамплин, автоматическое опре
 | `core:common`            | JVM               | Чистые утилиты без Android (`anime`, `episode`, `coroutines`, `player`)       |
 | `core:utils`             | Android           | Утилиты: `BrowserUserAgentProvider`, превью Kodik, файловые логи (`logging/`), `CastSupport`, `lazyKey`, пагинация |
 | `core:network`           | Android           | HTTP-клиент yani (`buildYaniHttpClient`), `YaniApiJson`, `YANI_BASE_URL`      |
-| `core:preferences`       | Android           | DataStore и защищённые настройки (токен, язык интерфейса, UA)                |
+| `core:preferences`       | Android           | DataStore и защищённые настройки (токен, режим интерфейса, UA)                |
 | `core:storage`           | Android           | Локальное хранилище (прогресс просмотра, «Позже», кэши)                       |
 | `core:featuretoggle`     | Android           | Feature toggles (Varioqub), `FeatureToggleVersionSupportChecker`              |
 | `core:analytics`         | Android           | `AnalyticsTracker`, `PersistedLogTags`, AppMetrica                            |

@@ -1,6 +1,6 @@
 # Project Guidelines
 
-These guidelines describe the conventions used in ReYani. Follow the existing
+These guidelines describe the conventions used in YANIME. Follow the existing
 codebase and the original YummyTV project when making changes.
 
 ## General

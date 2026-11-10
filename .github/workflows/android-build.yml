@@ -1,4 +1,4 @@
-name: ReYani Optimized Build
+name: YANIME Optimized Build
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ permissions:
 
 # Separate concurrency per ref: a new run cancels only an older run on the same ref.
 concurrency:
-  group: reyani-optimized-build-${{ github.ref }}
+  group: yanime-optimized-build-${{ github.ref }}
   # Never kill an active build: Gradle cache is saved during the post-job step.
   # Keep one active run per branch and let newer commits wait their turn.
   cancel-in-progress: false
@@ -151,36 +151,32 @@ jobs:
           [[ "$version_name" =~ ^[0-9A-Za-z._+-]+$ ]]
           echo "version_name=$version_name" >> "$GITHUB_OUTPUT"
 
-      - name: Rename APK to ReYani versioned filename
+      - name: Verify static APK filename
         shell: bash
         run: |
           set -euo pipefail
-
-          apk_dir="app/build/outputs/apk/releaseDebug"
-          output_file="$(jq -er '.elements[0].outputFile' "$apk_dir/output-metadata.json")"
-          test -f "$apk_dir/$output_file"
-          mv "$apk_dir/$output_file" "$apk_dir/ReYani-${{ steps.app_version.outputs.version_name }}.apk"
+          test -f app/build/outputs/apk/releaseDebug/YANIME.apk
 
       - name: Upload optimized APK
         uses: actions/upload-artifact@v7
         with:
-          name: reyani-optimized-apk
-          path: app/build/outputs/apk/releaseDebug/ReYani-*.apk
+          name: yanime-apk
+          path: app/build/outputs/apk/releaseDebug/YANIME.apk
           if-no-files-found: error
           retention-days: 7
 
   release:
-    name: Publish versioned ReYani release
+    name: Publish versioned YANIME release
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
-      - name: Download optimized APK
+      - name: Download latest APK
         uses: actions/download-artifact@v7
         with:
-          name: reyani-optimized-apk
+          name: yanime-apk
           path: release-apk
 
       # Remove legacy non-versioned releases/tags left by earlier CI runs.
@@ -199,7 +195,7 @@ jobs:
             fi
           done
 
-      - name: Publish versioned ReYani release
+      - name: Publish versioned YANIME release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.build.outputs.version_name }}
@@ -210,4 +206,4 @@ jobs:
           draft: false
           overwrite_files: true
           fail_on_unmatched_files: true
-          files: release-apk/*.apk
+          files: release-apk/YANIME.apk

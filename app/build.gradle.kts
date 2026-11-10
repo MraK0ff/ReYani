@@ -52,7 +52,6 @@ android {
         // чтобы можно было ставить и проверять результат минификации без релизного keystore.
         create("releaseDebug") {
             initWith(getByName("release"))
-            applicationIdSuffix = ".releasedebug"
             resValue("string", "search_suggest_authority", "$baseApplicationId.releasedebug.search")
             signingConfig = signingConfigs.getByName("debug")
             // библиотечные модули этого типа не объявляют — берём их release-вариант
@@ -68,7 +67,7 @@ android {
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
-            val fileName = "YAnime-${output.versionName.orNull ?: "1.0"}-${variant.buildType}.apk"
+            val fileName = "YANIME.apk"
             (output as? com.android.build.api.variant.impl.VariantOutputImpl)?.outputFileName?.set(fileName)
         }
     }

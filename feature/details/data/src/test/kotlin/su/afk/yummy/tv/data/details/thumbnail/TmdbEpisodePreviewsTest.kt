@@ -10,7 +10,8 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import su.afk.yummy.tv.core.common.coroutines.AppClock
 import su.afk.yummy.tv.core.model.anime.AnimeTmdbImages
-import su.afk.yummy.tv.core.preferences.device.DeviceTypeDetector
+import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
+import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
 import su.afk.yummy.tv.core.testing.BaseUnitTest
 import su.afk.yummy.tv.domain.anime.repository.AnimeRepository
 import su.afk.yummy.tv.domain.anime.usecase.GetAnimeTmdbImagesUseCase
@@ -19,11 +20,11 @@ class TmdbEpisodePreviewsTest : BaseUnitTest() {
 
     private val repository: AnimeRepository = mockk()
     private val clock: AppClock = mockk { every { nowMillis() } returns 0L }
-    private val deviceTypeDetector: DeviceTypeDetector = mockk()
+    private val interfaceMode: AppInterfaceModePreferences = mockk()
 
-    private fun kotlinx.coroutines.test.TestScope.previews(isTv: Boolean): TmdbEpisodePreviews {
-        every { deviceTypeDetector.isTv } returns isTv
-        return TmdbEpisodePreviews(GetAnimeTmdbImagesUseCase(repository), deviceTypeDetector, backgroundScope, clock)
+    private fun kotlinx.coroutines.test.TestScope.previews(mode: AppInterfaceMode?): TmdbEpisodePreviews {
+        every { interfaceMode.selectedMode } returns mode
+        return TmdbEpisodePreviews(GetAnimeTmdbImagesUseCase(repository), interfaceMode, backgroundScope, clock)
     }
 
     private fun withPreviews(vararg pairs: Pair<String, String>) {
@@ -34,14 +35,14 @@ class TmdbEpisodePreviewsTest : BaseUnitTest() {
     fun `mobile gets a bigger frame`() = runTest {
         withPreviews("1" to W300)
 
-        assertEquals(W300.replace("/w300/", "/w780/"), previews(isTv = false).previewUrl(ANIME_ID, "1"))
+        assertEquals(W300.replace("/w300/", "/w780/"), previews(AppInterfaceMode.MOBILE).previewUrl(ANIME_ID, "1"))
     }
 
     @Test
     fun `tv gets the biggest frame`() = runTest {
         withPreviews("1" to W300)
 
-        assertEquals(W300.replace("/w300/", "/w1280/"), previews(isTv = true).previewUrl(ANIME_ID, "01"))
+        assertEquals(W300.replace("/w300/", "/w1280/"), previews(AppInterfaceMode.TV).previewUrl(ANIME_ID, "01"))
     }
 
     @Test

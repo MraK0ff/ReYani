@@ -11,7 +11,7 @@
 
 | Свойство                | Значение сейчас   | Назначение                                                |
 |-------------------------|-------------------|-----------------------------------------------------------|
-| `yummytv.applicationId` | `su.afk.yummy.tv` | Базовый id; debug получает суффикс `.debug`               |
+| `yanime.applicationId` | `app.yanime` | Базовый id; debug получает суффикс `.debug`               |
 | `yummytv.versionName`   | `1.25`            | Версия для пользователя, сравнивается компаратором        |
 | `yummytv.versionCode`   | `128`             | Только растёт, иначе APK не встанет поверх установленного |
 
@@ -22,7 +22,7 @@
 (`build-logic/.../BuildSecrets.kt`). KDoc: не найден — пустая строка, сборка проходит,
 соответствующий SDK не инициализируется (`AppMetricaAnalyticsInitializer` при пустом ключе выходит).
 
-Имя файла APK: `YummyTV-<versionName>-<buildType>.apk`.
+Имя файла APK: `YANIME.apk` (статическое для каждой сборки).
 
 ## Типы сборки
 
@@ -74,7 +74,7 @@ release-вариант.
   pre-release).
 - Коммит версии называется `[RELEASE] <версия>` (например, `[RELEASE] 1.25`); тег `RELEASE`
   разрешён хуком `commit-msg`.
-- Дистрибуция — GitHub Releases `Helandy/YummyTV` (`UpdateConfig.GITHUB_OWNER`/`GITHUB_REPO`).
+- Дистрибуция и источник обновлений — GitHub Releases `MraK0ff/YANIME`; APK asset всегда называется `YANIME.apk` (`UpdateConfig.GITHUB_OWNER`/`GITHUB_REPO`).
 - Конфигурации подписи для типа `release` в проекте нет: ни `signingConfig`, ни keystore, ни
   скрипта подписи.
 - `GitHubReleaseMapper`: из релиза берётся первый asset, оканчивающийся на `.apk`, иначе первый
@@ -86,7 +86,7 @@ release-вариант.
 
 ```
 старт приложения → MainSideEffectsHandler.checkForUpdates
-  GitHubUpdateRepository: GET /repos/Helandy/YummyTV/releases?per_page=100
+  GitHubUpdateRepository: GET /repos/MraK0ff/YANIME/releases?per_page=100
   выбор релиза: самая большая версия среди недрафтовых с APK, с учётом настройки «Бета-версии»
   UpdateDialog (обязательный, если версия ниже минимальной из feature toggle)
   ApkDownloaderImpl: update.apk.part → проверка ZIP → rename в update.apk (cacheDir)
@@ -106,7 +106,7 @@ release-вариант.
 - После успешного обновления `AppStartupMaintenanceRunner` по смене `VERSION_CODE` удаляет
   `update.apk` из кэша.
 - Если автоматическая установка не удалась, в диалоге есть ссылка на страницу
-  `https://github.com/Helandy/YummyTV/releases/latest`.
+  `https://github.com/MraK0ff/YANIME/releases/latest`.
 
 Ограничения: одна страница `/releases?per_page=100` (`RELEASES_PER_PAGE`); проверка при запуске
 (`MainSideEffectsHandler.checkForUpdates`).

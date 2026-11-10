@@ -148,7 +148,7 @@ Activity.onCreate / onNewIntent
       resolvers.firstNotNullOfOrNull { it.resolve(link) } → navManager.navigate(key)
 ```
 
-- Схема своя, `yummytv://<host>/…`. `DeepLinkReference.appLinkHost` возвращает хост только для этой
+- Схема своя, `yanime://<host>/…`. `DeepLinkReference.appLinkHost` возвращает хост только для этой
   схемы.
 - Резолвер — `DeepLinkResolver`, регистрируется как `@Binds @IntoSet`. Он возвращает `NavKey` или
   `null`. Порядок обхода набора не определён, поэтому резолверы не должны пересекаться.

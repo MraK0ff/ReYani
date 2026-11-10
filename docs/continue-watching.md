@@ -79,7 +79,7 @@ Watched — meaningful progress, где до конца серии остало�
 
 ## Серверная история на главной (last-watches)
 
-Только главная: библиотека, виджет, ярлыки и `yummytv://continue/{id}` остаются на локальном
+Только главная: библиотека, виджет, ярлыки и `yanime://continue/{id}` остаются на локальном
 `ObserveContinueWatchingUseCase`.
 
 `ObserveHomeContinueWatchingUseCase` объединяет локальный список с `GET /video/last-watches`
@@ -181,7 +181,7 @@ playback-цель. Presentation превращает её в destination пле�
 
 ## Запуск извне: ярлыки и виджет
 
-`yummytv://continue/{animeId}` запускает «продолжить просмотр» так же, как карточка на главной.
+`yanime://continue/{animeId}` запускает «продолжить просмотр» так же, как карточка на главной.
 `ContinueWatchingDeepLinkResolver` открывает `ContinueWatchingLaunchDestination` — экран-лоадер
 (`ContinueWatchingLaunchViewModel`, `:feature:home`), который берёт запись тайтла из
 `ObserveContinueWatchingUseCase`, разрешает её через `ResolveContinueWatchingLaunchUseCase` и
@@ -193,7 +193,7 @@ playback-цель. Presentation превращает её в destination пле�
 обновляются, пока жива `MobileActivity`:
 
 - **Ярлыки** (`AppShortcutsPublisher`): два последних тайтла + «Поиск» (`ACTION_SEARCH` →
-  `SystemSearchIntentHandler`) + «Загрузки» (`yummytv://downloads`). Все динамические: статический
+  `SystemSearchIntentHandler`) + «Загрузки» (`yanime://downloads`). Все динамические: статический
   `shortcuts.xml` требует литерального `targetPackage`, а у debug/releasedebug свой суффикс
   applicationId.
 - **Виджет** (`ContinueWatchingWidget`, Glance, `SizeMode.Exact`): до трёх карточек по ширине (не

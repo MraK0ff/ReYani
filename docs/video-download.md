@@ -39,7 +39,7 @@ VideoDownloadWorker (foreground, до 2 одновременно)
 | `api`          | `IVideoDownloadNavigator`, `VideoDownloadPlaybackCache` (контракт для плеера)         |
 | `domain`       | Модели, `VideoDownloadCacheKeyScheme`, use case'ы постановки, паузы, отмены, экспорта |
 | `data`         | Воркеры, `VideoDownloadExecutor`, стратегии, кэш, уведомления, экспорт                |
-| `presentation` | `VideoDownloadViewModel`, навигатор, резолвер диплинка `yummytv://downloads`          |
+| `presentation` | `VideoDownloadViewModel`, навигатор, резолвер диплинка `yanime://downloads`          |
 
 `VideoDownloadPlaybackCache` (`feature:video-download:api`) отдаёт `Cache` и фабрику ключей для
 записи загрузки; `feature:player:ui-common` зависит от этого `api`-модуля.

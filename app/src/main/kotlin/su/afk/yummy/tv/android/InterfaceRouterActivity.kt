@@ -4,20 +4,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import su.afk.yummy.tv.core.preferences.device.DeviceTypeDetector
+import dagger.hilt.android.AndroidEntryPoint
 import su.afk.yummy.tv.core.preferences.interface_language.AppInterfaceLanguageContext
+import su.afk.yummy.tv.core.preferences.device.DeviceTypeDetector
 import javax.inject.Inject
 
 /**
  * Единая точка входа для обычного launcher, Android TV launcher и диплинков.
  *
- * Автоматически определяет тип устройства и направляет исходный Intent в соответствующий интерфейс.
+ * При первом запуске предлагает выбрать интерфейс. После выбора всегда направляет исходный
+ * Intent в [MobileActivity] или [TvActivity], не полагаясь на тип устройства из Configuration.
  */
 @AndroidEntryPoint
 class InterfaceRouterActivity : ComponentActivity() {
@@ -69,4 +71,6 @@ class InterfaceRouterActivity : ComponentActivity() {
             }
         }
     }
+
+
 }

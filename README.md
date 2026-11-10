@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/images/yanime-app-icon.svg" width="112" height="112" alt="YAnime logo" />
+  <img src="docs/images/yanime-app-icon.svg" width="112" height="112" alt="YANIME logo" />
 </p>
 
-<h1 align="center">YAnime</h1>
+<h1 align="center">YANIME</h1>
 
 <p align="center">
   Неофициальный клиент <a href="https://yummyani.me/">YummyAnime</a> для Android и Android TV,
@@ -10,19 +10,19 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/MraK0ff/ReYani/releases/latest">
+  <a href="https://github.com/MraK0ff/YANIME/releases/latest/download/YANIME.apk">
     <img alt="Скачать APK" src="https://img.shields.io/badge/Скачать-APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" />
   </a>
-  <a href="https://github.com/MraK0ff/ReYani/releases/latest">
-    <img alt="Последний релиз" src="https://img.shields.io/github/v/release/MraK0ff/ReYani?style=for-the-badge" />
+  <a href="https://github.com/MraK0ff/YANIME/releases/latest/download/YANIME.apk">
+    <img alt="Последний релиз" src="https://img.shields.io/github/v/release/MraK0ff/YANIME?style=for-the-badge" />
   </a>
 </p>
 
 > [!IMPORTANT]
-> YAnime — независимый форк оригинального [YummyTV](https://github.com/Helandy/YummyTV), который разрабатывает Helandy.
-> Предложения по оригинальному приложению направляйте в [Helandy Issues](https://github.com/Helandy/YummyTV/issues), а вопросы и предложения по YAnime — в [YAnime Issues](https://github.com/MraK0ff/ReYani/issues).
+> YANIME — независимый форк оригинального [YummyTV](https://github.com/Helandy/YummyTV), который разрабатывает Helandy.
+> Предложения по оригинальному приложению направляйте в [Helandy Issues](https://github.com/Helandy/YummyTV/issues), а вопросы и предложения по YANIME — в [YANIME Issues](https://github.com/MraK0ff/YANIME/issues).
 >
-> Если предложение не планируется к реализации в оригинале, его можно отдельно предложить для YAnime. Каждая идея рассматривается отдельно и не принимается автоматически.
+> Если предложение не планируется к реализации в оригинале, его можно отдельно предложить для YANIME. Каждая идея рассматривается отдельно и не принимается автоматически.
 
 ---
 
@@ -82,6 +82,8 @@
   В MY_NEW_EPISODES и CALENDAR используется время фактической публикации видео на YummyAnime, а не время японского эфира. Это позволяет ориентироваться на момент, когда серию действительно можно посмотреть.
 
 
+- **Фильтр списка серий с сохранением состояния.**  
+  Доступны режимы «Все», «Непросмотренное» и «Просмотренное» как на Android, так и на Android TV. Выбранный режим сохраняется между запусками приложения. При переключении фильтра и возвращении к режиму «Все» сохраняется текущая позиция списка: например, если пользователь просматривал серии 126–130, временно включил фильтр «Непросмотренное», а затем вернулся к «Все», список должен восстановиться около серий 126–130, а не сбрасываться к началу.
 
 </details>
 
@@ -131,8 +133,17 @@
 <details>
 <summary><strong>Настройки</strong></summary>
 
-- **Удаление Яндекс Метрики (AppMetrica).**  
-  Планируется удалить интеграцию AppMetrica из YAnime.
+- **Удалена Яндекс Метрика (AppMetrica).**  
+  Интеграция сбора аналитики оригинального приложения исключена из YANIME.
+
+- **Язык интерфейса.**  
+  Настройка меняет язык не только интерфейса приложения, но и элементов управления и меню плеера.
+
+- **Мгновенное применение темы и фона.**  
+  Выбранные пользователем тема и цвет фона применяются уже при запуске приложения. Больше не возникает кратковременного отображения стандартного оформления перед загрузкой пользовательских настроек.
+
+- **Улучшенная первоначальная настройка.**  
+  При первом запуске собраны самые важные параметры приложения, а значения по умолчанию пересмотрены и выбраны разработчиком форка как наиболее оптимальные.
 
 </details>
 
@@ -140,9 +151,9 @@
 
 ## Скачать
 
-Готовые APK публикуются в разделе **[Releases](https://github.com/MraK0ff/ReYani/releases)**.
+Готовые APK публикуются в разделе **[Releases](https://github.com/MraK0ff/YANIME/releases)**.
 
-1. Откройте [последний релиз](https://github.com/MraK0ff/ReYani/releases/latest).
+1. Откройте [последний релиз](https://github.com/MraK0ff/YANIME/releases/latest/download/YANIME.apk).
 2. Скачайте APK-файл из списка Assets.
 3. Установите его на Android-устройство или передайте APK на Android TV.
 
@@ -163,7 +174,7 @@
 
 ## Отказ от ответственности
 
-- YAnime — неофициальный форк клиента YummyAnime; проект не связан с владельцами сервиса и не одобряется ими.
+- YANIME — неофициальный форк клиента YummyAnime; проект не связан с владельцами сервиса и не одобряется ими.
 - Приложение не предоставляет собственный каталог видео, не хранит и не распространяет видеоконтент.
 - Доступность каталога, API и воспроизведения зависит от YummyAnime и сторонних видеобалансеров.
 - Названия сервисов, товарные знаки и права на сторонний контент принадлежат их владельцам.

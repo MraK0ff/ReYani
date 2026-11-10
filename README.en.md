@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/images/yanime-app-icon.svg" width="128" height="128" alt="YAnime logo" />
+  <img src="docs/images/yanime-app-icon.svg" width="128" height="128" alt="YANIME logo" />
 </p>
 
-<h1 align="center">YAnime</h1>
+<h1 align="center">YANIME</h1>
 
 <p align="center">
   An unofficial <a href="https://yummyani.me/">YummyAnime</a> client for Android TV and Android.<br/>
@@ -14,17 +14,17 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Helandy/YummyTV/releases/latest">
+  <a href="https://github.com/MraK0ff/YANIME/releases/latest/download/YANIME.apk">
     <img alt="Download APK" src="https://img.shields.io/badge/Download-APK-2ea44f?style=for-the-badge" />
   </a>
-  <a href="https://github.com/Helandy/YummyTV/releases/latest">
-    <img alt="Latest release" src="https://img.shields.io/github/v/release/Helandy/YummyTV?style=for-the-badge" />
+  <a href="https://github.com/MraK0ff/YANIME/releases/latest/download/YANIME.apk">
+    <img alt="Latest release" src="https://img.shields.io/github/v/release/MraK0ff/YANIME?style=for-the-badge" />
   </a>
-  <a href="https://github.com/Helandy/YummyTV/releases">
-    <img alt="Total downloads" src="https://img.shields.io/github/downloads/Helandy/YummyTV/total?style=for-the-badge" />
+  <a href="https://github.com/MraK0ff/YANIME/releases">
+    <img alt="Total downloads" src="https://img.shields.io/github/downloads/MraK0ff/YANIME/total?style=for-the-badge" />
   </a>
-  <a href="https://github.com/Helandy/YummyTV/stargazers">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/Helandy/YummyTV?style=for-the-badge" />
+  <a href="https://github.com/MraK0ff/YANIME/stargazers">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/MraK0ff/YANIME?style=for-the-badge" />
   </a>
 </p>
 
@@ -44,11 +44,11 @@
 > [!IMPORTANT]
 > 💼 Open to work: [@Etozhesandy](https://t.me/Etozhesandy) (Android, Compose, Kotlin).
 > Please don't message there with app questions — use
-> [Issues](https://github.com/Helandy/YummyTV/issues) instead.
+> [Issues](https://github.com/MraK0ff/YANIME/issues) instead.
 
-## What is YAnime?
+## What is YANIME?
 
-**YAnime** is a native Android app for watching anime from YummyAnime. The project includes two
+**YANIME** is a native Android app for watching anime from YummyAnime. The project includes two
 separate experiences: a TV-first interface for Android TV / set-top boxes and a mobile interface for
 Android phones.
 
@@ -60,7 +60,7 @@ On TV, the app is designed for remote control, D-pad navigation, and large UI el
 it supports bottom navigation, player gestures, and Picture-in-Picture.
 
 <p align="center">
-  <a href="https://github.com/Helandy/YummyTV/releases/latest"><b>Download APK</b></a>
+  <a href="https://github.com/MraK0ff/YANIME/releases/latest/download/YANIME.apk"><b>Download APK</b></a>
   ·
   <a href="#screenshots"><b>Screenshots</b></a>
   ·
@@ -198,7 +198,7 @@ The built-in player is based on **Media3 / ExoPlayer** and supports:
 The latest version is available on **GitHub Releases**:
 
 <p align="center">
-  <a href="https://github.com/Helandy/YummyTV/releases/latest">
+  <a href="https://github.com/MraK0ff/YANIME/releases/latest/download/YANIME.apk">
     <img alt="Download latest APK" src="https://img.shields.io/badge/Download%20latest%20APK-2ea44f?style=for-the-badge&logo=android&logoColor=white" />
   </a>
 </p>
@@ -233,7 +233,7 @@ The project is built with Kotlin and a modular architecture.
 
 ## Limitations
 
-YummyTV depends on YummyAnime and third-party video balancers. If the website, API, player, or
+YANIME depends on YummyAnime and third-party video balancers. If the website, API, player, or
 source is temporarily unavailable, some features or video playback may not work.
 
 For users outside CIS countries, some video balancers may be unavailable due to regional
@@ -243,7 +243,7 @@ restrictions or IP blocks.
 
 ## ☕ Support the project
 
-YummyTV is developed and maintained independently.
+YANIME is developed and maintained independently.
 
 If you enjoy using the app and want to support its future development:
 
@@ -252,14 +252,14 @@ If you enjoy using the app and want to support its future development:
 You can also support the project for free:
 
 * ⭐ **Star the repository** — it helps others discover the project
-* 🐞 **Report bugs** via [Issues](https://github.com/Helandy/YummyTV/issues)
-* 💡 **Suggest improvements** via [Issues](https://github.com/Helandy/YummyTV/issues)
+* 🐞 **Report bugs** via [Issues](https://github.com/MraK0ff/YANIME/issues)
+* 💡 **Suggest improvements** via [Issues](https://github.com/MraK0ff/YANIME/issues)
 
 ---
 
 ## Disclaimer
 
-- YummyTV is an unofficial YummyAnime client.
+- YANIME is an unofficial YummyAnime client.
 - The app does not host, store, or distribute content.
 - All rights belong to their respective owners.
 

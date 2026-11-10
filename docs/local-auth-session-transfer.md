@@ -21,7 +21,7 @@
 │ запрос доступа к локальной сети            │
 │ код = SecureRandom (10 символов)           │
 │ embeddedServer(CIO, port = 0)              │
-│ NSD register _yummytv_auth._tcp.           │
+│ NSD register _yanime_auth._tcp.           │
 │ onServiceRegistered → serviceName          │
 │──── Pairing(pin, port, serviceName) → UI ──│ QR: yummytv://pair?d=<serviceName>&c=<код>
 │                                            │ NSD discover + resolve
@@ -35,7 +35,7 @@
 
 ## Обнаружение
 
-Тип сервиса `_yummytv_auth._tcp.`, имя `YummyTv-<Build.MODEL>`. Имя санитайзится (буквы, цифры,
+Тип сервиса `_yanime_auth._tcp.`, имя `YANIME-<Build.MODEL>`. Имя санитайзится (буквы, цифры,
 пробел, дефис) и режется до 63 байт: у приставок `MODEL` бывает длинным и с юникодом, NSD такое имя
 не примет.
 
@@ -78,7 +78,7 @@
   нужный адрес на стороне ТВ ненадёжно. Телефон ищет ТВ по имени сервиса через NSD и получает уже
   проверенный адрес. В QR то же, что и так на экране, плюс публичное имя из mDNS.
 - Имя берётся из `onServiceRegistered`, а не из `deviceServiceName()`: при конфликте имён NSD
-  переименовывает сервис (`YummyTv-X (2)`). Реальное имя сохраняется в `PairingSession.serviceName`
+  переименовывает сервис (`YANIME-X (2)`). Реальное имя сохраняется в `PairingSession.serviceName`
   и попадает в `LocalAuthServerState.Pairing.serviceName`, в том числе при повторных `Pairing` после
   неверного кода. Имена сравниваются без учёта регистра: mDNS регистронезависим.
 
@@ -111,7 +111,7 @@ QR многие сканеры не читают, а без светлой ра�
 | QR с именем, ТВ уже найден             | ТВ выбирается, код подставляется, перенос стартует сразу                       |
 | QR с именем, ТВ ещё не найден          | `pendingDeviceId`, «Ищем этот телевизор…»; перенос при появлении в NSD         |
 | Голый код (до 12 символов с пробелами) | Код подставляется; если в списке один ТВ, он выбирается и перенос стартует     |
-| Что-то другое                          | `LOCAL_AUTH_INVALID_QR` — «Это не QR-код YummyTV»                              |
+| Что-то другое                          | `LOCAL_AUTH_INVALID_QR` — «Это не QR-код YANIME»                              |
 | Сканер не запустился                   | `LOCAL_AUTH_SCANNER_UNAVAILABLE` — нет Play Services, предлагается ручной ввод |
 
 Отмена скана ничего не показывает. Ручной выбор ТВ сбрасывает `pendingDeviceId`. Ограничение длины
