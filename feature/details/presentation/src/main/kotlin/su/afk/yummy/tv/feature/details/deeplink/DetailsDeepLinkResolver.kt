@@ -6,7 +6,7 @@ import su.afk.yummy.tv.core.deeplink.api.DeepLinkResolver
 import su.afk.yummy.tv.feature.details.IDetailsNavigator
 import javax.inject.Inject
 
-/** Разбирает `yummytv://details/{animeId}` в экран деталей тайтла. */
+/** Разбирает `yanime://details/{animeId}` в экран деталей тайтла. */
 class DetailsDeepLinkResolver @Inject constructor(
     private val detailsNavigator: IDetailsNavigator,
 ) : DeepLinkResolver {

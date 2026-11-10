@@ -12,7 +12,7 @@ import su.afk.yummy.tv.core.navigation.scene.FullscreenDestination
 @Serializable
 data class ContinueWatchingLaunchDestination(
     val animeId: Int,
-    /** Явный запрос (диплинк `yummytv://play/...`): серия, балансер, озвучка и позиция, секунды. */
+    /** Явный запрос (диплинк `yanime://play/...`): серия, балансер, озвучка и позиция, секунды. */
     val episode: String? = null,
     val player: String? = null,
     val dubbing: String? = null,

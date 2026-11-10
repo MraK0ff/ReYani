@@ -132,7 +132,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yummytv"
+                    android:scheme="yanime"
                     android:host="details" />
             </intent-filter>
             <intent-filter>
@@ -142,7 +142,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yummytv"
+                    android:scheme="yanime"
                     android:host="home" />
             </intent-filter>
             <intent-filter>
@@ -152,7 +152,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yummytv"
+                    android:scheme="yanime"
                     android:host="schedule" />
             </intent-filter>
             <intent-filter>
@@ -162,7 +162,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yummytv"
+                    android:scheme="yanime"
                     android:host="collection" />
             </intent-filter>
             <intent-filter>
@@ -172,7 +172,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yummytv"
+                    android:scheme="yanime"
                     android:host="downloads" />
             </intent-filter>
             <intent-filter>
@@ -182,7 +182,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yummytv"
+                    android:scheme="yanime"
                     android:host="continue" />
             </intent-filter>
             <intent-filter>
@@ -192,7 +192,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yummytv"
+                    android:scheme="yanime"
                     android:host="play" />
             </intent-filter>
             <intent-filter>
@@ -202,7 +202,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yummytv"
+                    android:scheme="yanime"
                     android:host="episodes" />
             </intent-filter>
             <intent-filter>

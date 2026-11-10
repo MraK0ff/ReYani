@@ -74,7 +74,7 @@ internal class PreviewChannelManager @Inject constructor(
             put(PROGRAM_COLUMN_TITLE, item.title)
             put(TvContractCompat.PreviewPrograms.COLUMN_INTERNAL_PROVIDER_ID, animeId.toString())
             if (!posterUrl.isNullOrBlank()) put(PROGRAM_COLUMN_POSTER_ART_URI, posterUrl)
-            put(TvContractCompat.PreviewPrograms.COLUMN_INTENT_URI, "yummytv://details/$animeId")
+            put(TvContractCompat.PreviewPrograms.COLUMN_INTENT_URI, "yanime://details/$animeId")
         }
         runCatching {
             resolver.insert(TvContractCompat.PreviewPrograms.CONTENT_URI, values)
@@ -90,7 +90,7 @@ internal class PreviewChannelManager @Inject constructor(
         val channel = Channel.Builder()
             .setType(TvContractCompat.Channels.TYPE_PREVIEW)
             .setDisplayName(context.getString(R.string.tv_preview_channel_new))
-            .setAppLinkIntentUri("yummytv://home".toUri())
+            .setAppLinkIntentUri("yanime://home".toUri())
             .build()
 
         val uri = runCatching {

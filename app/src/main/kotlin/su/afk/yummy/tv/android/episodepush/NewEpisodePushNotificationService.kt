@@ -17,7 +17,7 @@ import su.afk.yummy.tv.domain.home.model.LibraryEpisodePush
 import javax.inject.Inject
 
 /**
- * Пуш о новой серии. Основной тап и кнопка «Смотреть» ведут в `yummytv://continue/{id}` — сразу
+ * Пуш о новой серии. Основной тап и кнопка «Смотреть» ведут в `yanime://continue/{id}` — сразу
  * плеер (без записи «продолжить» резолвер сам откроет детали), «Подробнее» — в детали тайтла.
  * Без id тайтла пуш просто открывает главную и кнопок не имеет.
  */
@@ -120,9 +120,9 @@ class NewEpisodePushNotificationService @Inject constructor(
         const val NOTIFICATION_ID_BASE = 61_000
         const val LIBRARY_NOTIFICATION_ID_BASE = 1_000_000
 
-        const val CONTINUE_DEEP_LINK_PREFIX = "yummytv://continue/"
-        const val DETAILS_DEEP_LINK_PREFIX = "yummytv://details/"
-        const val HOME_DEEP_LINK = "yummytv://home"
+        const val CONTINUE_DEEP_LINK_PREFIX = "yanime://continue/"
+        const val DETAILS_DEEP_LINK_PREFIX = "yanime://details/"
+        const val HOME_DEEP_LINK = "yanime://home"
         const val ACCENT_COLOR = 0xFFFF6666.toInt()
     }
 }

@@ -7,7 +7,7 @@ import su.afk.yummy.tv.feature.collection.ICollectionNavigator
 import javax.inject.Inject
 
 /**
- * Разбирает `yummytv://collection/{id}` и ссылку сайта `https://ru.yummyani.me/catalog/collection/{id}`
+ * Разбирает `yanime://collection/{id}` и ссылку сайта `https://ru.yummyani.me/catalog/collection/{id}`
  * в экран коллекции.
  */
 class CollectionDeepLinkResolver @Inject constructor(

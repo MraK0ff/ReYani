@@ -7,7 +7,7 @@ import su.afk.yummy.tv.core.navigation.manager.INavigationManager
 import su.afk.yummy.tv.core.navigation.root.RootTab
 import javax.inject.Inject
 
-/** Разбирает ссылки на корневые вкладки приложения (`yummytv://home`). */
+/** Разбирает ссылки на корневые вкладки приложения (`yanime://home`). */
 internal class RootTabDeepLinkResolver @Inject constructor(
     private val navManager: INavigationManager,
 ) : DeepLinkResolver {

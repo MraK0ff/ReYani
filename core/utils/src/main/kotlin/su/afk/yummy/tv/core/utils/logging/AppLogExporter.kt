@@ -29,7 +29,7 @@ class AppLogExporter @Inject constructor(
             mkdirs()
         }
         val stamp = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
-        File(exportDir, "yummytv-logs-$stamp.txt").also { dump ->
+        File(exportDir, "yanime-logs-$stamp.txt").also { dump ->
             dump.outputStream().use { out ->
                 store.files.forEach { file -> file.inputStream().use { it.copyTo(out) } }
             }

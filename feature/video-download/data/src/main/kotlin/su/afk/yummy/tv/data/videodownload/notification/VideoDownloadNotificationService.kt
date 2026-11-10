@@ -149,6 +149,6 @@ class VideoDownloadNotificationService @Inject constructor(
         private const val NOTIFICATION_ID_BASE = 56_000
         private const val PROGRESS_MAX = 100
         private const val CONTENT_REQUEST_CODE = 56_000
-        private const val DOWNLOADS_DEEP_LINK = "yummytv://downloads"
+        private const val DOWNLOADS_DEEP_LINK = "yanime://downloads"
     }
 }

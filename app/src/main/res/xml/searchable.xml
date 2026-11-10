@@ -6,6 +6,6 @@
     android:searchSettingsDescription="@string/search_settings_description"
     android:searchSuggestAuthority="@string/search_suggest_authority"
     android:searchSuggestIntentAction="android.intent.action.VIEW"
-    android:searchSuggestIntentData="yummytv://details"
+    android:searchSuggestIntentData="yanime://details"
     android:searchSuggestSelection=" ?"
     android:searchSuggestThreshold="2" />

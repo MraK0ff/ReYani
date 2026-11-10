@@ -7,8 +7,8 @@ import su.afk.yummy.tv.feature.home.navigator.ContinueWatchingLaunchDestination
 import javax.inject.Inject
 
 /**
- * Разбирает `yummytv://continue/{animeId}` (ярлыки, виджет) в запуск «продолжить просмотр» и
- * `yummytv://play/{animeId}?episode=&balancer=&dubbing=&position=` в запуск с явным выбором серии,
+ * Разбирает `yanime://continue/{animeId}` (ярлыки, виджет) в запуск «продолжить просмотр» и
+ * `yanime://play/{animeId}?episode=&balancer=&dubbing=&position=` в запуск с явным выбором серии,
  * балансера, озвучки и позиции в секундах; все параметры необязательные.
  */
 class ContinueWatchingDeepLinkResolver @Inject constructor() : DeepLinkResolver {

@@ -5,7 +5,7 @@ import su.afk.yummy.tv.domain.account.model.LocalAuthPairingPayload
 import java.net.URLDecoder
 import java.net.URLEncoder
 
-private const val PREFIX = "yummytv://pair?"
+private const val PREFIX = "yanime://pair?"
 private const val PARAM_DEVICE = "d"
 private const val PARAM_CODE = "c"
 private const val CHARSET = "UTF-8"

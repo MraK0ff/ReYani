@@ -29,8 +29,8 @@ import kotlin.math.min
  *
  * Все ярлыки динамические: статический `shortcuts.xml` требует литерального `targetPackage`,
  * а у debug/releasedebug-сборок свой суффикс applicationId. Интенты идут в
- * [InterfaceRouterActivity], как и всё внешнее: тайтл — `yummytv://continue/{id}` (сразу плеер),
- * поиск — `ACTION_SEARCH` (его разбирает SystemSearchIntentHandler), загрузки — `yummytv://downloads`.
+ * [InterfaceRouterActivity], как и всё внешнее: тайтл — `yanime://continue/{id}` (сразу плеер),
+ * поиск — `ACTION_SEARCH` (его разбирает SystemSearchIntentHandler), загрузки — `yanime://downloads`.
  */
 class AppShortcutsPublisher @Inject constructor(
     @param:ApplicationContext private val context: Context,
@@ -123,7 +123,7 @@ class AppShortcutsPublisher @Inject constructor(
         const val CONTINUE_SHORTCUT_PREFIX = "continue_"
         const val SEARCH_SHORTCUT_ID = "search"
         const val DOWNLOADS_SHORTCUT_ID = "downloads"
-        const val CONTINUE_DEEP_LINK_PREFIX = "yummytv://continue/"
-        const val DOWNLOADS_DEEP_LINK = "yummytv://downloads"
+        const val CONTINUE_DEEP_LINK_PREFIX = "yanime://continue/"
+        const val DOWNLOADS_DEEP_LINK = "yanime://downloads"
     }
 }

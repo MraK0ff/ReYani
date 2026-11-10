@@ -54,7 +54,7 @@ internal class WatchNextManager @Inject constructor(
             put(COLUMN_DURATION_MILLIS, entry.durationMs.toInt())
             put(COLUMN_INTERNAL_PROVIDER_ID, entry.episodeUrl)
             if (artUri != null) put(COLUMN_POSTER_ART_URI, artUri)
-            put(COLUMN_INTENT_URI, "yummytv://details/${entry.animeId}")
+            put(COLUMN_INTENT_URI, "yanime://details/${entry.animeId}")
         }
         runCatching {
             resolver.insert(TvContractCompat.WatchNextPrograms.CONTENT_URI, values)

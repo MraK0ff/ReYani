@@ -6,7 +6,7 @@ import su.afk.yummy.tv.core.deeplink.api.DeepLinkResolver
 import su.afk.yummy.tv.feature.videodownload.IVideoDownloadNavigator
 import javax.inject.Inject
 
-/** Разбирает `yummytv://downloads` в экран загрузок. */
+/** Разбирает `yanime://downloads` в экран загрузок. */
 class VideoDownloadDeepLinkResolver @Inject constructor(
     private val videoDownloadNavigator: IVideoDownloadNavigator,
 ) : DeepLinkResolver {

@@ -57,7 +57,7 @@ import su.afk.yummy.tv.domain.home.usecase.ObserveContinueWatchingUseCase
 
 /**
  * Виджет «Продолжить просмотр» (мобильный рабочий стол): последние тайтлы из того же списка,
- * что на главной. Тап по тайтлу — `yummytv://continue/{id}`, то есть сразу плеер.
+ * что на главной. Тап по тайтлу — `yanime://continue/{id}`, то есть сразу плеер.
  *
  * Пока сессия виджета жива, список приходит из потока; новую сессию запускает
  * [ContinueWatchingWidgetUpdater], пока приложение открыто, а в фоне — [GlanceHomeScreenWidgetRefresher]
@@ -205,12 +205,12 @@ private fun WidgetCard(card: ContinueWatchingWidgetCard, modifier: GlanceModifie
 
 private val MIN_CARD_WIDTH = 110.dp
 
-/** Тайтл — сразу плеер через `yummytv://continue/{id}`; без тайтла — просто открыть приложение. */
+/** Тайтл — сразу плеер через `yanime://continue/{id}`; без тайтла — просто открыть приложение. */
 private fun routerIntent(context: Context, animeId: Int?): Intent =
     Intent(context, InterfaceRouterActivity::class.java).apply {
         if (animeId != null) {
             action = Intent.ACTION_VIEW
-            data = "yummytv://continue/$animeId".toUri()
+            data = "yanime://continue/$animeId".toUri()
         } else {
             action = Intent.ACTION_MAIN
         }

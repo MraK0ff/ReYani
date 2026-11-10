@@ -4,10 +4,10 @@ import android.os.Build
 
 /** Общие для ТВ и телефона детали протокола сопряжения. */
 internal object LocalAuthContract {
-    const val SERVICE_TYPE = "_yummytv_auth._tcp."
+    const val SERVICE_TYPE = "_yanime_auth._tcp."
     const val TRANSFER_PATH = "/transfer"
 
-    private const val SERVICE_NAME_PREFIX = "YummyTv"
+    private const val SERVICE_NAME_PREFIX = "YANIME"
     private const val MAX_SERVICE_NAME_BYTES = 63
 
     /**
