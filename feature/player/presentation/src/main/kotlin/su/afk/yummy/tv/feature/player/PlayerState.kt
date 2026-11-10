@@ -85,7 +85,7 @@ class PlayerState {
         val pictureInPictureEnabled: Boolean = true,
         /** Блокировка и смена серии в мобильном плеере требуют удержания кнопки. */
         val holdToConfirmEnabled: Boolean = true,
-        val playerOrientationMode: PlayerOrientationMode = PlayerOrientationMode.SYSTEM,
+        val playerOrientationMode: PlayerOrientationMode = PlayerOrientationMode.SENSOR_LANDSCAPE,
         val mobileGestureTutorialReady: Boolean = false,
         val showMobileGestureTutorial: Boolean = false,
         val tvControlsTutorialReady: Boolean = false,

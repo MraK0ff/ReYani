@@ -10,14 +10,36 @@ internal class SharedPreferencesAppInterfaceLanguagePreferences @Inject construc
 ) : AppInterfaceLanguagePreferences {
 
     override val selectedLanguage: AppInterfaceLanguage
-        get() = AppInterfaceLanguageContext.read(context)
+        get() {
+            val preferences = context.getSharedPreferences(
+                AppInterfaceLanguageContext.PREFERENCES_NAME,
+                Context.MODE_PRIVATE,
+            )
+            val stored = preferences.getString(AppInterfaceLanguageContext.LANGUAGE_KEY, null)
+            val language = if (stored.isNullOrBlank() || stored == "SYSTEM") {
+                AppInterfaceLanguageContext.resolveSystemLanguage(context)
+            } else {
+                AppInterfaceLanguage.fromPreferenceValue(stored)
+            }
+            // При первом запуске и миграции старого SYSTEM сохраняем конкретный язык устройства.
+            if (stored != language.name) {
+                preferences.edit()
+                    .putString(AppInterfaceLanguageContext.LANGUAGE_KEY, language.name)
+                    .commit()
+            }
+            return language
+        }
 
     override fun select(language: AppInterfaceLanguage) {
-        // commit(), а не apply(): сразу за выбором следует холодный рестарт процесса,
-        // и асинхронная запись могла бы не успеть.
-        context.getSharedPreferences(AppInterfaceLanguageContext.PREFERENCES_NAME, Context.MODE_PRIVATE)
-            .edit()
+        val preferences = context.getSharedPreferences(
+            AppInterfaceLanguageContext.PREFERENCES_NAME,
+            Context.MODE_PRIVATE,
+        )
+        if (selectedLanguage == language) return
+        // Запись завершается до события, которое обновит локаль Activity.
+        preferences.edit()
             .putString(AppInterfaceLanguageContext.LANGUAGE_KEY, language.name)
             .commit()
+        AppInterfaceLanguageContext.notifyLanguageChanged(language)
     }
 }

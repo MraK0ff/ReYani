@@ -166,8 +166,8 @@ private val LightOutline = Color(0xFF757575)
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun YummyTvTheme(
-    appTheme: AppTheme = AppTheme.WARM_AMBER,
-    backgroundStyle: BackgroundStyle = BackgroundStyle.DARK,
+    appTheme: AppTheme = AppTheme.GRAPHITE,
+    backgroundStyle: BackgroundStyle = BackgroundStyle.AMOLED,
     isTelevision: Boolean? = null,
     content: @Composable () -> Unit,
 ) {

@@ -35,4 +35,20 @@
     <string name="player_setup_mobile_orientation_sensor_landscape">Landscape (sensor)</string>
     <string name="player_setup_mobile_orientation_sensor_landscape_hint">Always landscape; left or right follows the sensor</string>
     <string name="player_setup_mobile_orientation_portrait_hint">Always portrait, even if system rotation is unlocked</string>
+    <string name="player_setup_interface_language_label">Interface language</string>
+    <string name="player_setup_interface_language_hint">Language of menus and player controls; takes effect after restarting the app</string>
+    <string name="player_setup_theme_label">Color theme</string>
+    <string name="player_setup_theme_hint">App color palette</string>
+    <string name="player_setup_background_label">Background</string>
+    <string name="player_setup_background_hint">Light, dark, or system background</string>
+    <string name="player_setup_theme_graphite">Graphite</string>
+    <string name="player_setup_theme_amber">Warm amber</string>
+    <string name="player_setup_theme_sakura">Sakura</string>
+    <string name="player_setup_theme_mint">Mint</string>
+    <string name="player_setup_theme_ocean">Ocean</string>
+    <string name="player_setup_theme_dynamic">Dynamic (Material You)</string>
+    <string name="player_setup_background_system">System</string>
+    <string name="player_setup_background_light">Light</string>
+    <string name="player_setup_background_dark">Dark</string>
+    <string name="player_setup_background_amoled">AMOLED</string>
 </resources>

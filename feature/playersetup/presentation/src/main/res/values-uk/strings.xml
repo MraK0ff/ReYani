@@ -35,4 +35,20 @@
     <string name="player_setup_mobile_orientation_sensor_landscape">Альбомна (датчик)</string>
     <string name="player_setup_mobile_orientation_sensor_landscape_hint">Завжди альбомна орієнтація, сторона (ліворуч або праворуч) визначається датчиком</string>
     <string name="player_setup_mobile_orientation_portrait_hint">Завжди вертикальна орієнтація, навіть якщо в системі увімкнено автоповорот</string>
+    <string name="player_setup_interface_language_label">Мова інтерфейсу</string>
+    <string name="player_setup_interface_language_hint">Мова меню та елементів керування. Застосовується після перезапуску застосунку.</string>
+    <string name="player_setup_theme_label">Кольорова тема</string>
+    <string name="player_setup_theme_hint">Кольорова палітра застосунку</string>
+    <string name="player_setup_background_label">Тло застосунку</string>
+    <string name="player_setup_background_hint">Світле, темне або системне тло</string>
+    <string name="player_setup_theme_graphite">Графітова</string>
+    <string name="player_setup_theme_amber">Теплий бурштин</string>
+    <string name="player_setup_theme_sakura">Сакура</string>
+    <string name="player_setup_theme_mint">М’ятна</string>
+    <string name="player_setup_theme_ocean">Океан</string>
+    <string name="player_setup_theme_dynamic">Динамічна (Material You)</string>
+    <string name="player_setup_background_system">Системне</string>
+    <string name="player_setup_background_light">Світле</string>
+    <string name="player_setup_background_dark">Темне</string>
+    <string name="player_setup_background_amoled">AMOLED</string>
 </resources>

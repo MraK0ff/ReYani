@@ -29,6 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
 import su.afk.yummy.tv.core.designsystem.R as CoreR
+import su.afk.yummy.tv.core.model.settings.AppInterfaceLanguage
+import su.afk.yummy.tv.core.model.settings.AppTheme
+import su.afk.yummy.tv.core.model.settings.BackgroundStyle
 import su.afk.yummy.tv.feature.playersetup.PlayerSetupState
 import su.afk.yummy.tv.feature.playersetup.presentation.R
 import su.afk.yummy.tv.feature.playersetup.tv.utils.next
@@ -67,13 +70,34 @@ fun PlayerSetupTvScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
+        PlayerSetupTvChoiceRow(
+            label = stringResource(R.string.player_setup_interface_language_label),
+            icon = Icons.Outlined.Language,
+            hint = stringResource(R.string.player_setup_interface_language_hint),
+            value = state.interfaceLanguage.setupLabel(),
+            onCycle = { onEvent(PlayerSetupState.Event.InterfaceLanguageSelected(state.interfaceLanguage.next())) },
+            modifier = Modifier.focusRequester(firstRowFocusRequester),
+        )
+        PlayerSetupTvChoiceRow(
+            label = stringResource(R.string.player_setup_theme_label),
+            icon = Icons.Outlined.Speed,
+            hint = stringResource(R.string.player_setup_theme_hint),
+            value = state.appTheme.setupLabel(),
+            onCycle = { onEvent(PlayerSetupState.Event.AppThemeSelected(state.appTheme.next())) },
+        )
+        PlayerSetupTvChoiceRow(
+            label = stringResource(R.string.player_setup_background_label),
+            icon = Icons.Outlined.Speed,
+            hint = stringResource(R.string.player_setup_background_hint),
+            value = state.backgroundStyle.setupLabel(),
+            onCycle = { onEvent(PlayerSetupState.Event.BackgroundStyleSelected(state.backgroundStyle.next())) },
+        )
         PlayerSetupTvToggleRow(
             label = stringResource(R.string.player_setup_opening_timeline_label),
             icon = Icons.Outlined.Timeline,
             hint = stringResource(R.string.player_setup_opening_timeline_hint),
             enabled = state.showOpeningOnTimeline,
             onClick = { onEvent(PlayerSetupState.Event.ShowOpeningOnTimelineToggled) },
-            modifier = Modifier.focusRequester(firstRowFocusRequester),
         )
         PlayerSetupTvToggleRow(
             label = stringResource(R.string.player_setup_auto_skip_label),

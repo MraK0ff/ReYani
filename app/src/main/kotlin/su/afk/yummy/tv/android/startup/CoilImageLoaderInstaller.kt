@@ -21,8 +21,7 @@ import su.afk.yummy.tv.core.model.anime.utils.PosterMirrorConfig
 import su.afk.yummy.tv.core.network.okHttpKtorClient
 import su.afk.yummy.tv.core.network.statics.AppVersionHeaderPlugin
 import su.afk.yummy.tv.core.network.yummy.SiteApiConfig
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
+import su.afk.yummy.tv.core.preferences.device.DeviceTypeDetector
 import su.afk.yummy.tv.core.preferences.settings.CacheSettingsStore
 import su.afk.yummy.tv.core.utils.episode.EpisodeThumbnailFetcher
 import su.afk.yummy.tv.core.utils.episode.EpisodeThumbnailKeyer
@@ -45,7 +44,7 @@ class CoilImageLoaderInstaller @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val okHttpClient: OkHttpClient,
     private val settingsStore: CacheSettingsStore,
-    private val interfaceModePreferences: AppInterfaceModePreferences,
+    private val deviceTypeDetector: DeviceTypeDetector,
     private val episodeThumbnailResolver: EpisodeThumbnailResolver,
     private val kodikThumbnailCacheIO: KodikThumbnailCacheIO,
     private val siteApiConfig: SiteApiConfig,
@@ -69,7 +68,7 @@ class CoilImageLoaderInstaller @Inject constructor(
             // Лоадер собирается лениво, на первой картинке — интерфейс к этому моменту уже выбран.
             // На ТВ crossfade выключен: анимация на каждой карточке грида стоит кадров на слабых
             // приставках, а при DPAD-скролле её всё равно не видно.
-            val isTvInterface = interfaceModePreferences.selectedMode == AppInterfaceMode.TV
+            val isTvInterface = deviceTypeDetector.isTv
             ImageLoader.Builder(it)
                 .logger(CoilErrorLogger(logRecordingSettings))
                 .crossfade(!isTvInterface)

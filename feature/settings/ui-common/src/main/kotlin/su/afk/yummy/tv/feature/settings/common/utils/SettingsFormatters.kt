@@ -21,7 +21,6 @@ import su.afk.yummy.tv.core.model.settings.PreferredVideoQuality
 import su.afk.yummy.tv.core.model.settings.TitleCardLayout
 import su.afk.yummy.tv.core.model.settings.AppInterfaceLanguage
 import su.afk.yummy.tv.core.model.settings.YaniContentLanguage
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.feature.settings.presentation.R
 
 @Composable
@@ -30,22 +29,6 @@ fun SeasonalTheme.enabledHint(): String = stringResource(
         SeasonalTheme.HALLOWEEN -> R.string.settings_seasonal_decorations_halloween
         SeasonalTheme.NEW_YEAR -> R.string.settings_seasonal_decorations_new_year
         SeasonalTheme.NONE -> R.string.settings_seasonal_decorations_off_season
-    },
-)
-
-@Composable
-fun AppInterfaceMode.label(): String = stringResource(
-    when (this) {
-        AppInterfaceMode.MOBILE -> R.string.settings_interface_mobile
-        AppInterfaceMode.TV -> R.string.settings_interface_tv
-    },
-)
-
-@Composable
-fun AppInterfaceMode.hint(): String = stringResource(
-    when (this) {
-        AppInterfaceMode.MOBILE -> R.string.settings_interface_mobile_hint
-        AppInterfaceMode.TV -> R.string.settings_interface_tv_hint
     },
 )
 
@@ -216,7 +199,6 @@ val videoQualitySliderEntries: List<PreferredVideoQuality> = listOf(
 @Composable
 fun AppInterfaceLanguage.label(): String = stringResource(
     when (this) {
-        AppInterfaceLanguage.SYSTEM -> R.string.settings_interface_language_system
         AppInterfaceLanguage.RUSSIAN -> R.string.settings_interface_language_russian
         AppInterfaceLanguage.ENGLISH -> R.string.settings_interface_language_english
         AppInterfaceLanguage.UKRAINIAN -> R.string.settings_interface_language_ukrainian

@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.json.Json
 import su.afk.yummy.tv.core.designsystem.baseScreen.ScreenNavigator
 import su.afk.yummy.tv.core.designsystem.theme.YummyTvTheme
+import su.afk.yummy.tv.core.preferences.interface_language.AppInterfaceLanguageContext
 import su.afk.yummy.tv.feature.player.PlayerViewModel
 import su.afk.yummy.tv.feature.player.host.PlayerActivityHost
 import su.afk.yummy.tv.feature.player.host.PlayerHostNavigation
@@ -34,6 +35,10 @@ import javax.inject.Inject
  */
 @AndroidEntryPoint
 class PlayerActivity : ComponentActivity(), PlayerActivityHost {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppInterfaceLanguageContext.wrap(newBase))
+    }
 
     @Inject
     lateinit var hostNavigation: PlayerHostNavigation

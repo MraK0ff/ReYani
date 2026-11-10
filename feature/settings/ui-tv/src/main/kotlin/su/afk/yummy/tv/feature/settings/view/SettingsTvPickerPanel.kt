@@ -27,7 +27,6 @@ import su.afk.yummy.tv.core.model.settings.PlayerSubtitleEdge
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleTextColor
 import su.afk.yummy.tv.core.model.settings.AppInterfaceLanguage
 import su.afk.yummy.tv.core.model.settings.YaniContentLanguage
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.feature.settings.SettingsState
 import su.afk.yummy.tv.feature.settings.model.DetailsButtonMoveDirection
 import su.afk.yummy.tv.feature.settings.model.SettingsTvPicker
@@ -43,7 +42,6 @@ import su.afk.yummy.tv.feature.settings.common.utils.newEpisodesSourcesValue
 /** Текущее значение пункта-пикера для строки в центральной колонке. */
 @Composable
 internal fun SettingsTvPicker.valueText(state: SettingsState.State): String = when (this) {
-    SettingsTvPicker.INTERFACE_MODE -> state.interfaceMode.label()
     SettingsTvPicker.INTERFACE_LANGUAGE -> state.interfaceLanguage.label()
     SettingsTvPicker.CONTENT_LANGUAGE -> state.contentLanguage.label()
     SettingsTvPicker.THEME -> state.appTheme.label()
@@ -70,7 +68,6 @@ internal fun SettingsTvPickerPanel(
     state: SettingsState.State,
     entryFocusRequester: FocusRequester,
     openerFocusRequester: FocusRequester,
-    onInterfaceModeSelected: (AppInterfaceMode) -> Unit,
     onEvent: (SettingsState.Event) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -99,17 +96,6 @@ internal fun SettingsTvPickerPanel(
             onClose()
         }
         when (picker) {
-            SettingsTvPicker.INTERFACE_MODE -> PickerOptions(
-                values = AppInterfaceMode.entries,
-                selected = state.interfaceMode,
-                labelOf = { it.label() },
-                hintOf = { it.hint() },
-                focusRequester = entryFocusRequester,
-                onSelected = {
-                    onClose()
-                    onInterfaceModeSelected(it)
-                },
-            )
 
             SettingsTvPicker.INTERFACE_LANGUAGE -> PickerOptions(
                 values = AppInterfaceLanguage.entries,

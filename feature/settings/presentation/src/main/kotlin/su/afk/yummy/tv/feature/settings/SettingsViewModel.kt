@@ -16,8 +16,6 @@ import su.afk.yummy.tv.core.navigation.manager.INavigationManager
 import su.afk.yummy.tv.core.preferences.api.TokenStorageMode
 import su.afk.yummy.tv.core.preferences.api.YaniAuthPreferences
 import su.afk.yummy.tv.core.preferences.interface_language.AppInterfaceLanguagePreferences
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
 import su.afk.yummy.tv.core.preferences.settings.AppLifecycleSettingsStore
 import su.afk.yummy.tv.core.preferences.settings.EpisodePushSettingsStore
 import su.afk.yummy.tv.core.preferences.settings.SettingsStore
@@ -48,7 +46,6 @@ class SettingsViewModel @Inject internal constructor(
     private val episodePushSettingsStore: EpisodePushSettingsStore,
     private val appLifecycleSettingsStore: AppLifecycleSettingsStore,
     private val yaniAuthPreferences: YaniAuthPreferences,
-    private val interfaceModePreferences: AppInterfaceModePreferences,
     private val interfaceLanguagePreferences: AppInterfaceLanguagePreferences,
     private val tvIntegration: ITvIntegration,
     private val nav: INavigationManager,
@@ -67,7 +64,6 @@ class SettingsViewModel @Inject internal constructor(
 ) : BaseViewModel<SettingsState.State, SettingsState.Event, SettingsState.Effect>() {
 
     override fun createInitialState() = SettingsState.State(
-        interfaceMode = interfaceModePreferences.selectedMode ?: AppInterfaceMode.MOBILE,
         interfaceLanguage = interfaceLanguagePreferences.selectedLanguage,
     )
 
@@ -215,14 +211,6 @@ class SettingsViewModel @Inject internal constructor(
     override fun onEvent(event: SettingsState.Event) {
         when (event) {
             SettingsState.Event.BackSelected -> nav.back()
-            is SettingsState.Event.InterfaceModeSelected -> {
-                if (event.mode == currentState.interfaceMode) return
-                interfaceModePreferences.select(event.mode)
-                analytics.eventInterfaceModeSelected(event.mode)
-                setState { copy(interfaceMode = event.mode) }
-                setEffect(SettingsState.Effect.RestartApplication)
-            }
-
             is SettingsState.Event.AppThemeSelected -> viewModelScope.launch {
                 analytics.eventAppThemeSelected(event.theme)
                 settingsStore.setAppTheme(event.theme)
@@ -449,8 +437,6 @@ class SettingsViewModel @Inject internal constructor(
                 interfaceLanguagePreferences.select(event.language)
                 analytics.eventInterfaceLanguageSelected(event.language)
                 setState { copy(interfaceLanguage = event.language) }
-                // Локаль применяется в attachBaseContext, поэтому нужен новый процесс.
-                setEffect(SettingsState.Effect.ColdRestartApplication)
             }
 
             is SettingsState.Event.ContentLanguageSelected -> viewModelScope.launch {

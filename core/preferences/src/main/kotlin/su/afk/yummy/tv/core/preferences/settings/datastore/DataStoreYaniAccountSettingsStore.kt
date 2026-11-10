@@ -113,6 +113,9 @@ internal class DataStoreYaniAccountSettingsStore @Inject constructor(
     override suspend fun setYaniContentLanguage(language: YaniContentLanguage) =
         store.setEnum(yaniContentLanguageKey, language)
 
+    override fun resolveSystemYaniContentLanguage(): YaniContentLanguage =
+        store.resolveSystemContentLanguage()
+
     override suspend fun ensureYaniContentLanguageInitialized() {
         store.edit { prefs ->
             if (YaniContentLanguage.fromPreferenceValue(prefs[yaniContentLanguageKey]) == null) {

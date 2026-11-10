@@ -25,7 +25,6 @@ import su.afk.yummy.tv.core.model.settings.YaniContentLanguage
 import su.afk.yummy.tv.core.mvi.UiEffect
 import su.afk.yummy.tv.core.mvi.UiEvent
 import su.afk.yummy.tv.core.mvi.UiState
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.core.preferences.settings.SettingsStore
 import su.afk.yummy.tv.core.utils.system.CacheStorageEntry
 import su.afk.yummy.tv.core.utils.system.PlatformInfo
@@ -36,9 +35,8 @@ import su.afk.yummy.tv.feature.settings.navigator.SettingsCategory
 class SettingsState {
     @Immutable
     data class State(
-        val interfaceMode: AppInterfaceMode = AppInterfaceMode.MOBILE,
-        val appTheme: AppTheme = AppTheme.WARM_AMBER,
-        val backgroundStyle: BackgroundStyle = BackgroundStyle.DARK,
+        val appTheme: AppTheme = AppTheme.GRAPHITE,
+        val backgroundStyle: BackgroundStyle = BackgroundStyle.AMOLED,
         val navTransitionStyle: NavTransitionStyle = NavTransitionStyle.FADE_SCALE,
         val posterCardSize: PosterCardSize = PosterCardSize.STANDARD,
         val titleCardLayout: TitleCardLayout = TitleCardLayout.TILE,
@@ -65,7 +63,7 @@ class SettingsState {
         val playerControlsAutoHideSeconds: Int = 4,
         val pictureInPictureEnabled: Boolean = true,
         val holdToConfirmEnabled: Boolean = true,
-        val playerOrientationMode: PlayerOrientationMode = PlayerOrientationMode.SYSTEM,
+        val playerOrientationMode: PlayerOrientationMode = PlayerOrientationMode.SENSOR_LANDSCAPE,
         val subtitleStyle: PlayerSubtitleStyleSettings = PlayerSubtitleStyleSettings(),
         val mobilePlayerGestureTutorialDismissed: Boolean = false,
         val tvPlayerControlsTutorialDismissed: Boolean = false,
@@ -127,9 +125,6 @@ class SettingsState {
         /** Пользователь выбрал цвет фона интерфейса. */
         data class BackgroundStyleSelected(val style: BackgroundStyle) : Event
         data class NavTransitionStyleSelected(val style: NavTransitionStyle) : Event
-
-        /** Пользователь подтвердил смену типа интерфейса. */
-        data class InterfaceModeSelected(val mode: AppInterfaceMode) : Event
 
         /** Пользователь выбрал качество постеров. */
 

@@ -26,7 +26,7 @@ import su.afk.yummy.tv.android.startup.utils.startReasonName
 import su.afk.yummy.tv.android.startup.utils.startTypeName
 import su.afk.yummy.tv.android.startup.utils.toStartupEntry
 import su.afk.yummy.tv.android.startup.utils.totalRamGb
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
+import su.afk.yummy.tv.core.preferences.device.DeviceTypeDetector
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,7 +42,7 @@ import javax.inject.Singleton
 class StartupMetricsTracker @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val analytics: StartupAnalytics,
-    private val interfaceModePreferences: AppInterfaceModePreferences,
+    private val deviceTypeDetector: DeviceTypeDetector,
 ) : Application.ActivityLifecycleCallbacks {
 
     private val handler = Handler(Looper.getMainLooper())
@@ -62,7 +62,7 @@ class StartupMetricsTracker @Inject constructor(
     /** Вызывать сразу после super.onCreate() приложения; [onCreateStartedAt] — до него. */
     fun start(application: Application, onCreateStartedAt: Long) {
         this.onCreateStartedAt = onCreateStartedAt
-        if (!isProcessStartedInForeground() || interfaceModePreferences.selectedMode == null) {
+        if (!isProcessStartedInForeground()) {
             isFinished = true
             return
         }

@@ -16,7 +16,6 @@ import su.afk.yummy.tv.core.model.settings.TitleCardLayout
 import su.afk.yummy.tv.core.model.settings.WatchedThresholds
 import su.afk.yummy.tv.core.model.settings.AppInterfaceLanguage
 import su.afk.yummy.tv.core.model.settings.YaniContentLanguage
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.feature.settings.model.DetailsButtonMoveDirection
 import javax.inject.Inject
 
@@ -31,12 +30,6 @@ internal class SettingsAnalytics @Inject constructor(
     }
 
     /** Пользователь изменил тип интерфейса приложения. */
-    fun eventInterfaceModeSelected(mode: AppInterfaceMode) {
-        tracker.track(
-            EVENT_INTERFACE_MODE_SELECTED,
-            analyticsParamsOf(PARAM_VALUE to mode.name.lowercase()),
-        )
-    }
 
     /**
      * Пользователь изменил тему приложения.
@@ -460,7 +453,6 @@ internal class SettingsAnalytics @Inject constructor(
         const val EVENT_LIBRARY_TAB_ORDER_MOVED = "settings_library_tab_order_moved"
         const val EVENT_LIBRARY_TAB_ORDER_RESET = "settings_library_tab_order_reset"
         const val EVENT_LIBRARY_TAB_ORDER_SCREEN_OPENED = "settings_library_tab_order_screen"
-        const val EVENT_INTERFACE_MODE_SELECTED = "settings_interface_mode_selected"
         const val EVENT_SCREEN_OPENED = "settings_screen"
         const val EVENT_SHOW_CATALOG_TITLE_YEAR_TOGGLED =
             "settings_show_top_title_year_toggled"

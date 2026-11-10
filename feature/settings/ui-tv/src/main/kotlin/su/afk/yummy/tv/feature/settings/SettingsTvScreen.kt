@@ -39,7 +39,6 @@ import su.afk.yummy.tv.core.designsystem.focus.requestFocusUntilTimeout
 import su.afk.yummy.tv.core.designsystem.locals.LocalMainMenuFocusRequester
 import su.afk.yummy.tv.core.designsystem.locals.LocalPreferredContentFocusRequester
 import su.afk.yummy.tv.core.designsystem.preview.ScreenPreviewTheme
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.core.utils.system.restartApplication
 import su.afk.yummy.tv.core.utils.system.restartApplicationCold
 import su.afk.yummy.tv.feature.settings.model.SettingsTab
@@ -49,7 +48,6 @@ import su.afk.yummy.tv.feature.settings.view.SettingsTvCategoryList
 import su.afk.yummy.tv.feature.settings.view.SettingsTvPanelHost
 import su.afk.yummy.tv.feature.settings.view.SettingsTvPickerPanel
 import su.afk.yummy.tv.feature.settings.view.SettingsTvValueRow
-import su.afk.yummy.tv.feature.settings.view.TvInterfaceModeConfirmationDialog
 import su.afk.yummy.tv.feature.settings.view.TvLogRecordingConfirmationDialog
 import su.afk.yummy.tv.feature.settings.view.category.SettingsTvPickerRow
 import su.afk.yummy.tv.feature.settings.view.valueText
@@ -74,7 +72,6 @@ fun SettingsTvScreen(
     onEvent: (SettingsState.Event) -> Unit,
 ) {
     var selectedTab by remember { mutableStateOf(SettingsTab.APPEARANCE) }
-    var pendingInterfaceMode by remember { mutableStateOf<AppInterfaceMode?>(null) }
     var openedPicker by remember { mutableStateOf<SettingsTvPicker?>(null) }
     val pickerRowFocusRequesters = remember {
         SettingsTvPicker.entries.associateWith { FocusRequester() }
@@ -229,11 +226,6 @@ fun SettingsTvScreen(
                         state = state,
                         entryFocusRequester = pickerPanelFocusRequester,
                         openerFocusRequester = pickerRowFocusRequesters.getValue(picker),
-                        onInterfaceModeSelected = { selectedMode ->
-                            if (selectedMode != state.interfaceMode) {
-                                pendingInterfaceMode = selectedMode
-                            }
-                        },
                         onEvent = onEvent,
                         onClose = closePicker,
                         modifier = Modifier
@@ -252,14 +244,4 @@ fun SettingsTvScreen(
         )
     }
 
-    pendingInterfaceMode?.let { targetMode ->
-        TvInterfaceModeConfirmationDialog(
-            targetModeLabel = targetMode.label(),
-            onConfirm = {
-                pendingInterfaceMode = null
-                onEvent(SettingsState.Event.InterfaceModeSelected(targetMode))
-            },
-            onDismiss = { pendingInterfaceMode = null },
-        )
-    }
 }

@@ -14,8 +14,10 @@ import su.afk.yummy.tv.core.navigation.root.RootTab
 class MainState {
 
     data class State(
-        val appTheme: AppTheme = AppTheme.WARM_AMBER,
-        val backgroundStyle: BackgroundStyle = BackgroundStyle.DARK,
+        /** Не показываем интерфейс до получения сохранённой темы и фона из DataStore. */
+        val appearanceLoaded: Boolean = false,
+        val appTheme: AppTheme = AppTheme.GRAPHITE,
+        val backgroundStyle: BackgroundStyle = BackgroundStyle.AMOLED,
         val navTransitionStyle: NavTransitionStyle = NavTransitionStyle.FADE_SCALE,
         val seasonalDecorationsEnabled: Boolean = true,
         /** Праздничная тема, включившаяся автоматически, о которой пользователю ещё не сообщили. */

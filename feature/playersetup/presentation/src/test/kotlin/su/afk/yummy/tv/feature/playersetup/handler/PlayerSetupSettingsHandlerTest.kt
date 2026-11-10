@@ -44,6 +44,7 @@ class PlayerSetupSettingsHandlerTest : BaseUnitTest() {
         every { store.playerOrientationMode } returns orientation
         every { store.pictureInPictureEnabled } returns pip
         every { accountStore.yaniContentLanguage } returns language
+        every { accountStore.resolveSystemYaniContentLanguage() } returns YaniContentLanguage.RUSSIAN
     }
 
     @Test

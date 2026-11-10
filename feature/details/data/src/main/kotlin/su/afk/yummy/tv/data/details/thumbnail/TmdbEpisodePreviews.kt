@@ -6,8 +6,7 @@ import kotlinx.coroutines.async
 import su.afk.yummy.tv.core.common.coroutines.AppClock
 import su.afk.yummy.tv.core.common.episode.episodeGroupKey
 import su.afk.yummy.tv.core.model.anime.AnimeTmdbImages
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
+import su.afk.yummy.tv.core.preferences.device.DeviceTypeDetector
 import su.afk.yummy.tv.core.utils.coroutines.di.IoApplicationScope
 import su.afk.yummy.tv.domain.anime.usecase.GetAnimeTmdbImagesUseCase
 import java.util.concurrent.ConcurrentHashMap
@@ -25,7 +24,7 @@ import javax.inject.Singleton
 @Singleton
 class TmdbEpisodePreviews @Inject constructor(
     private val getAnimeTmdbImages: GetAnimeTmdbImagesUseCase,
-    private val interfaceModePreferences: AppInterfaceModePreferences,
+    private val deviceTypeDetector: DeviceTypeDetector,
     @IoApplicationScope private val scope: CoroutineScope,
     private val clock: AppClock,
 ) {
@@ -38,7 +37,7 @@ class TmdbEpisodePreviews @Inject constructor(
     suspend fun previewUrl(animeId: Int, episode: String): String? {
         if (animeId <= 0 || episode.isBlank()) return null
         val url = previewsOf(animeId).episodePreviewUrls[episode.episodeGroupKey()] ?: return null
-        val size = if (interfaceModePreferences.selectedMode == AppInterfaceMode.TV) TV_SIZE_SEGMENT else MOBILE_SIZE_SEGMENT
+        val size = if (deviceTypeDetector.isTv) TV_SIZE_SEGMENT else MOBILE_SIZE_SEGMENT
         return url.replace(SERVED_SIZE_SEGMENT, size)
     }
 

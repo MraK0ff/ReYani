@@ -62,6 +62,8 @@ class MobileMainGraph @Inject internal constructor(
         val showRail = !isRequiredUpdateDestination && !isFullscreenDestination
 
         ScreenNavigator(viewModel) { state, effect, onEvent ->
+            // Не рисуем тему по умолчанию: ждём атомарную загрузку сохранённых оформления и фона.
+            if (!state.appearanceLoaded) return@ScreenNavigator
             val accountSettingsFocusRequester = remember { FocusRequester() }
             val toast = rememberGlobalToastState()
             LaunchedEffect(effect) {

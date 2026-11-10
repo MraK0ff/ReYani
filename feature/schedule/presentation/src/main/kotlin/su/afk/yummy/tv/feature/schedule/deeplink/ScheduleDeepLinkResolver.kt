@@ -5,8 +5,7 @@ import su.afk.yummy.tv.core.deeplink.api.DeepLinkReference
 import su.afk.yummy.tv.core.deeplink.api.DeepLinkResolver
 import su.afk.yummy.tv.core.navigation.manager.INavigationManager
 import su.afk.yummy.tv.core.navigation.root.RootTab
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
+import su.afk.yummy.tv.core.preferences.device.DeviceTypeDetector
 import su.afk.yummy.tv.feature.schedule.IScheduleNavigator
 import javax.inject.Inject
 
@@ -20,12 +19,12 @@ import javax.inject.Inject
 class ScheduleDeepLinkResolver @Inject constructor(
     private val navManager: INavigationManager,
     private val scheduleNavigator: IScheduleNavigator,
-    private val interfaceModePreferences: AppInterfaceModePreferences,
+    private val deviceTypeDetector: DeviceTypeDetector,
 ) : DeepLinkResolver {
 
     override fun resolve(link: DeepLinkReference): NavKey? {
         if (link.appLinkHost != "schedule") return null
-        if (interfaceModePreferences.selectedMode == AppInterfaceMode.TV) {
+        if (deviceTypeDetector.isTv) {
             navManager.switchRoot(RootTab.SCHEDULE, reselectPopToRoot = false)
             return null
         }

@@ -35,4 +35,20 @@
     <string name="player_setup_mobile_orientation_sensor_landscape">Альбомная (датчик)</string>
     <string name="player_setup_mobile_orientation_sensor_landscape_hint">Всегда альбомная ориентация, сторона (влево или вправо) выбирается по датчику</string>
     <string name="player_setup_mobile_orientation_portrait_hint">Всегда вертикальная ориентация, даже если в системе включён автоповорот</string>
+    <string name="player_setup_interface_language_label">Язык интерфейса</string>
+    <string name="player_setup_interface_language_hint">Язык меню и элементов управления. Применится после перезапуска приложения.</string>
+    <string name="player_setup_theme_label">Цветовая тема</string>
+    <string name="player_setup_theme_hint">Цветовая палитра приложения</string>
+    <string name="player_setup_background_label">Фон приложения</string>
+    <string name="player_setup_background_hint">Светлый, тёмный или системный фон</string>
+    <string name="player_setup_theme_graphite">Графитовая</string>
+    <string name="player_setup_theme_amber">Тёплый янтарь</string>
+    <string name="player_setup_theme_sakura">Сакура</string>
+    <string name="player_setup_theme_mint">Мятная</string>
+    <string name="player_setup_theme_ocean">Океан</string>
+    <string name="player_setup_theme_dynamic">Динамическая (Material You)</string>
+    <string name="player_setup_background_system">Системный</string>
+    <string name="player_setup_background_light">Светлый</string>
+    <string name="player_setup_background_dark">Тёмный</string>
+    <string name="player_setup_background_amoled">AMOLED</string>
 </resources>

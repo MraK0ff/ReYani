@@ -33,5 +33,6 @@ interface YaniAccountSettingsStore {
     suspend fun clearYaniAccount()
     suspend fun setYaniUnreadNotificationsCount(count: Int)
     suspend fun setYaniContentLanguage(language: YaniContentLanguage)
+    fun resolveSystemYaniContentLanguage(): YaniContentLanguage
     suspend fun ensureYaniContentLanguageInitialized()
 }

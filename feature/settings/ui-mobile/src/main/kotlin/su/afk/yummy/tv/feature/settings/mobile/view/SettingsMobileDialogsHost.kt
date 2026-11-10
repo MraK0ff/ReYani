@@ -17,7 +17,6 @@ import su.afk.yummy.tv.core.model.settings.PlayerSubtitleEdge
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleTextColor
 import su.afk.yummy.tv.core.model.settings.AppInterfaceLanguage
 import su.afk.yummy.tv.core.model.settings.YaniContentLanguage
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.feature.settings.SettingsState
 import su.afk.yummy.tv.feature.settings.mobile.model.SettingsMobilePicker
 import su.afk.yummy.tv.feature.settings.mobile.model.SettingsMobilePickerOption
@@ -36,7 +35,6 @@ import su.afk.yummy.tv.feature.settings.common.utils.label
 @Stable
 internal class SettingsMobileDialogs {
     var activePicker by mutableStateOf<SettingsMobilePicker?>(null)
-    var pendingInterfaceMode by mutableStateOf<AppInterfaceMode?>(null)
     var showCacheStorage by mutableStateOf(false)
 }
 
@@ -64,25 +62,6 @@ internal fun SettingsMobileDialogsHost(
             },
             onDismiss = { dialogs.activePicker = null },
             onToggle = { onEvent(SettingsState.Event.NewEpisodesSourceToggled(it)) },
-        )
-
-        SettingsMobilePicker.INTERFACE_MODE -> SettingsMobilePickerSheet(
-            title = stringResource(R.string.settings_interface_type),
-            selectedValue = state.interfaceMode,
-            options = AppInterfaceMode.entries.map {
-                SettingsMobilePickerOption(
-                    it,
-                    it.label(),
-                    it.hint(),
-                )
-            },
-            onDismiss = { dialogs.activePicker = null },
-            onSelected = { selectedMode ->
-                dialogs.activePicker = null
-                if (selectedMode != state.interfaceMode) {
-                    dialogs.pendingInterfaceMode = selectedMode
-                }
-            },
         )
 
         SettingsMobilePicker.THEME -> SettingsMobilePickerSheet(
@@ -261,14 +240,4 @@ internal fun SettingsMobileDialogsHost(
         )
     }
 
-    dialogs.pendingInterfaceMode?.let { targetMode ->
-        MobileInterfaceModeConfirmationDialog(
-            targetModeLabel = targetMode.label(),
-            onConfirm = {
-                dialogs.pendingInterfaceMode = null
-                onEvent(SettingsState.Event.InterfaceModeSelected(targetMode))
-            },
-            onDismiss = { dialogs.pendingInterfaceMode = null },
-        )
-    }
 }

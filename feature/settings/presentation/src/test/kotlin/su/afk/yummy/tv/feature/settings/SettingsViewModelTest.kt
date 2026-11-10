@@ -33,9 +33,7 @@ import su.afk.yummy.tv.core.model.settings.YaniContentLanguage
 import su.afk.yummy.tv.core.navigation.manager.INavigationManager
 import su.afk.yummy.tv.core.preferences.api.TokenStorageMode
 import su.afk.yummy.tv.core.preferences.api.YaniAuthPreferences
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.core.preferences.interface_language.AppInterfaceLanguagePreferences
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
 import su.afk.yummy.tv.core.preferences.settings.AppLifecycleSettingsStore
 import su.afk.yummy.tv.core.preferences.settings.EpisodePushSettingsStore
 import su.afk.yummy.tv.core.preferences.settings.SettingsStore
@@ -72,7 +70,6 @@ class SettingsViewModelTest : BaseUnitTest() {
     private val appLifecycleSettingsStore: AppLifecycleSettingsStore = mockk(relaxed = true)
     private val episodePushEnabled = MutableStateFlow(true)
     private val yaniAuthPreferences: YaniAuthPreferences = mockk()
-    private val interfaceModePreferences: AppInterfaceModePreferences = mockk(relaxed = true)
     private val interfaceLanguagePreferences: AppInterfaceLanguagePreferences = mockk(relaxed = true)
     private val tvIntegration: ITvIntegration = mockk(relaxed = true)
     private val nav: INavigationManager = mockk(relaxed = true)
@@ -108,8 +105,7 @@ class SettingsViewModelTest : BaseUnitTest() {
         every { yaniAuthPreferences.storageMode } returns storageMode
         every { tvIntegration.previewChannelBrowsable } returns MutableStateFlow(true)
         every { exportRepository.observeDestination() } returns exportDestination
-        every { interfaceModePreferences.selectedMode } returns AppInterfaceMode.MOBILE
-        every { interfaceLanguagePreferences.selectedLanguage } returns AppInterfaceLanguage.SYSTEM
+        every { interfaceLanguagePreferences.selectedLanguage } returns AppInterfaceLanguage.RUSSIAN
         coEvery { cacheStorageInspector.inspect() } returns CacheStorageReport(entries = emptyList(), totalBytes = 1_024L)
         coEvery { analyticsDeviceIdProvider.deviceId() } returns "abcdefgh"
     }
@@ -121,7 +117,6 @@ class SettingsViewModelTest : BaseUnitTest() {
         episodePushSettingsStore = episodePushSettingsStore,
         appLifecycleSettingsStore = appLifecycleSettingsStore,
         yaniAuthPreferences = yaniAuthPreferences,
-        interfaceModePreferences = interfaceModePreferences,
         interfaceLanguagePreferences = interfaceLanguagePreferences,
         tvIntegration = tvIntegration,
         nav = nav,
@@ -179,7 +174,6 @@ class SettingsViewModelTest : BaseUnitTest() {
         assertEquals("token", state.yaniApplicationToken)
         assertFalse(state.isFallbackSessionStorage.xor(storageMode.value == TokenStorageMode.FALLBACK))
         assertTrue(state.isPreviewChannelBrowsable)
-        assertEquals(AppInterfaceMode.MOBILE, state.interfaceMode)
         verify(exactly = 1) { analytics.eventScreenOpened() }
     }
 
@@ -266,34 +260,15 @@ class SettingsViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `changing the interface mode saves it and asks for a restart`() = runTest {
+    fun `changing the interface language saves it and applies without restarting the process`() = runTest {
         val vm = createViewModel()
         val effects = collectEmissions(vm.effect)
-
-        vm.setEvent(Event.InterfaceModeSelected(AppInterfaceMode.MOBILE))
-        assertTrue(effects.isEmpty())
-
-        val other = AppInterfaceMode.entries.first { it != AppInterfaceMode.MOBILE }
-        vm.setEvent(Event.InterfaceModeSelected(other))
-
-        verify(exactly = 1) { interfaceModePreferences.select(other) }
-        assertEquals(other, vm.currentState.interfaceMode)
-        assertEquals(listOf<Effect>(Effect.RestartApplication), effects)
-    }
-
-    @Test
-    fun `changing the interface language saves it and asks for a cold restart`() = runTest {
-        val vm = createViewModel()
-        val effects = collectEmissions(vm.effect)
-
-        vm.setEvent(Event.InterfaceLanguageSelected(AppInterfaceLanguage.SYSTEM))
-        assertTrue(effects.isEmpty())
 
         vm.setEvent(Event.InterfaceLanguageSelected(AppInterfaceLanguage.ENGLISH))
 
         verify(exactly = 1) { interfaceLanguagePreferences.select(AppInterfaceLanguage.ENGLISH) }
         assertEquals(AppInterfaceLanguage.ENGLISH, vm.currentState.interfaceLanguage)
-        assertEquals(listOf<Effect>(Effect.ColdRestartApplication), effects)
+        assertTrue(effects.isEmpty())
     }
 
     @Test

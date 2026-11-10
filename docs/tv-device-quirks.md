@@ -6,9 +6,11 @@
 
 ## Определение телевизора
 
-Единого флага нет: интерфейс выбирает пользователь (`AppInterfaceModePreferences`, диалог в
-`InterfaceRouterActivity`), а в местах, где нужно знать тип устройства, код сам читает
-`Configuration.UI_MODE_TYPE_TELEVISION`:
+Тип устройства централизованно определяет `DeviceTypeDetector` в `core:preferences`. Основной
+критерий — `UiModeManager.currentModeType == UI_MODE_TYPE_TELEVISION` (на старых API используется
+`Configuration.UI_MODE_TYPE_MASK`); `PackageManager.FEATURE_LEANBACK` — дополнительный признак
+для диагностики несовпадений. При расхождении признаков приоритет остаётся за UI mode. Ручной
+выбор платформы отсутствует:
 
 | Где                              | Что зависит                                                                |
 |----------------------------------|----------------------------------------------------------------------------|

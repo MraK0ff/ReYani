@@ -97,8 +97,8 @@ internal class DataStoreSettingsStore @Inject constructor(
 
     override val settingsSnapshot: Flow<SettingsSnapshot> = store.data.map { prefs ->
         SettingsSnapshot(
-            appTheme = prefs.enum(appThemeKey, AppTheme.WARM_AMBER),
-            backgroundStyle = prefs.enum(backgroundStyleKey, BackgroundStyle.DARK),
+            appTheme = prefs.enum(appThemeKey, AppTheme.GRAPHITE),
+            backgroundStyle = prefs.enum(backgroundStyleKey, BackgroundStyle.AMOLED),
             navTransitionStyle = prefs.enum(navTransitionStyleKey, NavTransitionStyle.FADE_SCALE),
             posterCardSize = prefs.enum(posterCardSizeKey, PosterCardSize.STANDARD),
             titleCardLayout = prefs.enum(titleCardLayoutKey, TitleCardLayout.TILE),
@@ -118,19 +118,19 @@ internal class DataStoreSettingsStore @Inject constructor(
             adaptiveVideoQualityEnabled = prefs[adaptiveVideoQualityEnabledKey] ?: true,
             watchNextEnabled = prefs[watchNextEnabledKey] ?: true,
             previewCacheSize = (prefs[previewCacheSizeKey] ?: 100).coerceIn(50, 500),
-            autoSkipOpeningsEndings = prefs[autoSkipOpeningsEndingsKey] ?: false,
-            autoSkipDelaySeconds = (prefs[autoSkipDelaySecondsKey] ?: 5).coerceIn(1, 15),
+            autoSkipOpeningsEndings = prefs[autoSkipOpeningsEndingsKey] ?: true,
+            autoSkipDelaySeconds = (prefs[autoSkipDelaySecondsKey] ?: 1).coerceIn(1, 15),
             showOpeningOnTimeline = prefs[showOpeningOnTimelineKey] ?: false,
-            autoPlayNextEpisode = prefs[autoPlayNextEpisodeKey] ?: false,
+            autoPlayNextEpisode = prefs[autoPlayNextEpisodeKey] ?: true,
             nextEpisodeSwitchDelaySeconds =
-                (prefs[nextEpisodeSwitchDelaySecondsKey] ?: 10).coerceIn(0, 30),
+                (prefs[nextEpisodeSwitchDelaySecondsKey] ?: 0).coerceIn(0, 30),
             playerControlsAutoHideSeconds =
-                (prefs[playerControlsAutoHideSecondsKey] ?: 4).coerceIn(1, 30000),
+                (prefs[playerControlsAutoHideSecondsKey] ?: 2).coerceIn(1, 30000),
             pictureInPictureEnabled = prefs[pictureInPictureEnabledKey] ?: true,
             holdToConfirmEnabled = prefs[holdToConfirmEnabledKey] ?: true,
             playerOrientationMode = prefs.enum(
                 playerOrientationModeKey,
-                PlayerOrientationMode.SYSTEM,
+                PlayerOrientationMode.SENSOR_LANDSCAPE,
             ),
             suggestNextEpisodeOnWatched = prefs[suggestNextEpisodeOnWatchedKey] ?: true,
             autoManageLibraryLists = prefs[autoManageLibraryListsKey] ?: true,
@@ -157,8 +157,8 @@ internal class DataStoreSettingsStore @Inject constructor(
 
     override val mainSettingsSnapshot: Flow<MainSettingsSnapshot> = store.data.map { prefs ->
         MainSettingsSnapshot(
-            appTheme = prefs.enum(appThemeKey, AppTheme.WARM_AMBER),
-            backgroundStyle = prefs.enum(backgroundStyleKey, BackgroundStyle.DARK),
+            appTheme = prefs.enum(appThemeKey, AppTheme.GRAPHITE),
+            backgroundStyle = prefs.enum(backgroundStyleKey, BackgroundStyle.AMOLED),
             navTransitionStyle = prefs.enum(navTransitionStyleKey, NavTransitionStyle.FADE_SCALE),
             posterCardSize = prefs.enum(posterCardSizeKey, PosterCardSize.STANDARD),
             yaniNickname = prefs[yaniNicknameKey].orEmpty(),

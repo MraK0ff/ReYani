@@ -52,6 +52,8 @@ class TvMainGraph @Inject constructor(
         val showMainMenu = atRoot && !isRequiredUpdateDestination
 
         ScreenNavigator(viewModel) { state, effect, onEvent ->
+            // Не рисуем тему по умолчанию: ждём атомарную загрузку сохранённых оформления и фона.
+            if (!state.appearanceLoaded) return@ScreenNavigator
             val toast = rememberGlobalToastState()
             LaunchedEffect(effect) {
                 effect.collect { eff ->
