@@ -11,4 +11,5 @@ internal enum class SettingsMobilePicker {
     SUBTITLE_EDGE,
     INTERFACE_LANGUAGE,
     CONTENT_LANGUAGE,
+    TORRENT_SORT,
 }

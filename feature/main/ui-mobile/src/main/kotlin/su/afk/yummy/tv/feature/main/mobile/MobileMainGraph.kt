@@ -12,6 +12,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import su.afk.yummy.tv.core.common.coroutines.AppClock
 import su.afk.yummy.tv.core.designsystem.baseScreen.ScreenNavigator
 import su.afk.yummy.tv.core.designsystem.components.rememberGlobalToastState
+import su.afk.yummy.tv.core.designsystem.dialog.ChoiceDialogHost
 import su.afk.yummy.tv.core.designsystem.dialog.ConfirmDialogHost
 import su.afk.yummy.tv.core.designsystem.locals.LocalIsOffline
 import su.afk.yummy.tv.core.designsystem.locals.LocalLibraryListStatuses
@@ -34,6 +35,8 @@ import su.afk.yummy.tv.feature.main.mobile.navigation.MobileNavigationHolder
 import su.afk.yummy.tv.feature.main.mobile.navigation.mobileNavPopTransitionSpec
 import su.afk.yummy.tv.feature.main.mobile.navigation.mobileNavTransitionSpec
 import su.afk.yummy.tv.feature.main.mobile.navigation.rememberMobileListDetailSceneStrategy
+import su.afk.yummy.tv.feature.main.mobile.utils.mobileMainTourSteps
+import su.afk.yummy.tv.feature.main.utils.MAIN_ONBOARDING_TOUR_ID
 import su.afk.yummy.tv.feature.main.mobile.view.MobileMainScaffold
 import su.afk.yummy.tv.feature.update.navigator.UpdateDestination
 import javax.inject.Inject
@@ -80,6 +83,12 @@ class MobileMainGraph @Inject internal constructor(
                 isTelevision = false,
             ) {
                 ConfirmDialogHost(isTelevision = false)
+                ChoiceDialogHost(isTelevision = false)
+                val onboarding = rememberOnboardingController()
+                val tabRootReady = atTabRoot && !isRequiredUpdateDestination && !isFullscreenDestination
+                if (state.onboardingWelcomePending && tabRootReady) {
+                    OnboardingWelcome(onFinished = { onEvent(MainState.Event.OnboardingWelcomeFinished) })
+                }
                 SeasonalPrompt(
                     theme = state.seasonalPrompt,
                     isTelevision = false,
@@ -97,6 +106,12 @@ class MobileMainGraph @Inject internal constructor(
                         atTabRoot && navManager.currentRoot == RootTab.ACCOUNT
                     },
                 ) {
+                    OnboardingTourEffect(
+                        tourId = MAIN_ONBOARDING_TOUR_ID,
+                        steps = mobileMainTourSteps,
+                        show = state.showMainOnboardingTour && tabRootReady,
+                        onFinished = { onEvent(MainState.Event.OnboardingMainTourFinished) },
+                    )
                     MobileMainScaffold(
                         selectedDestination = navManager.currentRoot,
                         menuItems = mobileMenuItems(

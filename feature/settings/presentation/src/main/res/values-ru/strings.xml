@@ -168,8 +168,8 @@
     <string name="settings_controls_auto_hide_label">Скрывать управление плеером через</string>
     <string name="settings_picture_in_picture_label">Плавающий режим (PiP)</string>
     <string name="settings_picture_in_picture_enabled">Автоматически включать при выходе из приложения во время воспроизведения</string>
-    <string name="settings_hold_to_confirm_label">Удержание для блокировки и смены серии</string>
-    <string name="settings_hold_to_confirm_enabled">Блокировка и переключение серии срабатывают только при удержании кнопки</string>
+    <string name="settings_hold_to_confirm_label">Удержание для разблокировки</string>
+    <string name="settings_hold_to_confirm_enabled">Экран разблокируется только при удержании кнопки</string>
     <string name="settings_advanced_volume_label">Продвинутая громкость в плеере</string>
     <string name="settings_advanced_volume_enabled" formatted="false">У плеера своя громкость (0–100%, шаг 1%), независимо от системы</string>
     <string name="settings_advanced_volume_disabled">Громкость меняет системный звук как обычно</string>
@@ -350,4 +350,48 @@
     <string name="settings_home_block_collections">Коллекции</string>
     <string name="settings_home_block_blogger_videos">От блогеров</string>
     <string name="settings_home_block_quick_actions">Ещё</string>
+
+    <string name="settings_onboarding_reset">Показать подсказки снова</string>
+    <string name="settings_onboarding_reset_hint">Приветственные слайды, подсказки по экранам и обучение плеера покажутся заново</string>
+    <string name="settings_onboarding_reset_done">Подсказки покажутся при следующем заходе на экраны</string>
+    <string name="settings_torrent_title">Торренты</string>
+    <string name="settings_torrent_enabled_label">Поиск торрентов</string>
+    <string name="settings_torrent_enabled_on">В выборе озвучки появится пункт «Поиск торрента»</string>
+    <string name="settings_torrent_enabled_off">Выключено</string>
+    <string name="settings_torrent_server_label">Адрес TorrServer</string>
+    <string name="settings_torrent_server_placeholder">http://192.168.1.10:8090</string>
+    <string name="settings_torrent_user_label">Логин TorrServer (необязательно)</string>
+    <string name="settings_torrent_password_label">Пароль TorrServer (необязательно)</string>
+    <string name="settings_torrent_jacred_label">Искать через JacRed</string>
+    <string name="settings_torrent_jacred_on">Поиск через JacRed (ключ не нужен)</string>
+    <string name="settings_torrent_jacred_off">Поиск через JacRed выключен</string>
+    <string name="settings_torrent_jackett_label">Искать через Jackett</string>
+    <string name="settings_torrent_jackett_on">Поиск через ваш Jackett</string>
+    <string name="settings_torrent_jackett_off">Поиск через Jackett выключен</string>
+    <string name="settings_torrent_jacred_url_label">Адрес JacRed</string>
+    <string name="settings_torrent_jackett_url_label">Адрес Jackett</string>
+    <string name="settings_torrent_jackett_key_label">API-ключ Jackett</string>
+    <string name="settings_torrent_hint">Нужен свой TorrServer: https://github.com/YouROK/TorrServer
+Индексатор поиска: https://jac-red.ru или Jackett: https://github.com/jackett/jackett</string>
+    <string name="settings_category_torrent">Торренты</string>
+    <string name="settings_mobile_category_torrent_hint">Поиск, TorrServer, сортировка</string>
+    <string name="settings_torrent_sort_title">Сортировка торрентов</string>
+    <string name="settings_torrent_sort_seeders">По сидам</string>
+    <string name="settings_torrent_sort_seeders_hint">Сначала самые раздаваемые</string>
+    <string name="settings_torrent_sort_size">По размеру</string>
+    <string name="settings_torrent_sort_size_hint">Сначала самые крупные</string>
+    <string name="settings_torrent_sort_title_name">По названию</string>
+    <string name="settings_torrent_sort_title_hint">По алфавиту</string>
+    <string name="settings_torrent_sort_reversed_label">Обратный порядок</string>
+    <string name="settings_torrent_sort_reversed_on">Порядок перевёрнут</string>
+    <string name="settings_torrent_sort_reversed_off">Обычный порядок выбранного поля</string>
+    <string name="settings_torrent_check_label">Проверить TorrServer</string>
+    <string name="settings_torrent_check_checking">Проверяем соединение…</string>
+    <string name="settings_torrent_check_ok">Подключено. Версия сервера: %1$s</string>
+    <string name="settings_torrent_check_unreachable">Сервер не отвечает. Проверьте адрес, что он запущен и доступ к локальной сети</string>
+    <string name="settings_torrent_check_unauthorized">Нужна авторизация: укажите логин и пароль TorrServer</string>
+    <string name="settings_torrent_check_unexpected">Неожиданный ответ (HTTP %1$d). Похоже, это не адрес TorrServer</string>
+    <string name="settings_torrent_warning_no_server">Источник торрентов не появится: не указан адрес TorrServer</string>
+    <string name="settings_torrent_warning_server_unavailable">Источник торрентов не появится: TorrServer недоступен</string>
+    <string name="settings_torrent_warning_no_indexer">Источник торрентов не появится: включите JacRed или Jackett (с адресом)</string>
 </resources>

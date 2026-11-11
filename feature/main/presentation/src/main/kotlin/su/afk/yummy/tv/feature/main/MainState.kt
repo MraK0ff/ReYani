@@ -22,6 +22,10 @@ class MainState {
         val seasonalDecorationsEnabled: Boolean = true,
         /** Праздничная тема, включившаяся автоматически, о которой пользователю ещё не сообщили. */
         val seasonalPrompt: SeasonalTheme? = null,
+        /** Нужно показать приветственные слайды (первый запуск). */
+        val onboardingWelcomePending: Boolean = false,
+        /** Тур по главным вкладкам ещё не пройден и приветственные слайды уже закрыты. */
+        val showMainOnboardingTour: Boolean = false,
         val posterCardSize: PosterCardSize = PosterCardSize.STANDARD,
         val yaniNickname: String = "",
         val yaniAvatarUrl: String = "",
@@ -45,6 +49,12 @@ class MainState {
 
         /** Пользователь ответил на диалог о праздничном оформлении; [disable] — отключить его. */
         data class SeasonalPromptAnswered(val disable: Boolean) : Event()
+
+        /** Приветственные слайды закрыты (пройдены или пропущены). */
+        data object OnboardingWelcomeFinished : Event()
+
+        /** Тур по главным вкладкам завершён или пропущен. */
+        data object OnboardingMainTourFinished : Event()
     }
 
     sealed class Effect : UiEffect {

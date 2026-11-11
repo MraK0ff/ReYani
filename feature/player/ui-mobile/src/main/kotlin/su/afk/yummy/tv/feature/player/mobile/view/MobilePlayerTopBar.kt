@@ -1,8 +1,6 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,6 +10,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -31,8 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import su.afk.yummy.tv.core.designsystem.theme.overline
-import su.afk.yummy.tv.core.designsystem.utils.dubbingDisplayName
 import su.afk.yummy.tv.core.model.anime.EpisodeFlags
+import su.afk.yummy.tv.core.designsystem.utils.dubbingDisplayName
 import su.afk.yummy.tv.feature.player.presentation.R
 import su.afk.yummy.tv.core.designsystem.R as DesignSystemR
 
@@ -42,9 +41,10 @@ internal fun MobilePlayerTopBar(
     episode: String,
     dubbing: String,
     playerName: String,
+    isDownloaded: Boolean,
     episodeFlags: EpisodeFlags?,
-    onBack: () -> Unit,
     onLockClick: () -> Unit,
+    onBack: () -> Unit,
     visible: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -102,9 +102,13 @@ internal fun MobilePlayerTopBar(
                     horizontalAlignment = Alignment.End,
                     modifier = Modifier.padding(start = 8.dp),
                 ) {
-                    if (playerName.isNotBlank()) {
+                    val badgeText = listOfNotNull(
+                        playerName.takeIf(String::isNotBlank),
+                        stringResource(R.string.player_badge_downloaded).takeIf { isDownloaded },
+                    ).joinToString(" • ")
+                    if (badgeText.isNotBlank()) {
                         Text(
-                            text = playerName.uppercase(),
+                            text = badgeText.uppercase(),
                             color = Color.Black,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -116,8 +120,10 @@ internal fun MobilePlayerTopBar(
                                 .padding(horizontal = 12.dp, vertical = 5.dp),
                         )
                     }
-                    // Круглая подложка с обводкой, как у кнопок управления внизу: голые точки
-                    // терялись на светлом кадре.
+                    MobilePlayerEpisodeFlagLabel(
+                        flags = episodeFlags,
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.padding(top = 6.dp),
@@ -143,6 +149,7 @@ internal fun MobilePlayerTopBar(
         }
     }
 }
+
 private val FlagFillerColor = Color(0xFFFFC107)
 private val FlagRecapColor = Color(0xFF90CAF9)
 

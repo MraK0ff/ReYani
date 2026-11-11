@@ -50,6 +50,8 @@ class PlayerState {
          * узла хост подменяется на месте, без перерезолва источника.
          */
         val streamFailoverHost: String? = null,
+        /** Название играющего источника (раздача торрента) для чипа в плеере; null — чип показывает озвучку. */
+        val streamSourceLabel: String? = null,
         val allohaAudioTracks: List<AllohaAudioTrack> = emptyList(),
         val selectedAllohaAudioId: String? = null,
         val allohaSubtitles: List<AllohaSubtitleTrack> = emptyList(),
@@ -83,7 +85,7 @@ class PlayerState {
         /** Через сколько секунд бездействия скрываются контролы. */
         val controlsAutoHideSeconds: Int = 4,
         val pictureInPictureEnabled: Boolean = true,
-        /** Блокировка и смена серии в мобильном плеере требуют удержания кнопки. */
+        /** Разблокировка экрана в мобильном плеере требует удержания кнопки. */
         val holdToConfirmEnabled: Boolean = true,
         val playerOrientationMode: PlayerOrientationMode = PlayerOrientationMode.SENSOR_LANDSCAPE,
         val mobileGestureTutorialReady: Boolean = false,
