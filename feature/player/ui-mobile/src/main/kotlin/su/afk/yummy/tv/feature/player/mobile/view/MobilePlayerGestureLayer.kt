@@ -8,12 +8,15 @@ import androidx.compose.foundation.gestures.verticalDrag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.unit.dp
 import su.afk.yummy.tv.feature.player.common.model.StepSeekDirection
@@ -21,6 +24,7 @@ import su.afk.yummy.tv.feature.player.mobile.model.MobileVerticalGestureZone
 import kotlin.math.sqrt
 
 private const val VERTICAL_GESTURE_EDGE_FRACTION = 0.2f
+private const val SIDE_HOLD_SEEK_FRACTION = 0.35f
 private val VERTICAL_GESTURE_SIDE_SAFE_AREA = 32.dp
 
 @Composable
@@ -36,6 +40,8 @@ internal fun MobilePlayerGestureLayer(
     onVerticalDragStart: (zone: MobileVerticalGestureZone) -> Unit,
     onVerticalDrag: (zone: MobileVerticalGestureZone, deltaFraction: Float) -> Unit,
     onVerticalDragEnd: (zone: MobileVerticalGestureZone) -> Unit,
+    controlsActive: Boolean,
+    onLongPressSeek: (StepSeekDirection) -> Unit,
     onLongPressStart: () -> Unit,
     onLongPressEnd: () -> Unit,
     modifier: Modifier = Modifier,
@@ -48,9 +54,17 @@ internal fun MobilePlayerGestureLayer(
     val currentOnVerticalDragStart by rememberUpdatedState(onVerticalDragStart)
     val currentOnVerticalDrag by rememberUpdatedState(onVerticalDrag)
     val currentOnVerticalDragEnd by rememberUpdatedState(onVerticalDragEnd)
+    val currentOnLongPressSeek by rememberUpdatedState(onLongPressSeek)
     val currentOnLongPressStart by rememberUpdatedState(onLongPressStart)
     val currentOnLongPressEnd by rememberUpdatedState(onLongPressEnd)
 
+    val baseViewConfiguration = LocalViewConfiguration.current
+    val quickLongPressConfiguration = androidx.compose.runtime.remember(baseViewConfiguration) {
+        object : ViewConfiguration by baseViewConfiguration {
+            override val longPressTimeoutMillis: Long = 320L
+        }
+    }
+    CompositionLocalProvider(LocalViewConfiguration provides quickLongPressConfiguration) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -96,7 +110,7 @@ internal fun MobilePlayerGestureLayer(
                     }
                 }
             }
-            .pointerInput(enabled, locked) {
+            .pointerInput(enabled, locked, controlsActive) {
                 if (!enabled) return@pointerInput
 
                 detectTapGestures(
@@ -113,7 +127,13 @@ internal fun MobilePlayerGestureLayer(
                             currentOnDoubleTap(direction)
                         }
                     },
-                    onLongPress = if (locked) null else ({ currentOnLongPressStart() }),
+                    onLongPress = if (locked || controlsActive) null else ({ offset ->
+                        when {
+                            offset.x < size.width * SIDE_HOLD_SEEK_FRACTION -> currentOnLongPressSeek(StepSeekDirection.Backward)
+                            offset.x > size.width * (1f - SIDE_HOLD_SEEK_FRACTION) -> currentOnLongPressSeek(StepSeekDirection.Forward)
+                            else -> currentOnLongPressStart()
+                        }
+                    }),
                     onPress = {
                         try {
                             tryAwaitRelease()
@@ -161,6 +181,7 @@ internal fun MobilePlayerGestureLayer(
                 }
             },
     )
+    }
 }
 
 private fun Offset.isInVerticalGestureArea(height: Int): Boolean {

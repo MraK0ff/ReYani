@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
@@ -33,9 +32,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.width
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.compose.ContentFrame
@@ -44,8 +45,10 @@ import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import su.afk.yummy.tv.core.utils.cast.CastSupport
+import su.afk.yummy.tv.core.model.settings.PlayerResizeMode
 import su.afk.yummy.tv.feature.player.PlayerState
 import su.afk.yummy.tv.feature.player.common.PlayerBlackBackdrop
+import su.afk.yummy.tv.feature.player.common.PlayerSpeedOptions
 import su.afk.yummy.tv.feature.player.common.PlayerBufferingIndicator
 import su.afk.yummy.tv.feature.player.common.PlayerEpisodeEndController
 import su.afk.yummy.tv.feature.player.common.PlayerKeepScreenOnEffect
@@ -149,6 +152,7 @@ internal fun MobileNativePlayer(
     val pipSession = remember { MobilePlayerPipController.createSession() }
     val selectedQuality = ui.activeQuality
     val selectedSpeed = state.selectedSpeed
+    val playerNamePrefix = stringResource(R.string.player_name_prefix)
     // Новая серия/стрим начинают со значений из state (позиция возобновления).
     val progress = rememberPlayerPlaybackProgressState(
         ui.activeIframeUrl,
@@ -233,6 +237,32 @@ internal fun MobileNativePlayer(
         if (recoveryHintVisible) {
             overlay.cancelHide()
             overlay.visible = true
+        }
+    }
+
+    // Перезапускаем авто-скрытие после любого изменения playback/видимости UI.
+    // Если таймер завершился, пока была открыта панель, повторно планируем его при закрытии панели.
+    LaunchedEffect(
+        wantsPlay,
+        overlay.visible,
+        trackSheetOpen,
+        sidePanelOpen,
+        showActionsSheet,
+        qualitySheetOpen,
+        speedSheetOpen,
+        episodesExpanded,
+        progress.isSeeking,
+        recoveryHintVisible,
+        tutorialBlocksPlayback,
+        castConnection.isCasting,
+    ) {
+        if (!wantsPlay) {
+            overlay.cancelHide()
+            overlay.visible = true
+        } else if (overlay.visible) {
+            overlay.scheduleHide()
+        } else {
+            overlay.cancelHide()
         }
     }
 
@@ -398,9 +428,17 @@ internal fun MobileNativePlayer(
         fallbackDurationMs = { progress.duration },
         wantsPlay = { playbackShouldPlay },
         onWantsPlayChanged = {
-            if (!tutorialBlocksPlayback) wantsPlay = it
+            if (!tutorialBlocksPlayback) {
+                wantsPlay = it
+                if (!it) {
+                    // Системные кнопки, Bluetooth и гарнитуры тоже должны открывать контролы на паузе.
+                    overlay.cancelHide()
+                    overlay.visible = true
+                }
+            }
         },
-        autoHide = { schedule -> if (schedule) overlay.scheduleHide() else overlay.cancelHide() },
+        // schedule выполняем в LaunchedEffect(wantsPlay), уже после обновления state.
+        autoHide = { schedule -> if (!schedule) overlay.cancelHide() },
         onEpisodeEnd = episodeEnd::onEpisodeEnd,
         onEvent = onEvent,
     )
@@ -568,6 +606,11 @@ internal fun MobileNativePlayer(
             )
         }
 
+        // Часть затемнения перенесена с поверхностей кнопок на видеоряд.
+        if (overlay.visible && !locked) {
+            Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.29f)))
+        }
+
         PlayerSubtitleOverlay(
             player = player,
             style = state.subtitleStyle,
@@ -597,9 +640,34 @@ internal fun MobileNativePlayer(
             onVerticalDragStart = gestures::startVerticalGesture,
             onVerticalDrag = gestures::applyVerticalGesture,
             onVerticalDragEnd = gestures::endVerticalGesture,
+            controlsActive = overlay.visible,
+            onLongPressSeek = { direction ->
+                seekController.seekByWithToast(direction, MOBILE_PLAYER_LONG_HOLD_SEEK_MS)
+            },
             onLongPressStart = gestures::startSpeedBoost,
             onLongPressEnd = gestures::endSpeedBoost,
         )
+
+        val videoSize = player.videoSize
+        val rootSize = gestures.playerSize
+        val density = LocalDensity.current
+        val videoAspectRatio = if (videoSize.width > 0 && videoSize.height > 0) videoSize.width.toFloat() / videoSize.height else 16f / 9f
+        val useFittedVideoBounds = state.resizeMode == PlayerResizeMode.FIT && rootSize.width > 0 && rootSize.height > 0
+        val videoWidthPx = if (useFittedVideoBounds) minOf(rootSize.width, (rootSize.height * videoAspectRatio).roundToInt()) else rootSize.width
+        val videoHeightPx = if (useFittedVideoBounds) minOf(rootSize.height, (rootSize.width / videoAspectRatio).roundToInt()) else rootSize.height
+        val videoLeftDp = with(density) { ((rootSize.width - videoWidthPx) / 2).toDp() }
+        val videoTopDp = with(density) { ((rootSize.height - videoHeightPx) / 2).toDp() }
+        val videoWidthDp = with(density) { videoWidthPx.toDp() }
+        val videoHeightDp = with(density) { videoHeightPx.toDp() }
+        val videoBottomInsetDp = with(density) { ((rootSize.height - videoHeightPx) / 2).toDp() }
+        val videoLeftInsetDp = with(density) { ((rootSize.width - videoWidthPx) / 2).toDp() }
+        val videoWidthFraction = if (rootSize.width > 0) videoWidthPx.toFloat() / rootSize.width else 1f
+        val controlSize = mobilePlayerControlButtonSize()
+        val hasSideLetterboxing = videoLeftInsetDp >= 28.dp
+        // Замок расположен справа сверху за границей видеокадра.
+        val unlockRightOffset = if (hasSideLetterboxing) {
+            ((videoLeftInsetDp - controlSize) / 2).coerceAtLeast(0.dp)
+        } else 8.dp
 
         MobilePlayerTopBar(
             title = state.animeTitle,
@@ -717,6 +785,8 @@ internal fun MobileNativePlayer(
                     },
                 )
             },
+            videoWidthFraction = videoWidthFraction,
+            videoBottomInset = videoBottomInsetDp,
         )
 
         val skipButtonBottomPadding by animateDpAsState(
@@ -725,10 +795,9 @@ internal fun MobileNativePlayer(
             label = "skipButtonBottomPadding",
         )
 
+        // TODO(Android TV): перенести ручные кнопки пропуска в Android TV-версию и только после этого удалять их из Android-кода.
         MobilePlayerSkipButton(
-            skip = activeSkip.takeUnless {
-                isInPictureInPictureMode || tutorialBlocksPlayback || !overlay.visible || locked
-            },
+            skip = null,
             countdownSeconds = skipUi.autoSkipRemainingSeconds(activeSkip?.key),
             countdownProgress = skipUi.autoSkipProgress(activeSkip?.key),
             onStay = {
@@ -762,7 +831,9 @@ internal fun MobileNativePlayer(
             },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = if (overlay.visible && !isInPictureInPictureMode) 128.dp + overlayExtraBottom else 36.dp),
+                // Совпадает с seek-toast и не скачет при показе/скрытии control panel.
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .padding(bottom = 112.dp),
         )
 
         MobilePlayerZoomIndicator(
@@ -808,7 +879,6 @@ internal fun MobileNativePlayer(
             MobilePlayerRecoveryHint(
                 onChangePlayer = if (ui.canChangePlayer) {
                     {
-                        settingsTrackTab = MobilePlayerTrackSettingsTab.Player
                         trackSheetOpen = true
                         overlay.cancelHide()
                     }
@@ -817,7 +887,6 @@ internal fun MobileNativePlayer(
                 },
                 onChangeDubbing = if (ui.canChangeDubbing) {
                     {
-                        settingsTrackTab = MobilePlayerTrackSettingsTab.Dubbing
                         trackSheetOpen = true
                         overlay.cancelHide()
                     }
@@ -993,7 +1062,6 @@ internal fun MobileNativePlayer(
                 dubbingNames = ui.dubbingNames,
                 dubbingEpisodeCounts = ui.dubbingEpisodeCounts,
                 dubbingViews = ui.dubbingViews,
-                dubbingSourceNames = ui.dubbingSourceNames,
                 dubbingAvailability = ui.dubbingAvailability,
                 selectedDubbingIndex = ui.currentDubbingIndex,
                 onDubbingSelected = {
@@ -1009,11 +1077,15 @@ internal fun MobileNativePlayer(
                 balancerExternal = ui.balancerExternal,
                 selectedBalancerIndex = ui.currentBalancerIndex,
                 onBalancerSelected = { index ->
-                    onEvent(PlayerState.Event.BalancerSelected(index, player.currentPosition))
+                    val selectedName = ui.balancerNames.getOrNull(index)
+                    val graphIndex = state.sourceGraph.balancers.indexOfFirst {
+                        it.name.removePrefix(playerNamePrefix) == selectedName
+                    }
+                    if (graphIndex >= 0) {
+                        onEvent(PlayerState.Event.BalancerSelected(graphIndex, player.currentPosition))
+                    }
                 },
                 onDismiss = { trackSheetOpen = false },
-                initialTrackTab = settingsTrackTab,
-                onTrackTabChanged = { settingsTrackTab = it },
             )
         }
 
@@ -1025,6 +1097,17 @@ internal fun MobileNativePlayer(
             )
         }
 
+        MobilePlayerLockButton(
+            visible = overlay.visible && !locked && !isInPictureInPictureMode && !tutorialBlocksPlayback,
+            onLock = {
+                locked = true
+                overlay.cancelHide()
+                overlay.visible = false
+            },
+            buttonSize = controlSize,
+            modifier = Modifier.align(Alignment.TopEnd).offset(x = -unlockRightOffset, y = videoTopDp + 8.dp),
+        )
+
         MobilePlayerUnlockButton(
             visible = locked && unlockVisible && !isInPictureInPictureMode && !tutorialBlocksPlayback,
             onUnlock = {
@@ -1033,7 +1116,8 @@ internal fun MobileNativePlayer(
             },
             holdRequired = state.holdToConfirmEnabled,
             onTouched = { unlockTouchToken++ },
-            modifier = Modifier.align(Alignment.CenterStart),
+            buttonSize = controlSize,
+            modifier = Modifier.align(Alignment.TopEnd).offset(x = -unlockRightOffset, y = videoTopDp + 8.dp),
         )
 
         // Последний ребёнок Box - только так кнопка отключения гарантированно получает тапы
@@ -1049,5 +1133,6 @@ internal fun MobileNativePlayer(
     }
 }
 
+private const val MOBILE_PLAYER_LONG_HOLD_SEEK_MS = 88_000L
 private const val MOBILE_PLAYER_SPEED_BOOST = 2f
 private val MOBILE_PLAYER_UNLOCK_VISIBLE_DURATION = 3.seconds

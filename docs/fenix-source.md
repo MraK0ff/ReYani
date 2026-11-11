@@ -1,6 +1,6 @@
-# Плеер Fenix
+# Балансер Fenix
 
-Общий разбор плеера `fenixplay.xyz` для [AnimeON](animeon-source.md) и [Mikai](mikai-source.md): модули `source/fenix/{domain,data}`
+Общий разбор балансера `fenixplay.xyz` для [AnimeON](animeon-source.md) и [Mikai](mikai-source.md): модули `source/fenix/{domain,data}`
 (как у `source/ashdi`). Нет каталога `source/fenix` — нет и зависимости в `app/build.gradle.kts`; Mikai подключается только вместе с ним.
 
 - `ResolveFenixStreamsUseCase(pageUrl, track)` → `FenixRepository.getStreams`. Принимаются только

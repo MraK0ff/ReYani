@@ -80,7 +80,7 @@
     <string name="details_mobile_subscription_meta">%1$s · %2$d episodes</string>
     <string name="details_subscription_subscribe">Subscribe</string>
     <string name="details_subscription_unsubscribe">Unsubscribe</string>
-    <string name="details_balancer_title">Episode %1$s · Player</string>
+    <string name="details_balancer_title">Episode %1$s · Balancer</string>
     <string name="details_mobile_unsupported_player">%1$s · unsupported</string>
     <string name="details_balancer_external">External</string>
     <string name="details_mobile_aired">Aired: %1$d of %2$s</string>
@@ -139,7 +139,7 @@
     <string name="details_mobile_episode_download_error_unknown">Download error</string>
     <string name="details_episode_dubbings_title">Episode %1$s · Dubbing</string>
     <string name="details_mobile_download_dubbing_empty">No dubbings available</string>
-        <string name="details_mobile_download_balancer_empty">No players available</string>
+        <string name="details_mobile_download_balancer_empty">No balancers available</string>
     <string name="details_mobile_download_quality_title">Download quality</string>
     <string name="details_mobile_download_quality_prompt">Choose quality</string>
     <string name="details_mobile_download_quality_empty">No qualities available</string>
@@ -203,7 +203,7 @@
     <string name="details_in_library">In library</string>
     <string name="details_add_library">Add to library</string>
         <string name="details_subscription_dubbing">Dubbing: %1$s</string>
-    <string name="details_subscription_player">Player: %1$s</string>
+    <string name="details_subscription_player">Balancer: %1$s</string>
     <string name="details_subscription_episodes">%1$d episodes</string>
     <string name="details_subscribe_updates">Subscribe to new episodes</string>
     <string name="details_unsubscribe_updates">Unsubscribe from new episodes</string>

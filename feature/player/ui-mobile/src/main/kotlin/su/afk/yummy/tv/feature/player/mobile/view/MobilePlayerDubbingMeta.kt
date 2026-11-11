@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import su.afk.yummy.tv.feature.player.common.utils.formatCompactCount
 
@@ -55,15 +54,6 @@ internal fun MobilePlayerDubbingMeta(
             style = MaterialTheme.typography.labelSmall,
             color = metaColor,
             maxLines = 1,
-        )
-    }
-    if (sourceNames.isNotBlank()) {
-        Text(
-            text = sourceNames,
-            style = MaterialTheme.typography.labelSmall,
-            color = metaColor,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
         )
     }
 }

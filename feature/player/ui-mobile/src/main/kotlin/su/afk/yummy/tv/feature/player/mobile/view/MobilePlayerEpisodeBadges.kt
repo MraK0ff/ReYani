@@ -1,6 +1,7 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,7 @@ import su.afk.yummy.tv.feature.player.presentation.R
 
 private val FillerColor = Color(0xFFFFC107)
 private val RecapColor = Color(0xFF90CAF9)
-private val BadgeBackground = Color.Black.copy(alpha = 0.72f)
+private val BadgeBackground = Color(0xFF30343B).copy(alpha = 0.92f)
 
 /**
  * Значки серии в правом верхнем углу превью, как в списке серий тайтла: филлер/рекап, тайминг просмотра,
@@ -103,6 +104,7 @@ private fun BadgeText(text: String, color: Color, modifier: Modifier = Modifier)
         maxLines = 1,
         modifier = modifier
             .background(BadgeBackground, RoundedCornerShape(10.dp))
-            .padding(horizontal = 6.dp, vertical = 2.dp),
+            .border(1.dp, Color.White.copy(alpha = 0.28f), RoundedCornerShape(10.dp))
+            .padding(horizontal = 7.dp, vertical = 3.dp),
     )
 }

@@ -48,7 +48,7 @@ DefaultPlayerStreamRepository.resolve(request)
 Экстракторы лежат в `Set<PlayerStreamExtractor>`, `DefaultPlayerStreamRepository` берёт первый,
 у которого `supports(url)` истинно.
 
-`playerDisplayOrderPriority()` задаёт порядок показа в выборе плеера: CVH (0), Kodik (1), остальные
+`playerDisplayOrderPriority()` задаёт порядок показа в выборе балансера: CVH (0), Kodik (1), остальные
 (2).
 
 ### Общие утилиты (`extractor/common/`)

@@ -1,6 +1,5 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
-import androidx.compose.foundation.background
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -18,9 +17,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.HighQuality
@@ -30,15 +29,24 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import su.afk.yummy.tv.feature.player.common.model.PlayerPlaybackProgressState
+import su.afk.yummy.tv.feature.player.common.model.StepSeekDirection
 import su.afk.yummy.tv.feature.player.presentation.R
 
 @Composable
@@ -58,13 +66,13 @@ internal fun MobilePlayerOverlay(
     onOrientation: () -> Unit,
     onSettings: () -> Unit,
     modifier: Modifier = Modifier,
-    /** Кнопка серий в ряду управления и раскрывающаяся горизонтальная лента под ним. */
     episodesAvailable: Boolean = false,
     episodesExpanded: Boolean = false,
-    /** Горизонтальная лента серий поверх видео (и в портрете, и в ландшафте). */
     episodesStripVisible: Boolean = false,
     onEpisodesExpandedChange: (Boolean) -> Unit = {},
     episodesStrip: @Composable () -> Unit = {},
+    videoWidthFraction: Float = 1f,
+    videoBottomInset: androidx.compose.ui.unit.Dp = 0.dp,
 ) {
     if (!visible) return
 
@@ -189,15 +197,50 @@ internal fun MobilePlayerOverlay(
                     }
                 }
             }
-        }
-        if (episodesAvailable) {
             AnimatedVisibility(
-                visible = episodesStripVisible,
-                enter = expandVertically(animationSpec = tween(EPISODES_STRIP_ANIMATION_MS)),
-                exit = shrinkVertically(animationSpec = tween(EPISODES_STRIP_ANIMATION_MS)),
-                modifier = Modifier.pointerInput(Unit) { collapseOnSwipeDown(onEpisodesExpandedChange) },
+                visible = holdHintVisible,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.align(Alignment.BottomCenter).padding(top = 90.dp),
             ) {
-                episodesStrip()
+                Text(
+                    stringResource(R.string.player_mobile_hold_to_switch_episode),
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.clip(CircleShape).background(Color.Black.copy(alpha = 0.68f))
+                        .padding(horizontal = 14.dp, vertical = 8.dp),
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                .background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.30f), Color.Black.copy(alpha = 0.72f))))
+                .padding(vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            MobilePlayerProgressRow(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                displayTime = progress.displayTimeMs,
+                duration = progress.duration,
+                seekProgress = progress.progressFraction,
+                bufferedProgress = progress.bufferedProgress,
+                onSeekChange = onSeekChange,
+                onSeekFinished = onSeekFinished,
+                videoWidthFraction = videoWidthFraction,
+                videoBottomInset = videoBottomInset,
+            )
+            if (episodesAvailable) {
+                AnimatedVisibility(
+                    visible = episodesStripVisible,
+                    enter = expandVertically(animationSpec = tween(EPISODES_STRIP_ANIMATION_MS)),
+                    exit = shrinkVertically(animationSpec = tween(EPISODES_STRIP_ANIMATION_MS)),
+                    modifier = Modifier.pointerInput(Unit) { collapseOnSwipeDown(onEpisodesExpandedChange) },
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+                        episodesStrip()
+                    }
+                }
             }
         }
     }

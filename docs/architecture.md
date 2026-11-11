@@ -117,7 +117,7 @@ InterfaceRouterActivity (трамплин, диалог выбора при пе
 
 | Тема                                  | Документ                                                                                                                                                                 |
 |---------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Плеер Alloha, CVH, буфер              | [alloha-player.md](alloha-player.md), [cvh-player.md](cvh-player.md), [player-buffering.md](player-buffering.md)                                                         |
+| Балансеры Alloha, CVH, буфер плеера              | [alloha-player.md](alloha-player.md), [cvh-player.md](cvh-player.md), [player-buffering.md](player-buffering.md)                                                         |
 | Фокус и скролл на ТВ                  | [tv-focus.md](tv-focus.md)                                                                                                                                               |
 | API yani                              | [yani-api.md](yani-api.md)                                                                                                                                               |
 | Вход, подписки, восстановление сессии | [local-auth-session-transfer.md](local-auth-session-transfer.md), [subscriptions.md](subscriptions.md), [block-store-session-restore.md](block-store-session-restore.md) |

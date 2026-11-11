@@ -33,8 +33,8 @@
 <details>
 <summary><strong>Плеер</strong></summary>
 
-- **Более понятная иконка пункта «Озвучка и плеер».**  
-  Вместо <img src="docs/images/VolumeUp.svg" alt="VolumeUp" width="24" height="24" align="middle" /> (VolumeUp), которая ассоциируется с регулировкой громкости, используется <img src="docs/images/RecordVoiceOver.svg" alt="RecordVoiceOver" width="24" height="24" align="middle" /> (RecordVoiceOver) — иконка, точнее отражающая назначение выбора озвучки и плеера.
+- **Более понятная иконка пункта «Озвучка и балансер».**  
+  Вместо <img src="docs/images/VolumeUp.svg" alt="VolumeUp" width="24" height="24" align="middle" /> (VolumeUp), которая ассоциируется с регулировкой громкости, используется <img src="docs/images/RecordVoiceOver.svg" alt="RecordVoiceOver" width="24" height="24" align="middle" /> (RecordVoiceOver) — иконка, точнее отражающая назначение выбора озвучки и балансера.
 
 </details>
 

@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
@@ -18,12 +19,31 @@ fun Modifier.bufferedTrackOverlay(
     color: Color,
     openingRange: ClosedFloatingPointRange<Float>?,
     openingColor: Color,
+    playedColor: Color? = null,
+    gap: Dp = 6.dp,
 ): Modifier =
     drawWithContent {
         drawContent()
 
         val trackY = size.height / 2f
         val strokeWidth = 4.dp.toPx()
+
+        // Рисуем просмотренную часть с плоским внутренним краем: скругление
+        // на стыке двух участков создаёт заметные выступы сверху и снизу.
+        if (playedColor != null && activeProgress > 0f) {
+            val playedEndX = if (layoutDirection == LayoutDirection.Rtl) {
+                size.width * (1f - activeProgress)
+            } else {
+                size.width * activeProgress
+            }
+            drawLine(
+                color = playedColor,
+                start = Offset(if (layoutDirection == LayoutDirection.Rtl) size.width else 0f, trackY),
+                end = Offset(playedEndX, trackY),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round,
+            )
+        }
 
         // Метка опенинга: рисуем поверх дорожки, чтобы отрезок был виден и под проигранной частью.
         if (openingRange != null) {
@@ -49,7 +69,7 @@ fun Modifier.bufferedTrackOverlay(
 
         if (bufferedProgress <= activeProgress) return@drawWithContent
 
-        val gapPx = 6.dp.toPx()
+        val gapPx = gap.toPx()
         val startX: Float
         val endX: Float
         if (layoutDirection == LayoutDirection.Rtl) {
@@ -65,6 +85,8 @@ fun Modifier.bufferedTrackOverlay(
             start = Offset(startX, trackY),
             end = Offset(endX, trackY),
             strokeWidth = strokeWidth,
-            cap = StrokeCap.Round,
+            // Плоский край у стыка с просмотренной частью; внешнее скругление
+            // всей дорожки остаётся у базового Slider.Track.
+            cap = StrokeCap.Butt,
         )
     }

@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import su.afk.yummy.tv.core.designsystem.baseScreen.BaseBottomSheetCustom
 import su.afk.yummy.tv.core.designsystem.baseScreen.HideSheetWindowSystemBars
-import su.afk.yummy.tv.core.designsystem.components.LogoBadge
 import su.afk.yummy.tv.core.designsystem.utils.balancerFallbackIcon
 import su.afk.yummy.tv.core.designsystem.utils.balancerLogoRes
 import su.afk.yummy.tv.feature.player.presentation.R
@@ -64,29 +63,28 @@ internal fun MobilePlayerBalancerSheet(
         ) {
             item {
                 Text(
-                    text = stringResource(R.string.player_name_prefix),
+                    text = stringResource(R.string.player_balancer_name_prefix),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(bottom = 2.dp),
                 )
             }
-            itemsIndexed(balancerNames, key = { index, name -> "$index-$name" }) { index, name ->
-                val enabled = balancerAvailability.getOrElse(index) { true }
+            val availableIndices = balancerNames.indices.filter {
+                balancerAvailability.getOrElse(it) { true }
+            }
+            itemsIndexed(availableIndices, key = { _, index -> index }) { _, index ->
+                val name = balancerNames[index]
                 MobilePlayerBalancerRow(
                     label = name,
-                    metaLabel = if (enabled) {
-                        stringResource(
-                            if (balancerExternal.getOrElse(index) { false }) {
-                                R.string.player_balancer_external_meta
-                            } else {
-                                R.string.player_balancer_meta
-                            },
-                        )
-                    } else {
-                        stringResource(R.string.player_episode_unavailable)
-                    },
+                    metaLabel = stringResource(
+                        if (balancerExternal.getOrElse(index) { false }) {
+                            R.string.player_balancer_external_meta
+                        } else {
+                            R.string.player_balancer_meta
+                        },
+                    ),
                     selected = index == selectedIndex,
-                    enabled = enabled,
+                    enabled = true,
                     onClick = { onBalancerSelected(index) },
                 )
             }
@@ -102,7 +100,7 @@ private fun MobilePlayerBalancerRow(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val shape = MaterialTheme.shapes.medium
+    val shape = MobilePlayerInteractiveShape
     val background = if (selected) {
         MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
     } else {
@@ -130,7 +128,6 @@ private fun MobilePlayerBalancerRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        LogoBadge(logoRes = balancerLogoRes(label), size = 32.dp, fallbackIcon = balancerFallbackIcon(label))
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(3.dp),

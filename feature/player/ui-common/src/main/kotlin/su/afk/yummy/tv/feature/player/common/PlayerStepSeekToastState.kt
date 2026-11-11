@@ -32,7 +32,17 @@ class PlayerStepSeekToastState internal constructor(
         accumulator.next(direction, nowMs)
 
     fun showToast(direction: StepSeekDirection) {
-        text = accumulator.totalOffsetMs.formatSignedSeconds()
+        showText(direction, accumulator.totalOffsetMs.formatSignedSeconds())
+    }
+
+    fun showOffsetToast(direction: StepSeekDirection, offsetMs: Long) {
+        val now = System.currentTimeMillis()
+        accumulator.add(direction, offsetMs, now)
+        showText(direction, accumulator.totalOffsetMs.formatSignedSeconds())
+    }
+
+    private fun showText(direction: StepSeekDirection, value: String) {
+        text = value
         this.direction = direction
         toastJob?.cancel()
         toastJob = scope.launch {

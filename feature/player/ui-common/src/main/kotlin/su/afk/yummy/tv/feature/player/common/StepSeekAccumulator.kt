@@ -15,6 +15,16 @@ class StepSeekAccumulator(
     var totalOffsetMs = 0L
         private set
 
+    fun add(direction: StepSeekDirection, offsetMs: Long, nowMs: Long) {
+        if (nowMs - lastSeekTimeMs > resetMs || lastDirection != direction) {
+            stepCount = 0
+            totalOffsetMs = 0L
+        }
+        lastSeekTimeMs = nowMs
+        lastDirection = direction
+        totalOffsetMs += offsetMs * direction.sign
+    }
+
     fun next(direction: StepSeekDirection, nowMs: Long): Long {
         if (nowMs - lastSeekTimeMs > resetMs || lastDirection != direction) {
             stepCount = 0

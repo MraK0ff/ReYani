@@ -52,18 +52,20 @@ internal fun MobilePlayerDubbingSheet(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(bottom = 2.dp),
             )
-            playback.dubbingNames.forEachIndexed { index, name ->
-                val enabled = playback.dubbingAvailability.getOrElse(index) { true }
-                MobilePlayerDubbingRow(
-                    label = name.dubbingDisplayName(),
-                    selected = index == playback.currentDubbingIndex,
-                    enabled = enabled,
-                    views = playback.dubbingViews.getOrElse(index) { 0 },
-                    episodeCount = playback.dubbingEpisodeCounts.getOrElse(index) { 0 },
-                    sourceNames = playback.dubbingSourceNames.getOrElse(index) { "" },
-                    onClick = { onDubbingSelected(index) },
-                )
-            }
+            playback.dubbingNames.indices
+                .filter { playback.dubbingAvailability.getOrElse(it) { true } }
+                .forEach { index ->
+                    val name = playback.dubbingNames[index]
+                    MobilePlayerDubbingRow(
+                        label = name.dubbingDisplayName(),
+                        selected = index == playback.currentDubbingIndex,
+                        enabled = true,
+                        views = playback.dubbingViews.getOrElse(index) { 0 },
+                        episodeCount = playback.dubbingEpisodeCounts.getOrElse(index) { 0 },
+                        sourceNames = playback.dubbingSourceNames.getOrElse(index) { "" },
+                        onClick = { onDubbingSelected(index) },
+                    )
+                }
         }
     }
 }

@@ -80,7 +80,7 @@
     <string name="details_mobile_subscription_meta">%1$s · серій: %2$d</string>
     <string name="details_subscription_subscribe">Підписатися</string>
     <string name="details_subscription_unsubscribe">Відписатися</string>
-    <string name="details_balancer_title">Серія %1$s · Плеєр</string>
+    <string name="details_balancer_title">Серія %1$s · Балансер</string>
     <string name="details_mobile_unsupported_player">%1$s · не підтримується</string>
     <string name="details_balancer_external">Зовнішній</string>
     <string name="details_mobile_aired">Вийшло: %1$d із %2$s</string>
@@ -151,7 +151,7 @@
     <string name="details_mobile_episode_download_error_unknown">Помилка завантаження</string>
     <string name="details_episode_dubbings_title">Серія %1$s · Озвучення</string>
     <string name="details_mobile_download_dubbing_empty">Озвучення недоступні</string>
-        <string name="details_mobile_download_balancer_empty">Плеєри недоступні</string>
+        <string name="details_mobile_download_balancer_empty">Балансери недоступні</string>
     <string name="details_mobile_download_quality_title">Якість завантаження</string>
     <string name="details_mobile_download_quality_prompt">Виберіть якість</string>
     <string name="details_mobile_download_quality_empty">Немає доступних якостей</string>
@@ -215,7 +215,7 @@
     <string name="details_in_library">У списку</string>
     <string name="details_add_library">До списку</string>
         <string name="details_subscription_dubbing">Озвучення: %1$s</string>
-    <string name="details_subscription_player">Плеєр: %1$s</string>
+    <string name="details_subscription_player">Балансер: %1$s</string>
     <string name="details_subscription_episodes">Серій: %1$d</string>
     <string name="details_subscribe_updates">Підписатися на нові серії</string>
     <string name="details_unsubscribe_updates">Відписатися від нових серій</string>

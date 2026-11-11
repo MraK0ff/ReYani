@@ -36,7 +36,7 @@ internal fun MobilePlayerDubbingRow(
     sourceNames: String,
     onClick: () -> Unit,
 ) {
-    val shape = MaterialTheme.shapes.medium
+    val shape = MobilePlayerInteractiveShape
     val background = if (selected) {
         MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
     } else {

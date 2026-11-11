@@ -80,7 +80,7 @@
     <string name="details_mobile_subscription_meta">%1$s · серий: %2$d</string>
     <string name="details_subscription_subscribe">Подписаться</string>
     <string name="details_subscription_unsubscribe">Отписаться</string>
-    <string name="details_balancer_title">Серия %1$s · Плеер</string>
+    <string name="details_balancer_title">Серия %1$s · Балансер</string>
     <string name="details_mobile_unsupported_player">%1$s · не поддерживается</string>
     <string name="details_balancer_external">Внешний</string>
     <string name="details_mobile_aired">Вышло: %1$d из %2$s</string>
@@ -151,7 +151,7 @@
     <string name="details_mobile_episode_download_error_unknown">Ошибка загрузки</string>
     <string name="details_episode_dubbings_title">Серия %1$s · Озвучка</string>
     <string name="details_mobile_download_dubbing_empty">Озвучки недоступны</string>
-        <string name="details_mobile_download_balancer_empty">Плееры недоступны</string>
+        <string name="details_mobile_download_balancer_empty">Балансеры недоступны</string>
     <string name="details_mobile_download_quality_title">Качество скачивания</string>
     <string name="details_mobile_download_quality_prompt">Выберите качество</string>
     <string name="details_mobile_download_quality_empty">Нет доступных качеств</string>
@@ -215,7 +215,7 @@
     <string name="details_in_library">В списке</string>
     <string name="details_add_library">В список</string>
         <string name="details_subscription_dubbing">Озвучка: %1$s</string>
-    <string name="details_subscription_player">Плеер: %1$s</string>
+    <string name="details_subscription_player">Балансер: %1$s</string>
     <string name="details_subscription_episodes">Серий: %1$d</string>
     <string name="details_subscribe_updates">Подписаться на новые серии</string>
     <string name="details_unsubscribe_updates">Отписаться от новых серий</string>

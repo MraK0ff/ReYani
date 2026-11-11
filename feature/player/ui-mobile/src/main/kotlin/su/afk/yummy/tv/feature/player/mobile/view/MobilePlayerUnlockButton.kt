@@ -6,21 +6,15 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -59,6 +52,7 @@ internal fun MobilePlayerUnlockButton(
     holdRequired: Boolean,
     /** Любое касание кнопки: родитель продлевает время её показа. */
     onTouched: () -> Unit,
+    buttonSize: androidx.compose.ui.unit.Dp = mobilePlayerControlButtonSize(),
     modifier: Modifier = Modifier,
 ) {
     val holdProgress = remember { Animatable(0f) }
@@ -77,21 +71,22 @@ internal fun MobilePlayerUnlockButton(
         visible = visible,
         enter = fadeIn(),
         exit = fadeOut(),
-        modifier = modifier.windowInsetsPadding(
-            WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
-        ),
+        modifier = modifier,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = 24.dp),
+            modifier = Modifier,
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(72.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.55f))
-                    .border(1.dp, Color.White.copy(alpha = 0.28f), CircleShape)
+                    .size(buttonSize)
+                    .mobilePlayerGlassSurface(
+                        shape = CircleShape,
+                        fill = Color.Black.copy(alpha = 0.44f),
+                        borderColor = Color.White.copy(alpha = 0.34f),
+                        elevation = 0.dp,
+                    )
                     .semantics {
                         role = Role.Button
                         contentDescription = unlockLabel
@@ -128,13 +123,13 @@ internal fun MobilePlayerUnlockButton(
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = Color.Transparent,
                     strokeWidth = 3.dp,
-                    modifier = Modifier.size(72.dp),
+                    modifier = Modifier.size(buttonSize),
                 )
                 Icon(
                     imageVector = Icons.Filled.Lock,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(34.dp),
+                    modifier = Modifier.size(minOf(24.dp, buttonSize * 0.56f)),
                 )
             }
             AnimatedVisibility(visible = hintVisible, enter = fadeIn(), exit = fadeOut()) {
@@ -144,11 +139,47 @@ internal fun MobilePlayerUnlockButton(
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier
                         .padding(start = 12.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.55f))
+                        .mobilePlayerGlassSurface()
                         .padding(horizontal = 14.dp, vertical = 8.dp),
                 )
             }
+        }
+    }
+}
+
+
+/** Кнопка блокировки расположена в той же точке, что и кнопка разблокировки. */
+@Composable
+internal fun MobilePlayerLockButton(
+    visible: Boolean,
+    onLock: () -> Unit,
+    buttonSize: androidx.compose.ui.unit.Dp = mobilePlayerControlButtonSize(),
+    modifier: Modifier = Modifier,
+) {
+    val lockLabel = stringResource(R.string.player_mobile_lock)
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier = modifier,
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(buttonSize)
+                .mobilePlayerGlassSurface(shape = CircleShape, elevation = if (buttonSize < 40.dp) 0.dp else 12.dp)
+                .pointerInput(Unit) { detectTapGestures(onTap = { onLock() }) }
+                .semantics {
+                    role = Role.Button
+                    contentDescription = lockLabel
+                },
+        ) {
+            Icon(
+                imageVector = Icons.Filled.LockOpen,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(minOf(24.dp, buttonSize * 0.56f)),
+            )
         }
     }
 }

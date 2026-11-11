@@ -9,6 +9,7 @@ import androidx.media3.common.Player
 import su.afk.yummy.tv.feature.player.common.model.PlayerPlaybackProgressState
 import su.afk.yummy.tv.feature.player.common.model.StepSeekDirection
 import su.afk.yummy.tv.feature.player.common.utils.isAtPlayerEnd
+import kotlin.math.abs
 
 /**
  * Перемотка плеера для ТВ и мобилки: clamp к длительности, конец эпизода при перемотке в конец,
@@ -49,6 +50,23 @@ class PlayerSeekController internal constructor(
         val offset = stepSeekToast.nextOffsetMs(direction, System.currentTimeMillis())
         seekTo(player.currentPosition + offset)
         stepSeekToast.showToast(direction)
+    }
+
+    fun seekByWithToast(direction: StepSeekDirection, offsetMs: Long) {
+        val offset = offsetMs.coerceAtLeast(0L)
+        if (offset == 0L) return
+        val current = player.currentPosition.coerceAtLeast(0L)
+        val signedOffset = offset * direction.sign
+        val duration = player.duration.takeIf { it > 0L } ?: progress().duration
+        val target = if (duration > 0L) {
+            (current + signedOffset).coerceIn(0L, duration)
+        } else {
+            (current + signedOffset).coerceAtLeast(0L)
+        }
+        val actualOffset = abs(target - current)
+        if (actualOffset == 0L) return
+        seekTo(target)
+        stepSeekToast.showOffsetToast(direction, actualOffset)
     }
 
     /** «Смотреть снова»: в начало серии и воспроизведение, даже если плеер стоял на паузе в конце. */

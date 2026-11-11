@@ -36,11 +36,6 @@ internal fun MobilePlayerActionButton(
     size: Dp? = null,
 ) {
     val shape = CircleShape
-    val background = when {
-        !enabled -> Color.White.copy(alpha = 0.06f)
-        primary -> MaterialTheme.colorScheme.primary
-        else -> Color.White.copy(alpha = 0.14f)
-    }
     val contentColor = when {
         !enabled -> Color.White.copy(alpha = 0.26f)
         primary -> MaterialTheme.colorScheme.onPrimary
@@ -55,6 +50,13 @@ internal fun MobilePlayerActionButton(
         DEFAULT_ICON_SIZE * sizeMultiplier
     }
 
+    val baseViewConfiguration = LocalViewConfiguration.current
+    val quickLongPressConfiguration = remember(baseViewConfiguration) {
+        object : ViewConfiguration by baseViewConfiguration {
+            override val longPressTimeoutMillis: Long = 320L
+        }
+    }
+    CompositionLocalProvider(LocalViewConfiguration provides quickLongPressConfiguration) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -78,19 +80,6 @@ internal fun MobilePlayerActionButton(
             modifier = Modifier.size(iconSize),
         )
     }
-}
-
-/**
- * Размер кнопки подбирается по ширине экрана: ряд из семи кнопок в портрете на узких телефонах
- * (360dp) иначе не помещается, а на широких экранах и в ландшафте нет причин мельчить.
- */
-@Composable
-private fun actionButtonSize(primary: Boolean): Dp {
-    val widthDp = LocalConfiguration.current.screenWidthDp
-    return when {
-        widthDp >= WIDE_SCREEN_DP -> if (primary) 64.dp else 48.dp
-        widthDp >= MEDIUM_SCREEN_DP -> if (primary) 60.dp else 44.dp
-        else -> if (primary) 56.dp else 40.dp
     }
 }
 
