@@ -17,7 +17,7 @@
     <string name="player_change_player">Сменить плеер</string>
     <string name="player_change_dubbing">Сменить озвучку</string>
     <string name="player_stream_error">Не удалось получить поток плеера, попробуйте сменить плеер или озвучку</string>
-    <string name="player_decoder_error">Устройство не смогло декодировать видео, попробуйте более низкое качество</string>
+    <string name="player_decoder_error">Устройство не смогло декодировать видео, попробуйте другое качество или источник</string>
     <string name="player_change_quality">Сменить качество</string>
     <string name="player_no_connection">Нет подключения к интернету. Воспроизведение продолжится, когда сеть появится</string>
     <string name="player_recovery_hint_title">Не удаётся восстановить воспроизведение</string>
@@ -44,7 +44,6 @@
     <string name="player_dubbing_title">Озвучка</string>
         <string name="player_speed_title">Скорость</string>
     <string name="player_resize_title">Масштаб</string>
-    <string name="player_brightness_title">Яркость</string>
     <string name="player_brightness_auto_title">Автояркость</string>
     <string name="player_brightness_auto_hint">Следовать системной яркости. Свайп по левому краю задаёт её вручную.</string>
     <string name="player_volume_title">Громкость</string>
@@ -103,16 +102,13 @@
     <string name="player_tv_controls_tutorial_illustration">Подсказка по пульту</string>
     <string name="player_mobile_settings_title">Настройки плеера</string>
     <string name="player_mobile_track_settings_title">Озвучка и плеер</string>
-    <string name="player_mobile_playback_settings_title">Качество и скорость</string>
             <string name="player_mobile_episode_number">%1$s Серия</string>
     <string name="player_mobile_previous_episode">Предыдущая</string>
     <string name="player_mobile_next_episode">Следующая</string>
     <string name="player_mobile_details">Детали</string>
-    <string name="player_mobile_actions">Ещё</string>
     <string name="player_mobile_lock">Заблокировать управление</string>
     <string name="player_mobile_unlock">Разблокировать управление</string>
     <string name="player_mobile_unlock_hint">Удерживайте, чтобы разблокировать</string>
-    <string name="player_mobile_hold_to_switch_episode">Удерживайте для переключения</string>
     <string name="player_mobile_cast">Трансляция</string>
     <string name="player_mobile_pip">Картинка в картинке</string>
     <string name="player_mobile_forward">Дальше</string>
@@ -153,7 +149,6 @@
     <string name="player_toast_balancer_changed">Плеер: %1$s</string>
     <string name="player_side_panel_title">Настройки плеера</string>
     <string name="player_side_panel_open">Настройки плеера</string>
-    <string name="player_side_panel_close">Свернуть панель</string>
     <string name="player_subtitle_track_title">Дорожка субтитров</string>
     <string name="player_subtitle_style_title">Оформление субтитров</string>
     <string name="player_subtitle_size_title">Размер текста</string>
@@ -196,6 +191,8 @@
     <string name="player_resolve_failed_opening_session">Сбой на шаге: открытие плеера</string>
     <string name="player_resolve_response_error">Источник ответил ошибкой…</string>
     <string name="player_resolve_waiting_for_ad">Готовим доступ…</string>
+    <string name="player_resolve_waiting_for_torrent">Ожидание выбора торрента…</string>
+    <string name="player_resolve_waiting_for_torrent_file">Ожидание выбора торрент файла…</string>
     <string name="player_resolve_failed_response_error">Сбой на шаге: источник ответил ошибкой — возможно, он недоступен или блокирует запросы</string>
     <string name="player_resolve_loading_player_script">Загружаем скрипт плеера…</string>
     <string name="player_resolve_selecting_dubbing">Выбираем озвучку и серию…</string>
@@ -231,4 +228,17 @@
     <string name="player_problem_link_not_found">Плеер найден, но ссылки на видео в нём нет</string>
     <string name="player_problem_ticket">Не удалось получить доступ к 4K-озвучке</string>
     <string name="player_badge_downloaded">Скачано</string>
+    <string name="player_menu_subtitles">Субтитры</string>
+    <string name="player_menu_audio_track">Аудиодорожка</string>
+    <string name="player_menu_display">Яркость и громкость</string>
+    <string name="player_menu_quality_auto">Авто (%1$s)</string>
+    <string name="player_menu_back">Назад</string>
+    <string name="player_sleep_title">Автовыключение</string>
+    <string name="player_sleep_off">Отключено</string>
+    <string name="player_sleep_minutes">%1$d мин</string>
+    <string name="player_sleep_hour">1 час</string>
+    <string name="player_speed_normal">Нормальная</string>
+    <string name="player_speed_slower">Медленнее</string>
+    <string name="player_speed_faster">Быстрее</string>
+    <string name="player_menu_cast_pip">PiP и Cast</string>
 </resources>
