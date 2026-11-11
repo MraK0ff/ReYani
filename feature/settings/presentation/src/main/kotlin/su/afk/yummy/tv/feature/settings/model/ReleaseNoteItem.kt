@@ -14,4 +14,5 @@ data class ReleaseNoteItem(
     val notes: String,
     val isPrerelease: Boolean,
     val isCurrent: Boolean,
+    val title: String = version,
 )

@@ -31,7 +31,7 @@ import su.afk.yummy.tv.domain.videodownload.usecase.ObserveVideoExportDestinatio
 import su.afk.yummy.tv.domain.videodownload.usecase.SelectVideoExportDestinationUseCase
 import su.afk.yummy.tv.domain.videodownload.usecase.SetVideoDownloadWifiOnlyUseCase
 import su.afk.yummy.tv.feature.account.IAccountNavigator
-import su.afk.yummy.tv.feature.settings.mapper.toReleaseNoteItem
+import su.afk.yummy.tv.feature.settings.mapper.buildReleaseNoteItems
 import su.afk.yummy.tv.feature.settings.model.ReleaseNotesStatus
 import su.afk.yummy.tv.feature.settings.navigator.SettingsCategoryDestination
 import su.afk.yummy.tv.feature.settings.navigator.SettingsHomeBlocksDestination
@@ -593,14 +593,24 @@ class SettingsViewModel @Inject internal constructor(
         }
         setState { copy(releaseNotes = ReleaseNotesStatus.Loading) }
         viewModelScope.launch {
-            val status = runSuspendCatching {
-                getAppReleaseHistory(versionName, includePrerelease = settingsStore.betaUpdatesEnabled.first())
-            }.fold(
-                onSuccess = { releases ->
-                    ReleaseNotesStatus.Loaded(releases.map { it.toReleaseNoteItem(versionName) }.toImmutableList())
-                },
-                onFailure = { ReleaseNotesStatus.Error },
+            val includePrerelease = settingsStore.betaUpdatesEnabled.first()
+            val yanimeHistory = runSuspendCatching {
+                getAppReleaseHistory.yanimeHistory(versionName, includePrerelease)
+            }.getOrDefault(emptyList())
+            val originalHistory = runSuspendCatching {
+                getAppReleaseHistory.originalHistory(versionName, includePrerelease)
+            }.getOrDefault(emptyList())
+            val latestYanimeRelease = runSuspendCatching {
+                getAppReleaseHistory(versionName, includePrerelease).firstOrNull()
+            }.getOrNull()
+            val items = buildReleaseNoteItems(
+                currentVersion = versionName,
+                yanimeHistory = yanimeHistory,
+                originalHistory = originalHistory,
+                latestYanimeRelease = latestYanimeRelease,
             )
+            val status = if (items.isEmpty()) ReleaseNotesStatus.Error
+            else ReleaseNotesStatus.Loaded(items.toImmutableList())
             setState { copy(releaseNotes = status) }
         }
     }

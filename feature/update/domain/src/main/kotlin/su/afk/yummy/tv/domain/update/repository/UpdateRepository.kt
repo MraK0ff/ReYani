@@ -16,4 +16,10 @@ interface UpdateRepository {
      * если релизы получить не удалось, — чтобы экран отличил ошибку от пустой истории. Pre-release учитываются только при [includePrerelease].
      */
     suspend fun releaseHistory(currentVersion: String, includePrerelease: Boolean): List<AppReleaseNotes>
+
+    /** История оригинального YummyTV, загружаемая напрямую из репозитория Helandy. */
+    suspend fun originalReleaseHistory(currentVersion: String, includePrerelease: Boolean): List<AppReleaseNotes>
+
+    /** Curated YANIME history maintained in docs/changelog/yanime.json. */
+    suspend fun yanimeReleaseHistory(currentVersion: String, includePrerelease: Boolean): List<AppReleaseNotes>
 }

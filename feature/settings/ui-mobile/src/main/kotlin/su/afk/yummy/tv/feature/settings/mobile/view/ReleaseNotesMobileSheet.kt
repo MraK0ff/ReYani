@@ -68,7 +68,7 @@ internal fun ReleaseNotesMobileSheet(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    items(status.items, key = { "release_${it.version}_${it.isPrerelease}" }) { item ->
+                    items(status.items, key = { "release_${it.title}_${it.version}_${it.isPrerelease}" }) { item ->
                         ReleaseNoteMobileItem(item)
                     }
                 }

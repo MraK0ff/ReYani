@@ -173,6 +173,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout release history generator
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
       - name: Download latest APK
         uses: actions/download-artifact@v7
         with:
@@ -188,11 +193,10 @@ jobs:
 
           for legacy_tag in latest v; do
             if gh release view "$legacy_tag" >/dev/null 2>&1; then
-              gh release delete "$legacy_tag" --yes --cleanup-tag
-            else
-              # Also remove a dangling tag if its release was already deleted.
-              gh api --method DELETE "repos/$GITHUB_REPOSITORY/git/refs/tags/$legacy_tag" || true
+              gh release delete "$legacy_tag" --yes
             fi
+            # The tag may already be absent; that is not a release-job failure.
+            gh api --method DELETE "repos/$GITHUB_REPOSITORY/git/refs/tags/$legacy_tag" >/dev/null 2>&1 || true
           done
 
       - name: Publish versioned YANIME release
@@ -207,3 +211,9 @@ jobs:
           overwrite_files: true
           fail_on_unmatched_files: true
           files: release-apk/YANIME.apk
+
+      - name: Update automatic release history
+        env:
+          GH_TOKEN: ${{ github.token }}
+          YANIME_VERSION: ${{ needs.build.outputs.version_name }}
+        run: python3 .github/scripts/update_release_history.py

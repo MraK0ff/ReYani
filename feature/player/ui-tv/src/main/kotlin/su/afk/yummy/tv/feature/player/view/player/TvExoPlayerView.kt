@@ -505,7 +505,6 @@ internal fun TvExoPlayerView(
         TvPlayerNameBadge(
             visible = controllerVisible,
             playerName = playback.activeBalancerLabel,
-            isDownloaded = playback.isDownloaded,
             episodeFlags = playback.activeEpisodeFlags,
             modifier = Modifier.align(Alignment.TopEnd),
         )

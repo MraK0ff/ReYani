@@ -13,4 +13,10 @@ class GetAppReleaseHistoryUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(currentVersion: String, includePrerelease: Boolean): List<AppReleaseNotes> =
         updateRepository.releaseHistory(currentVersion, includePrerelease)
+
+    suspend fun originalHistory(currentVersion: String, includePrerelease: Boolean): List<AppReleaseNotes> =
+        updateRepository.originalReleaseHistory(currentVersion, includePrerelease)
+
+    suspend fun yanimeHistory(currentVersion: String, includePrerelease: Boolean): List<AppReleaseNotes> =
+        updateRepository.yanimeReleaseHistory(currentVersion, includePrerelease)
 }

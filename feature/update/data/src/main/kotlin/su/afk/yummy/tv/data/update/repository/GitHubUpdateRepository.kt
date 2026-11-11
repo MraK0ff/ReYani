@@ -11,6 +11,8 @@ import io.ktor.http.isSuccess
 import su.afk.yummy.tv.core.network.di.UnauthenticatedJsonClient
 import su.afk.yummy.tv.data.update.UpdateConfig
 import su.afk.yummy.tv.data.update.dto.GitHubReleaseDto
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import su.afk.yummy.tv.data.update.mapper.toDomain
 import su.afk.yummy.tv.data.update.mapper.toReleaseNotes
 import su.afk.yummy.tv.domain.update.model.AppRelease
@@ -65,9 +67,9 @@ internal class GitHubUpdateRepository @Inject constructor(
             null
         }
 
-    private suspend fun fetchReleaseHistoryOrNull(): List<GitHubReleaseDto>? =
+    private suspend fun fetchReleaseHistoryOrNull(url: String? = RELEASES_URL): List<GitHubReleaseDto>? =
         try {
-            withTimeoutOrNull(GITHUB_TIMEOUT_MS) { fetchReleases() }
+            withTimeoutOrNull(GITHUB_TIMEOUT_MS) { fetchReleases(url) }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -89,6 +91,67 @@ internal class GitHubUpdateRepository @Inject constructor(
             ?.takeIf { (includePrerelease || !it.isPrerelease) && !isVersionNewer(currentVersion, it.version) }
         return latest?.let(::listOf) ?: throw ReleasesUnavailableException()
     }
+
+    /** История оригинального проекта загружается непосредственно из Helandy/YummyTV. */
+    override suspend fun originalReleaseHistory(
+        currentVersion: String,
+        includePrerelease: Boolean,
+    ): List<AppReleaseNotes> {
+        val history = fetchReleaseHistoryOrNull(ORIGINAL_RELEASES_URL)
+            ?.mapNotNull { it.toReleaseNotes() }
+            ?.filter { (includePrerelease || !it.isPrerelease) && !isVersionNewer(currentVersion, it.version) }
+            ?.sortedWith { a, b -> compareVersions(b.version, a.version) }
+        return history?.takeIf { it.isNotEmpty() } ?: throw ReleasesUnavailableException()
+    }
+
+    override suspend fun yanimeReleaseHistory(
+        currentVersion: String,
+        includePrerelease: Boolean,
+    ): List<AppReleaseNotes> {
+        val changelog = fetchYanimeChangelogOrNull() ?: throw ReleasesUnavailableException()
+        return changelog.releases
+            .asSequence()
+            .filter { includePrerelease || !it.prerelease }
+            .filter { !isVersionNewer(currentVersion, it.version) }
+            .map { release ->
+                val curatedNotes = release.notes.map { "- $it" }
+                val overriddenCommits = release.commitOverrides.map { override ->
+                    buildString {
+                        override.tag?.takeIf { it.isNotBlank() }?.let { tag ->
+                            append("[${tag.trim('[', ']')}] ")
+                        }
+                        append(override.title.trim())
+                        override.description?.takeIf { it.isNotBlank() }?.let { description ->
+                            append("\n  ")
+                            append(description.trim().replace("\n", "\n  "))
+                        }
+                    }.let { "- $it" }
+                }
+                AppReleaseNotes(
+                    version = release.version,
+                    publishedDate = release.publishedAt,
+                    changelog = (curatedNotes + overriddenCommits).joinToString("\n"),
+                    isPrerelease = release.prerelease,
+                )
+            }
+            .sortedWith { a, b -> compareVersions(b.version, a.version) }
+            .toList()
+    }
+
+    private suspend fun fetchYanimeChangelogOrNull(): YanimeChangelogDto? =
+        try {
+            withTimeoutOrNull(GITHUB_TIMEOUT_MS) {
+                val response = httpClient.get(YANIME_CHANGELOG_URL) {
+                    header("Accept", "application/json")
+                    header("User-Agent", GITHUB_USER_AGENT)
+                }
+                if (response.status.isSuccess()) response.body<YanimeChangelogDto>() else null
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            null
+        }
 
     /** Короче общего таймаута проверки в MainSideEffectsHandler, чтобы на резерв осталось время. */
     private suspend fun fetchReleasesOrNull(): List<GitHubReleaseDto>? =
@@ -113,8 +176,8 @@ internal class GitHubUpdateRepository @Inject constructor(
     }
 
     /** null, когда репозиторий обновлений не сконфигурирован или GitHub ответил ошибкой. */
-    private suspend fun fetchReleases(): List<GitHubReleaseDto>? {
-        val url = RELEASES_URL ?: return null
+    private suspend fun fetchReleases(url: String? = RELEASES_URL): List<GitHubReleaseDto>? {
+        url ?: return null
         val response: HttpResponse = httpClient.get(url) {
             header("Accept", GITHUB_ACCEPT)
             header("User-Agent", GITHUB_USER_AGENT)
@@ -142,11 +205,14 @@ internal class GitHubUpdateRepository @Inject constructor(
         const val GITHUB_ACCEPT = "application/vnd.github+json"
         const val GITHUB_USER_AGENT = "YANIME-Android"
         const val GITHUB_API_VERSION = "2022-11-28"
+        const val YANIME_CHANGELOG_URL = "https://raw.githubusercontent.com/MraK0ff/YANIME/main/docs/changelog/yanime.json"
 
         /** Максимум GitHub на страницу: беты идут часто и не должны вытеснять последний стабильный релиз. */
         const val RELEASES_PER_PAGE = 100
 
         /** null, когда репозиторий обновлений не сконфигурирован — проверка просто выключена. */
+        val ORIGINAL_RELEASES_URL = "https://api.github.com/repos/Helandy/YummyTV/releases"
+
         val RELEASES_URL: String? =
             if (UpdateConfig.GITHUB_OWNER.isNotBlank() && UpdateConfig.GITHUB_REPO.isNotBlank()) {
                 "https://api.github.com/repos/" +
@@ -155,4 +221,27 @@ internal class GitHubUpdateRepository @Inject constructor(
                 null
             }
     }
+}
+
+
+@Serializable
+private data class YanimeChangelogDto(
+    val releases: List<Release> = emptyList(),
+) {
+    @Serializable
+    data class Release(
+        val version: String,
+        @SerialName("published_at") val publishedAt: String? = null,
+        val prerelease: Boolean = false,
+        val notes: List<String> = emptyList(),
+        @SerialName("commit_overrides") val commitOverrides: List<CommitOverride> = emptyList(),
+    )
+
+    @Serializable
+    data class CommitOverride(
+        val sha: String,
+        val tag: String? = null,
+        val title: String,
+        val description: String? = null,
+    )
 }

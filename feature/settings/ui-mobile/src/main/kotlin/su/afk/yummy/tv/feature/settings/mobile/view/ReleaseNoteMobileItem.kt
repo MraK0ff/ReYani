@@ -42,7 +42,7 @@ internal fun ReleaseNoteMobileItem(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = item.version,
+                text = item.title,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f, fill = false),

@@ -602,7 +602,6 @@ internal fun MobileNativePlayer(
             episode = ui.activeEpisode,
             dubbing = ui.activeDubbing,
             playerName = ui.activeBalancerLabel,
-            isDownloaded = ui.isDownloaded,
             episodeFlags = ui.activeEpisodeFlags,
             onBack = {
                 if (activity == null || !MobilePlayerPipController.enterOnBack(activity)) {

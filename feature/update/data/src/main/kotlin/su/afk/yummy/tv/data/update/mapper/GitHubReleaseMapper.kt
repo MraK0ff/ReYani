@@ -11,6 +11,65 @@ private const val BETA_TAG_PREFIX = 'b'
 /** Длина даты `yyyy-MM-dd` в начале ISO-времени `published_at` (`2026-09-20T12:00:00Z`). */
 private const val ISO_DATE_LENGTH = 10
 
+private val CHANGELOG_LIST_ITEM = Regex("""^(\s*)(?:[-*+]|\d+[.)])\s+""")
+private val CHANGELOG_TAG = Regex("""^\[([A-Z][A-Z0-9_-]*)]""", RegexOption.IGNORE_CASE)
+
+/**
+ * Убирает внутренние записи из текста релиза. Запись [INTERNAL] и её продолжение скрываются
+ * до следующего элемента того же или более высокого уровня списка, нового тега или заголовка.
+ * Обычный текст и пользовательские записи сохраняются.
+ */
+private fun String?.withoutInternalChangelogEntries(): String {
+    if (isNullOrBlank()) return orEmpty()
+
+    val visibleLines = mutableListOf<String>()
+    var hiddenIndent: Int? = null
+
+    for (line in lines()) {
+        val trimmed = line.trimStart()
+        val isHeading = trimmed.startsWith("#")
+        val listMatch = CHANGELOG_LIST_ITEM.find(line)
+        val content = when {
+            isHeading -> trimmed.dropWhile { it == '#' }.trimStart()
+            listMatch != null -> line.substring(listMatch.range.last + 1).trimStart()
+            else -> trimmed
+        }
+        val tag = CHANGELOG_TAG.find(content)?.groupValues?.getOrNull(1)
+
+        if (isHeading) {
+            hiddenIndent = if (tag.equals("INTERNAL", ignoreCase = true)) -1 else null
+            if (!tag.equals("INTERNAL", ignoreCase = true)) visibleLines += line
+            continue
+        }
+
+        if (listMatch != null) {
+            val itemIndent = listMatch.groupValues[1].length
+            if (hiddenIndent != null && itemIndent <= hiddenIndent) hiddenIndent = null
+            if (tag.equals("INTERNAL", ignoreCase = true)) {
+                hiddenIndent = itemIndent
+                continue
+            }
+            if (hiddenIndent != null) continue
+            visibleLines += line
+            continue
+        }
+
+        if (tag != null) {
+            if (tag.equals("INTERNAL", ignoreCase = true)) {
+                hiddenIndent = -1
+                continue
+            }
+            hiddenIndent = null
+            visibleLines += line
+            continue
+        }
+
+        if (hiddenIndent == null) visibleLines += line
+    }
+
+    return visibleLines.joinToString("\n").trim()
+}
+
 /**
  * Релиз без приложенного APK установить нельзя, поэтому такой релиз (как и черновик) маппится
  * в null — для вызывающего это «обновления нет».
@@ -25,7 +84,7 @@ internal fun GitHubReleaseDto.toDomain(): AppRelease? {
         ?: return null
     return AppRelease(
         version = domainVersion(),
-        changelog = body.orEmpty(),
+        changelog = body.withoutInternalChangelogEntries(),
         apkUrl = apkUrl,
         isPrerelease = isPrerelease(),
     )
@@ -37,7 +96,7 @@ internal fun GitHubReleaseDto.toReleaseNotes(): AppReleaseNotes? {
     return AppReleaseNotes(
         version = domainVersion(),
         publishedDate = publishedAt?.takeIf { it.length >= ISO_DATE_LENGTH }?.take(ISO_DATE_LENGTH),
-        changelog = body.orEmpty(),
+        changelog = body.withoutInternalChangelogEntries(),
         isPrerelease = isPrerelease(),
     )
 }
