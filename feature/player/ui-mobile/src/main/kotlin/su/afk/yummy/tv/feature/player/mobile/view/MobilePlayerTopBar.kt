@@ -223,12 +223,12 @@ internal fun MobilePlayerTopBar(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 320.dp)
+                                .heightIn(max = minOf(420.dp, choices.size * 48.dp))
                                 .pointerInput(choices) {
+                                    val rowHeight = with(density) { 48.dp.toPx() }
                                     fun updatePreview(y: Float) {
                                         qualityPreviewOffsetPx = y.coerceIn(0f, size.height.toFloat())
-                                        qualityPreviewIndex = ((y / size.height.toFloat()) * choices.size).toInt()
-                                            .coerceIn(0, choices.lastIndex)
+                                        qualityPreviewIndex = (y / rowHeight).toInt().coerceIn(0, choices.lastIndex)
                                     }
                                     detectDragGestures(
                                         onDragStart = { updatePreview(it.y) },
