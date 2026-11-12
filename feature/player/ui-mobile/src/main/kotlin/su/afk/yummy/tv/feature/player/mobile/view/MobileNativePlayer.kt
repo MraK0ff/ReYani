@@ -733,13 +733,8 @@ internal fun MobileNativePlayer(
                     overlay.cancelHide()
                 }
             },
-            onMoreActions = {
-                endFlow.hideAll()
-                settingsMenuPage = MobilePlayerSettingsPage.Root
-                settingsMenuOpen = true
-                overlay.visible = true
-                overlay.cancelHide()
-            },
+            showAudioTracks = trackMenu.showAudioChoice,
+            showSubtitleTracks = trackMenu.showSubtitleChoice,
             onMoreMenuItem = { page ->
                 endFlow.hideAll()
                 settingsMenuPage = page
