@@ -633,6 +633,11 @@ internal fun MobileNativePlayer(
         )
 
 
+        PlayerBufferingIndicator(
+            visible = (isBuffering || showRecoveryIndicator) && !overlay.visible,
+            modifier = Modifier.align(Alignment.Center),
+        )
+
         MobilePlayerGestureLayer(
             enabled = !isInPictureInPictureMode && !tutorialBlocksPlayback,
             locked = locked,
