@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +32,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.clip
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -54,6 +57,7 @@ import su.afk.yummy.tv.feature.player.mobile.view.MobilePlayerMessage
 import su.afk.yummy.tv.feature.player.mobile.view.MobilePlayerQualitySheet
 import su.afk.yummy.tv.feature.player.mobile.view.MobilePlayerSkipToast
 import su.afk.yummy.tv.feature.player.model.PlayerNextEpisodeUnavailable
+import su.afk.yummy.tv.feature.player.model.PlayerPlaybackUiState
 import su.afk.yummy.tv.feature.player.navigator.PlayerDestination
 import su.afk.yummy.tv.feature.player.presentation.R
 import su.afk.yummy.tv.core.designsystem.R as CoreR
@@ -135,6 +139,19 @@ fun PlayerMobileScreen(
     )
     val streamUrl = state.streamUrl
     val kodikBlockedError = state.kodikBlockedError
+    var lastReadyPlayer by remember { mutableStateOf<ReadyPlayer?>(null) }
+    LaunchedEffect(state.animeId, state.animeTitle) {
+        if (lastReadyPlayer?.state?.animeTitle != state.animeTitle ||
+            lastReadyPlayer?.state?.animeId != state.animeId
+        ) {
+            lastReadyPlayer = null
+        }
+    }
+    LaunchedEffect(streamUrl, state, uiState) {
+        if (streamUrl != null) lastReadyPlayer = ReadyPlayer(state, uiState, streamUrl)
+    }
+    val displayedPlayer = if (streamUrl != null) ReadyPlayer(state, uiState, streamUrl)
+        else lastReadyPlayer?.takeIf { it.state.animeTitle == state.animeTitle }
     Box(modifier = Modifier.fillMaxSize().testTag("player_screen")) {
         when {
             kodikBlockedError != null -> MobilePlayerMessage(
@@ -200,15 +217,15 @@ fun PlayerMobileScreen(
                 onBack = { onEvent(PlayerState.Event.Back) },
             )
 
-            streamUrl != null -> Box(
+            displayedPlayer != null -> Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black),
             ) {
                 MobileNativePlayer(
-                    state = state,
-                    ui = uiState,
-                    streamUrl = streamUrl,
+                    state = displayedPlayer.state,
+                    ui = displayedPlayer.ui,
+                    streamUrl = displayedPlayer.streamUrl,
                     videoTransform = videoTransform,
                     onVideoTransformChanged = { transform ->
                         onEvent(
@@ -226,6 +243,30 @@ fun PlayerMobileScreen(
                     onEpisodesExpandedChange = { episodesExpanded = it },
                     modifier = Modifier.fillMaxSize(),
                 )
+                if (streamUrl == null && state.resolveStatus != null) {
+                    // Не заменяем уже работающий плеер экраном загрузки при смене серии:
+                    // статус резолва показываем поверх текущего интерфейса до готовности нового потока.
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(Color.Black.copy(alpha = 0.68f))
+                            .padding(horizontal = 18.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        YummyLoadingIndicator(color = Color.White, strokeWidth = 2.dp)
+                        Text(stringResource(state.resolveStatus.loadingTextRes()), color = Color.White)
+                    }
+                    if (state.showResolveLog) {
+                        Box(
+                            modifier = Modifier.align(Alignment.BottomCenter)
+                                .padding(horizontal = 24.dp, vertical = 32.dp),
+                        ) {
+                            PlayerResolveLogView(state.resolveLog)
+                        }
+                    }
+                }
             }
 
             else -> Box(
@@ -352,3 +393,10 @@ private fun HideMobilePlayerSystemBars(hide: Boolean) {
         }
     }
 }
+
+
+private data class ReadyPlayer(
+    val state: PlayerState.State,
+    val ui: PlayerPlaybackUiState,
+    val streamUrl: String,
+)
