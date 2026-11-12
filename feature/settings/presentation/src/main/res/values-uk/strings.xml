@@ -79,6 +79,8 @@
     <string name="settings_show_catalog_title_year_enabled">Рік відображається на картках тайтлів у каталозі</string>
     <string name="settings_show_library_title_year">Показувати рік у тайтлів у бібліотеці</string>
     <string name="settings_show_library_title_year_enabled">Рік відображається на картках тайтлів у бібліотеці</string>
+    <string name="settings_mobile_player_auto_brightness">Автояскравість у плеєрі</string>
+    <string name="settings_mobile_player_auto_brightness_hint">Слідувати системній яскравості; вертикальний жест перемикає на ручне налаштування</string>
     <string name="settings_player_orientation_title">Орієнтація плеєра</string>
     <string name="settings_player_orientation_system">Системна</string>
     <string name="settings_player_orientation_system_hint">Слідувати системному налаштуванню повороту екрана</string>
