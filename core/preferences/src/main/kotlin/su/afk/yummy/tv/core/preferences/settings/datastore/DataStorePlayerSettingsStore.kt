@@ -14,6 +14,7 @@ import su.afk.yummy.tv.core.model.settings.PlayerResizeSettings
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleBackground
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleEdge
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleStyleSettings
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleTextColor
 import su.afk.yummy.tv.core.model.settings.PlayerZoomLevel
 import su.afk.yummy.tv.core.model.settings.PreferredVideoQuality
@@ -36,6 +37,7 @@ import su.afk.yummy.tv.core.preferences.BuildConfig
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerControlsAutoHideSecondsKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerOrientationModeKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerPlaybackSpeedKey
+import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerTimeDisplaySettingsKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerResizeModeKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerZoomLevelKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.adaptiveVideoQualityEnabledKey
@@ -143,6 +145,9 @@ internal class DataStorePlayerSettingsStore @Inject constructor(
         (prefs[playerPlaybackSpeedKey] ?: DEFAULT_PLAYBACK_SPEED)
             .coerceIn(MIN_PLAYBACK_SPEED, MAX_PLAYBACK_SPEED)
     }
+
+    override val playerTimeDisplaySettings: Flow<PlayerTimeDisplaySettings> =
+        store.data.map { prefs -> PlayerTimeDisplaySettings.decode(prefs[playerTimeDisplaySettingsKey]) }
 
     override val volumeStabilizationEnabled: Flow<Boolean> =
         store.boolean(volumeStabilizationEnabledKey, false)
@@ -318,6 +323,10 @@ internal class DataStorePlayerSettingsStore @Inject constructor(
         store.edit { prefs ->
             prefs[playerPlaybackSpeedKey] = speed.coerceIn(MIN_PLAYBACK_SPEED, MAX_PLAYBACK_SPEED)
         }
+    }
+
+    override suspend fun setPlayerTimeDisplaySettings(settings: PlayerTimeDisplaySettings) {
+        store.edit { prefs -> prefs[playerTimeDisplaySettingsKey] = settings.encode() }
     }
 
     override suspend fun setVolumeStabilizationEnabled(enabled: Boolean) =
