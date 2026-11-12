@@ -160,17 +160,17 @@ internal fun MobilePlayerTopBar(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
+                        Icon(
+                            if (episodeExpanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                            stringResource(R.string.player_episodes_list_title),
+                            tint = Color.White.copy(alpha = 0.62f),
+                            modifier = Modifier.size(20.dp),
+                        )
                         Text(
                             stringResource(R.string.player_mobile_episode_number, episode),
                             color = Color.White.copy(alpha = 0.78f),
                             maxLines = 1,
                             style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
-                        )
-                        Icon(
-                            if (episodeExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                            stringResource(R.string.player_episodes_list_title),
-                            tint = Color.White.copy(alpha = 0.62f),
-                            modifier = Modifier.size(20.dp),
                         )
                     }
                 }
