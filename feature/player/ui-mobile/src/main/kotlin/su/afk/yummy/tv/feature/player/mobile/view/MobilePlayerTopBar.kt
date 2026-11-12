@@ -124,6 +124,7 @@ internal fun MobilePlayerTopBar(
     var qualityPreviewIndex by remember { mutableIntStateOf(-1) }
     var qualityPreviewOffsetPx by remember { mutableFloatStateOf(0f) }
     var moreExpanded by remember { mutableStateOf(false) }
+    var speedExpanded by remember { mutableStateOf(false) }
     val density = LocalDensity.current
     Box(
         modifier = modifier.fillMaxWidth()
@@ -306,8 +307,23 @@ internal fun MobilePlayerTopBar(
                 }
             }
             Box {
-                TopBarSpeedAction(selectedSpeed, onSpeedClick)
-
+                TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
+                DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
+                    Column(
+                        modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
+                    ) {
+                        speedOptions.forEach { speed ->
+                            val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
+                            DropdownMenuItem(
+                                text = { Text(label) },
+                                onClick = {
+                                    onSpeedSelected(speed)
+                                    speedExpanded = false
+                                },
+                            )
+                        }
+                    }
+                }
             }
             Box {
                 TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions)) {
