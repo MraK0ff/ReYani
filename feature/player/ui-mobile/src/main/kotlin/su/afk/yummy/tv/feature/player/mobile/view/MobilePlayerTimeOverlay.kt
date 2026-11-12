@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplayMode
 import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
-import su.afk.yummy.tv.core.utils.formatting.millisToClockTime
 import su.afk.yummy.tv.feature.player.presentation.R
 import java.text.SimpleDateFormat
 import java.util.Date
