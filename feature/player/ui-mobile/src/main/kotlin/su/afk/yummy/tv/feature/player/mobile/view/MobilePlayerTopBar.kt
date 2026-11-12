@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.HighQuality
@@ -117,6 +118,8 @@ internal fun MobilePlayerTopBar(
     onSpeedClick: () -> Unit,
     onSpeedLongPress: () -> Unit,
     visible: Boolean,
+    episodeExpanded: Boolean = false,
+    dubbingExpanded: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     if (!visible) return
@@ -128,9 +131,7 @@ internal fun MobilePlayerTopBar(
     var speedPreviewIndex by remember { mutableIntStateOf(-1) }
     val density = LocalDensity.current
     Box(
-        modifier = modifier.fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
-            .padding(start = 0.dp, end = 0.dp, top = 0.dp, bottom = 8.dp),
+        modifier = modifier.fillMaxSize(),
     ) {
         Column(
             modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.94f).padding(top = 2.dp),
@@ -154,9 +155,9 @@ internal fun MobilePlayerTopBar(
                             style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                         )
                         Icon(
-                            Icons.Filled.KeyboardArrowDown,
+                            if (episodeExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                             stringResource(R.string.player_episodes_list_title),
-                            tint = Color.White.copy(alpha = 0.9f),
+                            tint = Color.White.copy(alpha = 0.62f),
                             modifier = Modifier.size(20.dp),
                         )
                     }
@@ -191,9 +192,9 @@ internal fun MobilePlayerTopBar(
                                 style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                             )
                             Icon(
-                                Icons.Filled.KeyboardArrowDown,
+                                if (dubbingExpanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
                                 stringResource(R.string.player_balancer_name_prefix),
-                                tint = Color.White.copy(alpha = 0.9f),
+                                tint = Color.White.copy(alpha = 0.62f),
                                 modifier = Modifier.size(20.dp),
                             )
                         }
@@ -207,15 +208,14 @@ internal fun MobilePlayerTopBar(
                     maxLines = 2,
                     overflow = TextOverflow.Clip,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
+                    style = TextStyle(color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold),
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
             MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
         Row(
-            Modifier.align(Alignment.TopEnd).padding(end = 2.dp),
+            Modifier.align(Alignment.BottomEnd).padding(end = 4.dp, bottom = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
