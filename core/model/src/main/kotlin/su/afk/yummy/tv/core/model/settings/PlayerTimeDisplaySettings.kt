@@ -15,9 +15,10 @@ data class PlayerTimeDisplaySettings(
     val elapsed: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
     val remaining: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
     val finishAt: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
+    val showRemainingInsteadOfDuration: Boolean = false,
 ) {
-    fun encode(): String = listOf(systemClock, elapsed, remaining, finishAt)
-        .joinToString("|") { it.name }
+    fun encode(): String = (listOf(systemClock, elapsed, remaining, finishAt).map { it.name } +
+        showRemainingInsteadOfDuration.toString()).joinToString("|")
 
     companion object {
         fun decode(value: String?): PlayerTimeDisplaySettings {
@@ -30,6 +31,7 @@ data class PlayerTimeDisplaySettings(
                 elapsed = mode(1),
                 remaining = mode(2),
                 finishAt = mode(3),
+                showRemainingInsteadOfDuration = parts.getOrNull(4)?.toBooleanStrictOrNull() ?: false,
             )
         }
     }
