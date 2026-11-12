@@ -75,10 +75,14 @@ private fun TimeDisplayModeRow(
                 text = { Text(stringResource(R.string.player_time_display_always)) },
                 onClick = { onSelected(PlayerTimeDisplayMode.ALWAYS); expanded = false },
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.player_time_display_never)) },
-                onClick = { onSelected(PlayerTimeDisplayMode.NEVER); expanded = false },
-            )
+            if (label != stringResource(R.string.player_time_display_elapsed) &&
+                label != stringResource(R.string.player_time_display_remaining)
+            ) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.player_time_display_never)) },
+                    onClick = { onSelected(PlayerTimeDisplayMode.NEVER); expanded = false },
+                )
+            }
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.player_time_display_controls)) },
                 onClick = { onSelected(PlayerTimeDisplayMode.CONTROLS); expanded = false },
