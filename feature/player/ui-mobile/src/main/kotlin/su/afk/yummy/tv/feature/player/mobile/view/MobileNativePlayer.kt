@@ -952,8 +952,9 @@ internal fun MobileNativePlayer(
             controlsActive = overlay.visible && !locked && !isInPictureInPictureMode,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(x = videoLeftDp, y = videoTopDp + 76.dp)
+                .offset(x = videoLeftDp, y = videoTopDp)
                 .width(videoWidthDp)
+                .height(videoHeightDp)
                 .padding(horizontal = 12.dp),
         )
 
