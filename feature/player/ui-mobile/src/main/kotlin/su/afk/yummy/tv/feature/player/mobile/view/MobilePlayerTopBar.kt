@@ -29,6 +29,13 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.HighQuality
 import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.Audiotrack
+import androidx.compose.material.icons.filled.Subtitles
+import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.BrightnessMedium
+import androidx.compose.material.icons.filled.Cast
 import androidx.compose.material3.Icon
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -124,22 +131,10 @@ internal fun MobilePlayerTopBar(
             .padding(start = 0.dp, end = 0.dp, top = 0.dp, bottom = 8.dp),
     ) {
         Column(
-            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.94f).padding(top = 42.dp),
+            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.94f).padding(top = 2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(3.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            if (title.isNotBlank()) {
-                Text(
-                    title,
-                    color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Clip,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -154,8 +149,7 @@ internal fun MobilePlayerTopBar(
                             stringResource(R.string.player_mobile_episode_number, episode),
                             color = Color.White,
                             maxLines = 1,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium,
+                            style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                         )
                         Icon(
                             Icons.Filled.KeyboardArrowDown,
@@ -179,8 +173,7 @@ internal fun MobilePlayerTopBar(
                                 color = Color.White,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
+                                style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                             )
                         }
                         if (offlinePlayback) {
@@ -193,8 +186,7 @@ internal fun MobilePlayerTopBar(
                                 color = Color.White,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
+                                style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                             )
                             Icon(
                                 Icons.Filled.KeyboardArrowDown,
@@ -205,6 +197,18 @@ internal fun MobilePlayerTopBar(
                         }
                     }
                 }
+            }
+            if (title.isNotBlank()) {
+                Text(
+                    title,
+                    color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Clip,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
             MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
@@ -312,30 +316,37 @@ internal fun MobilePlayerTopBar(
                 DropdownMenu(expanded = moreExpanded, onDismissRequest = { moreExpanded = false }) {
                     if (showAudioTracks) DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_menu_audio_track)) },
+                        leadingIcon = { Icon(Icons.Filled.Audiotrack, contentDescription = null) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.AudioTrack) },
                     )
                     if (showSubtitleTracks) DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_menu_subtitles)) },
+                        leadingIcon = { Icon(Icons.Filled.Subtitles, contentDescription = null) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Subtitles) },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_sleep_title)) },
+                        leadingIcon = { Icon(Icons.Filled.Bedtime, contentDescription = null) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.SleepTimer) },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_resize_title)) },
+                        leadingIcon = { Icon(Icons.Filled.AspectRatio, contentDescription = null) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Resize) },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_time_display_title)) },
+                        leadingIcon = { Icon(Icons.Filled.AccessTime, contentDescription = null) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.TimeDisplay) },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_menu_display)) },
+                        leadingIcon = { Icon(Icons.Filled.BrightnessMedium, contentDescription = null) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Display) },
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_menu_cast_pip)) },
+                        leadingIcon = { Icon(Icons.Filled.Cast, contentDescription = null) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.CastAndPip) },
                     )
                 }
@@ -376,7 +387,7 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
             Icon(Icons.Filled.Speed, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
             BasicText(text = label,
-                style = TextStyle(color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold),
+                style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                 maxLines = 1)
         }
     }
