@@ -87,14 +87,13 @@ internal fun MobilePlayerTopBar(
     modifier: Modifier = Modifier,
 ) {
     if (!visible) return
-    Row(
+    Box(
         modifier = modifier.fillMaxWidth()
             .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
             .padding(start = 8.dp, end = 12.dp, top = 6.dp, bottom = 8.dp),
-        verticalAlignment = Alignment.Top,
     ) {
         Column(
-            Modifier.weight(1f).padding(start = titleStartPadding, top = 2.dp, end = 6.dp),
+            Modifier.align(Alignment.TopCenter).fillMaxWidth(0.62f).padding(top = 2.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             if (title.isNotBlank()) {
@@ -167,7 +166,7 @@ internal fun MobilePlayerTopBar(
             MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 3.dp))
         }
         Row(
-            Modifier.padding(start = 4.dp),
+            Modifier.align(Alignment.TopEnd).padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
@@ -182,8 +181,8 @@ internal fun MobilePlayerTopBar(
 private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
     androidx.compose.foundation.layout.Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.widthIn(min = 54.dp, max = 72.dp)
-            .size(height = mobilePlayerControlButtonSize(), width = 56.dp)
+        modifier = Modifier.widthIn(min = 72.dp, max = 104.dp)
+            .size(height = mobilePlayerControlButtonSize(), width = 96.dp)
             .clickable(onClick = onClick)
             .padding(horizontal = 5.dp),
     ) {

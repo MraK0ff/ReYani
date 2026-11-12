@@ -54,12 +54,6 @@ internal fun MobilePlayerProgressRow(
                 .offset(y = -videoBottomInset)
                 .padding(horizontal = 20.dp, vertical = 6.dp),
         ) {
-            Text(
-                text = "${displayTime.millisToClockTime()}/${duration.millisToClockTime()}",
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White.copy(alpha = 0.94f),
-                modifier = Modifier.padding(start = 2.dp, bottom = 3.dp),
-            )
             MobilePlayerTimeline(
                 progress = seekProgress.coerceIn(0f, 1f),
                 bufferedProgress = bufferedProgress.coerceIn(seekProgress.coerceIn(0f, 1f), 1f),
@@ -67,6 +61,12 @@ internal fun MobilePlayerProgressRow(
                 onValueChange = onSeekChange,
                 onValueChangeFinished = onSeekFinished,
                 modifier = Modifier.fillMaxWidth(),
+            )
+            Text(
+                text = "${displayTime.millisToClockTime().padStart(5, '0')}/${duration.millisToClockTime().padStart(5, '0')}",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.94f),
+                modifier = Modifier.padding(start = 2.dp, top = 3.dp),
             )
         }
     }
