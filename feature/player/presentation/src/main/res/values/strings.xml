@@ -249,7 +249,7 @@
     <string name="player_time_display_title">On-screen time</string>
     <string name="player_time_display_system_clock">System clock</string>
     <string name="player_time_display_elapsed">Watched time</string>
-    <string name="player_time_display_remaining">Time remaining</string>
+    <string name="player_time_display_remaining">Show remaining time instead of duration</string>
     <string name="player_time_display_finish_at">Episode end time</string>
     <string name="player_time_display_always">Always</string>
     <string name="player_time_display_never">Never</string>
