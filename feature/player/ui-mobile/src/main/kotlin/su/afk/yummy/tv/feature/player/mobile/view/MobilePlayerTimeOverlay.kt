@@ -2,8 +2,8 @@ package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +49,7 @@ internal fun MobilePlayerTimeOverlay(
     val finishAt = clockFormat.format(Date(nowMs + remainingMs))
     val showClock = shouldShow(settings.systemClock, controlsActive)
     val showFinish = durationMs > 0L && shouldShow(settings.finishAt, controlsActive)
-    if (!showClock && !showFinish) return
+    if (!showClock && !showFinish && !(settings.elapsed == PlayerTimeDisplayMode.ALWAYS && !controlsActive)) return
     Box(modifier = modifier.fillMaxSize()) {
         Row(
             modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(top = 76.dp),
