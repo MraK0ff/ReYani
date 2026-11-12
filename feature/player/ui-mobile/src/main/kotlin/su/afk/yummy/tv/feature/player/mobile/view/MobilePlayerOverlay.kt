@@ -4,30 +4,29 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.ui.input.pointer.PointerInputScope
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.HighQuality
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.ScreenRotation
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.FastForward
+import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,8 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -52,19 +51,21 @@ import su.afk.yummy.tv.feature.player.presentation.R
 @Composable
 internal fun MobilePlayerOverlay(
     visible: Boolean,
+    wantsPlay: Boolean,
     progress: PlayerPlaybackProgressState,
-    openingStartMs: Long?,
-    openingEndMs: Long?,
+    hasPrevEpisode: Boolean,
+    hasNextEpisode: Boolean,
+    holdToSwitchEpisode: Boolean,
+    onPlayPause: () -> Unit,
     onSeekChange: (Float) -> Unit,
     onSeekFinished: () -> Unit,
-    /** Кнопка качества слева: у источника без выбора качества её нет. */
-    showQuality: Boolean,
-    onQuality: () -> Unit,
-    onSpeed: () -> Unit,
-    onLock: () -> Unit,
-    onDubbing: () -> Unit,
-    onOrientation: () -> Unit,
-    onSettings: () -> Unit,
+    onStepSeek: (StepSeekDirection) -> Unit,
+    onLongPressSeek: (StepSeekDirection) -> Unit,
+    onPrevEpisode: () -> Unit,
+    onNextEpisode: () -> Unit,
+    onTrackSettings: () -> Unit,
+    onPlayerSettings: () -> Unit,
+    onMoreActions: () -> Unit,
     modifier: Modifier = Modifier,
     episodesAvailable: Boolean = false,
     episodesExpanded: Boolean = false,
@@ -75,126 +76,61 @@ internal fun MobilePlayerOverlay(
     videoBottomInset: androidx.compose.ui.unit.Dp = 0.dp,
 ) {
     if (!visible) return
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color.Transparent,
-                        Color.Black.copy(alpha = 0.90f)
-                    )
-                )
-            )
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(horizontal = 18.dp, vertical = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        MobilePlayerProgressRow(
-            displayTime = progress.displayTimeMs,
-            duration = progress.duration,
-            seekProgress = progress.progressFraction,
-            bufferedProgress = progress.bufferedProgress,
-            openingStartMs = openingStartMs,
-            openingEndMs = openingEndMs,
-            onSeekChange = onSeekChange,
-            onSeekFinished = onSeekFinished,
-        )
-        // Слева направо: серии, озвучка, качество, замок (центр), скорость, поворот, настройки.
-        // null - кнопки нет (серий или выбора качества у источника может не быть).
-        val episodesAction = if (episodesAvailable) {
-            BottomAction(
-                Icons.Filled.VideoLibrary,
-                stringResource(R.string.player_episodes_list_title),
-            ) { onEpisodesExpandedChange(!episodesExpanded) }
-        } else {
-            null
+    var holdHintTick by remember { mutableIntStateOf(0) }
+    var holdHintVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(holdHintTick) {
+        if (holdHintTick > 0) {
+            holdHintVisible = true
+            delay(HOLD_HINT_DURATION_MS)
+            holdHintVisible = false
         }
-        val dubbingAction = BottomAction(
-            Icons.AutoMirrored.Filled.VolumeUp,
-            stringResource(R.string.player_mobile_track_settings_title),
-            onDubbing,
-        )
-        val qualityAction = if (showQuality) {
-            BottomAction(Icons.Filled.HighQuality, stringResource(R.string.player_quality_title), onQuality)
-        } else {
-            null
-        }
-        val lockAction = BottomAction(Icons.Filled.Lock, stringResource(R.string.player_mobile_lock), onLock)
-        val speedAction = BottomAction(Icons.Filled.Speed, stringResource(R.string.player_speed_title), onSpeed)
-        val orientationAction = BottomAction(
-            Icons.Filled.ScreenRotation,
-            stringResource(R.string.player_mobile_orientation),
-            onOrientation,
-        )
-        val settingsAction = BottomAction(
-            Icons.Filled.Settings,
-            stringResource(R.string.player_mobile_settings_title),
-            onSettings,
-        )
-        val configuration = LocalConfiguration.current
-        val compactPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT &&
-            configuration.screenWidthDp < COMPACT_WIDTH_DP
-        if (compactPortrait) {
-            // Узкий портрет: семь равных слотов делят всю ширину ряда, кнопки крупнее обычных.
-            // Пустой слот (нет серий/качества) занимает место, чтобы замок остался строго по центру.
-            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                val buttonSize = ((maxWidth - BOTTOM_BUTTONS_MIN_GAP * (BOTTOM_SLOTS - 1)) / BOTTOM_SLOTS)
-                    .coerceIn(BOTTOM_BUTTON_MIN_SIZE, BOTTOM_BUTTON_MAX_SIZE)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    listOf(
-                        episodesAction,
-                        dubbingAction,
-                        qualityAction,
-                        lockAction,
-                        speedAction,
-                        orientationAction,
-                        settingsAction,
-                    ).forEach { action ->
-                        if (action != null) {
-                            MobilePlayerActionButton(
-                                icon = action.icon,
-                                contentDescription = action.description,
-                                onClick = action.onClick,
-                                size = buttonSize,
-                            )
-                        } else {
-                            Spacer(modifier = Modifier.size(buttonSize))
-                        }
-                    }
-                }
-            }
-        } else {
-            // Box, а не SpaceBetween: замок должен стоять ровно по центру, даже если группы слева и справа разной ширины.
-            Box(modifier = Modifier.fillMaxWidth()) {
+    }
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val expandedControlsOffset = minOf(72.dp, maxHeight * 0.12f)
+        Box(
+            modifier = Modifier.align(Alignment.Center)
+                .offset(y = if (episodesStripVisible) -expandedControlsOffset else 0.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 MobilePlayerActionButton(
-                    icon = lockAction.icon,
-                    contentDescription = lockAction.description,
-                    onClick = lockAction.onClick,
-                    modifier = Modifier.align(Alignment.Center),
+                    icon = Icons.Filled.SkipPrevious,
+                    contentDescription = stringResource(R.string.player_mobile_previous_episode),
+                    enabled = hasPrevEpisode,
+                    onClick = onPrevEpisode,
+                    onHold = onPrevEpisode.takeIf { holdToSwitchEpisode },
+                    onHoldHint = { holdHintTick++ },
                 )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(BOTTOM_BUTTONS_GAP),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.align(Alignment.CenterStart),
-                ) {
-                    listOfNotNull(episodesAction, dubbingAction, qualityAction).forEach { action ->
-                        MobilePlayerActionButton(action.icon, action.description, action.onClick)
-                    }
-                }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(BOTTOM_BUTTONS_GAP),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.align(Alignment.CenterEnd),
-                ) {
-                    listOf(speedAction, orientationAction, settingsAction).forEach { action ->
-                        MobilePlayerActionButton(action.icon, action.description, action.onClick)
-                    }
+                MobilePlayerActionButton(
+                    icon = Icons.Filled.FastRewind,
+                    contentDescription = stringResource(R.string.player_mobile_pip_rewind_10),
+                    onClick = { onStepSeek(StepSeekDirection.Backward) },
+                    onLongPress = { onLongPressSeek(StepSeekDirection.Backward) },
+                )
+                MobilePlayerActionButton(
+                    icon = if (wantsPlay) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                    contentDescription = stringResource(if (wantsPlay) R.string.player_mobile_pip_pause else R.string.player_mobile_pip_play),
+                    primary = true,
+                    pauseButton = wantsPlay,
+                    onClick = onPlayPause,
+                )
+                MobilePlayerActionButton(
+                    icon = Icons.Filled.FastForward,
+                    contentDescription = stringResource(R.string.player_mobile_pip_forward_10),
+                    onClick = { onStepSeek(StepSeekDirection.Forward) },
+                    onLongPress = { onLongPressSeek(StepSeekDirection.Forward) },
+                )
+                if (hasNextEpisode) {
+                    MobilePlayerActionButton(
+                        icon = Icons.Filled.SkipNext,
+                        contentDescription = stringResource(R.string.player_mobile_next_episode),
+                        onClick = onNextEpisode,
+                        onHold = onNextEpisode.takeIf { holdToSwitchEpisode },
+                        onHoldHint = { holdHintTick++ },
+                    )
                 }
             }
             AnimatedVisibility(
@@ -255,22 +191,6 @@ private suspend fun PointerInputScope.collapseOnSwipeDown(onExpandedChange: (Boo
     )
 }
 
-/** Кнопка нижнего ряда: значок, подпись для TalkBack и действие. */
-private class BottomAction(
-    val icon: ImageVector,
-    val description: String,
-    val onClick: () -> Unit,
-)
-
-private val BOTTOM_BUTTONS_GAP = 6.dp
-
-/** Ниже этой ширины (dp) в портрете кнопки нижнего ряда делят ряд поровну. */
-private const val COMPACT_WIDTH_DP = 600
-private const val BOTTOM_SLOTS = 7
-private val BOTTOM_BUTTONS_MIN_GAP = 6.dp
-private val BOTTOM_BUTTON_MIN_SIZE = 40.dp
-private val BOTTOM_BUTTON_MAX_SIZE = 52.dp
 private const val SWIPE_THRESHOLD_PX = 40f
-
-/** Линейная анимация вместо дефолтной пружины: у пружины длинный хвост, и лента «доезжает» с лагом. */
+private const val HOLD_HINT_DURATION_MS = 1_800L
 private const val EPISODES_STRIP_ANIMATION_MS = 220
