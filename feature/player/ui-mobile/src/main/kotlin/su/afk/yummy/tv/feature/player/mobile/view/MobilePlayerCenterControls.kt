@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ internal fun MobilePlayerCenterControls(
                 onClick = onPrevEpisode,
                 sizeMultiplier = CENTER_SWITCH_SCALE,
                 iconScale = CENTER_SWITCH_ICON_SCALE,
+                surface = false,
             )
         }
         val playPauseDescription = stringResource(
@@ -61,7 +63,13 @@ internal fun MobilePlayerCenterControls(
                     onClick = onPlayPause,
                 ),
         ) {
-            if (!loading) {
+            if (loading) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 3.dp,
+                    modifier = Modifier.size(42.dp),
+                )
+            } else {
                 Icon(
                     imageVector = if (wantsPlay) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                     contentDescription = playPauseDescription,
