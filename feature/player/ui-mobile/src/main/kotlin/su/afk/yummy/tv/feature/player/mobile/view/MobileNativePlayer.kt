@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,6 +48,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import su.afk.yummy.tv.core.utils.cast.CastSupport
 import su.afk.yummy.tv.core.model.settings.PlayerResizeMode
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.feature.player.PlayerState
 import su.afk.yummy.tv.feature.player.common.PlayerBlackBackdrop
 import su.afk.yummy.tv.feature.player.common.PlayerSpeedOptions
@@ -80,6 +82,7 @@ import su.afk.yummy.tv.feature.player.common.rememberPlayerTrackMenu
 import su.afk.yummy.tv.feature.player.mobile.model.MobilePlayerSettingsPage
 import su.afk.yummy.tv.feature.player.mobile.model.MobilePlayerSettingsMenuModel
 import su.afk.yummy.tv.feature.player.mobile.model.MobilePlayerSettingsMenuActions
+import su.afk.yummy.tv.feature.player.mobile.model.rememberMobilePlayerSettingsStore
 import su.afk.yummy.tv.feature.player.common.rememberPlayerSleepTimer
 import su.afk.yummy.tv.feature.player.common.rememberPlayerVolumeController
 import su.afk.yummy.tv.feature.player.common.service.rememberPlayerMediaController
@@ -111,6 +114,7 @@ import su.afk.yummy.tv.feature.player.mobile.utils.gestureIcon
 import su.afk.yummy.tv.feature.player.mobile.utils.toGesturePercentText
 import su.afk.yummy.tv.feature.player.mobile.utils.toMobilePlayerKeyAction
 import su.afk.yummy.tv.feature.player.mobile.view.tutorial.MobilePlayerGestureTutorial
+import kotlinx.coroutines.launch
 import su.afk.yummy.tv.feature.player.model.PlayerFinalEpisodeAction
 import su.afk.yummy.tv.feature.player.model.PlayerNextEpisodeSource
 import su.afk.yummy.tv.feature.player.model.PlayerNextEpisodeUnavailable
@@ -136,6 +140,11 @@ internal fun MobileNativePlayer(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val playerSettingsStore = rememberMobilePlayerSettingsStore()
+    val timeDisplaySettings by playerSettingsStore.playerTimeDisplaySettings.collectAsStateWithLifecycle(
+        initialValue = PlayerTimeDisplaySettings(),
+    )
+    val settingsScope = rememberCoroutineScope()
     val activity = remember(context) { MobilePlayerPipController.findActivity(context) }
     val supportsPictureInPicture = remember(context) { MobilePlayerPipController.canEnter(context) }
     val isInPictureInPictureMode = MobilePlayerPipController.isInPictureInPictureMode
@@ -820,6 +829,9 @@ internal fun MobileNativePlayer(
                     },
                     onDetails = { onEvent(PlayerState.Event.OpenDetails) },
                     onPictureInPictureChange = { onEvent(PlayerState.Event.PictureInPictureToggled(it)) },
+                    onTimeDisplaySettingsChange = { settings ->
+                        settingsScope.launch { playerSettingsStore.setPlayerTimeDisplaySettings(settings) }
+                    },
                 ),
                 onDismiss = {
                     settingsMenuOpen = false
@@ -923,6 +935,17 @@ internal fun MobileNativePlayer(
             },
             videoWidthFraction = videoWidthFraction,
             videoBottomInset = videoBottomInsetDp,
+        )
+
+        MobilePlayerTimeOverlay(
+            settings = timeDisplaySettings,
+            displayTimeMs = progress.displayTimeMs,
+            durationMs = progress.duration,
+            controlsActive = overlay.visible && !locked && !isInPictureInPictureMode,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = videoLeftDp, y = videoTopDp + 76.dp)
+                .padding(end = 12.dp),
         )
 
         val skipButtonBottomPadding by animateDpAsState(
