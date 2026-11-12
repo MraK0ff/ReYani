@@ -26,6 +26,12 @@ internal fun SettingsMobileGeneralContent(
     Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
         SettingsMobileSection {
             SettingsMobileOptionRow(
+                label = stringResource(R.string.settings_interface_type),
+                value = state.interfaceMode.label(),
+                hint = state.interfaceMode.hint(),
+                onClick = { onPickerRequested(SettingsMobilePicker.INTERFACE_MODE) },
+            )
+            SettingsMobileOptionRow(
                 label = stringResource(R.string.settings_interface_language_title),
                 value = state.interfaceLanguage.label(),
                 onClick = { onPickerRequested(SettingsMobilePicker.INTERFACE_LANGUAGE) },

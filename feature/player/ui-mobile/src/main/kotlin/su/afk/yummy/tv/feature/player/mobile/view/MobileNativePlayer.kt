@@ -240,6 +240,15 @@ internal fun MobileNativePlayer(
 
     // Перезапускаем авто-скрытие после любого изменения playback/видимости UI.
     // Если таймер завершился, пока была открыта панель, повторно планируем его при закрытии панели.
+    // Пауза открывает контролы только при переходе в paused. Изменение overlay.visible
+    // не должно повторно показывать панель после ручного скрытия тапом.
+    LaunchedEffect(wantsPlay) {
+        if (!wantsPlay) {
+            overlay.cancelHide()
+            overlay.visible = true
+        }
+    }
+
     LaunchedEffect(
         wantsPlay,
         overlay.visible,
@@ -254,14 +263,7 @@ internal fun MobileNativePlayer(
         tutorialBlocksPlayback,
         castConnection.isCasting,
     ) {
-        if (!wantsPlay) {
-            overlay.cancelHide()
-            overlay.visible = true
-        } else if (overlay.visible) {
-            overlay.scheduleHide()
-        } else {
-            overlay.cancelHide()
-        }
+        if (wantsPlay && overlay.visible) overlay.scheduleHide() else overlay.cancelHide()
     }
 
     // Видео-области при касте всё равно нет (кадры уходят на приёмник) - таймлайн и контролы
@@ -610,7 +612,7 @@ internal fun MobileNativePlayer(
 
         // Часть затемнения перенесена с поверхностей кнопок на видеоряд.
         if (overlay.visible && !locked) {
-            Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.29f)))
+            Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.36f)))
         }
 
         PlayerSubtitleOverlay(
@@ -676,6 +678,7 @@ internal fun MobileNativePlayer(
             episode = ui.activeEpisode,
             dubbing = ui.activeDubbing,
             playerName = ui.activeBalancerLabel,
+            offlinePlayback = state.isOfflinePlayback,
             episodeFlags = ui.activeEpisodeFlags,
             qualityLabel = playerQualityButtonLabel(
                 activeQuality = selectedQuality,
@@ -683,18 +686,22 @@ internal fun MobileNativePlayer(
                 adaptiveLimitQuality = ui.adaptiveLimitLabel,
                 adaptiveLimitBest = ui.adaptiveLimitBest,
             ),
-            titleStartPadding = if (
-                !hasSideLetterboxing && videoBottomInsetDp < controlSize && videoTopDp < controlSize
-            ) controlSize * 2 + 24.dp else 4.dp,
+            titleStartPadding = maxOf(
+                controlSize + 12.dp,
+                if (!hasSideLetterboxing && videoBottomInsetDp < controlSize && videoTopDp < controlSize)
+                    controlSize * 2 + 24.dp else 4.dp,
+            ),
             onEpisodeClick = {
                 onEpisodesExpandedChange(!episodesExpanded)
                 if (!episodesExpanded) overlay.cancelHide() else overlay.show()
             },
             onDubbingClick = {
-                endFlow.hideAll()
-                trackSheetOpen = true
-                overlay.visible = true
-                overlay.cancelHide()
+                if (!state.isOfflinePlayback) {
+                    endFlow.hideAll()
+                    trackSheetOpen = true
+                    overlay.visible = true
+                    overlay.cancelHide()
+                }
             },
             onMoreActions = {
                 endFlow.hideAll()
@@ -733,7 +740,7 @@ internal fun MobileNativePlayer(
                 }
             },
             buttonSize = 48.dp,
-            modifier = Modifier.align(Alignment.TopStart).offset(x = videoLeftDp + 8.dp, y = videoTopDp + 8.dp),
+            modifier = Modifier.align(Alignment.TopStart).offset(x = videoLeftDp + 4.dp, y = videoTopDp + 8.dp),
         )
 
         if (settingsMenuOpen && !isInPictureInPictureMode && !tutorialBlocksPlayback) {
@@ -760,9 +767,8 @@ internal fun MobileNativePlayer(
                     stabilizationEnabled = state.volumeStabilizationEnabled,
                     sleepTimerMinutes = sleepTimer.selectedMinutes,
                     showDetails = state.animeId > 0,
-                    showPictureInPicture = state.pictureInPictureEnabled &&
-                        supportsPictureInPicture &&
-                        !castConnection.isCasting,
+                    showPictureInPicture = supportsPictureInPicture && !castConnection.isCasting,
+                    pictureInPictureEnabled = state.pictureInPictureEnabled,
                     showCast = castSupported,
                 ),
                 actions = MobilePlayerSettingsMenuActions(
@@ -797,7 +803,7 @@ internal fun MobileNativePlayer(
                         if (minutes > 0) sleepTimer.set(minutes) else sleepTimer.cancel()
                     },
                     onDetails = { onEvent(PlayerState.Event.OpenDetails) },
-                    onPictureInPicture = { activity?.let(pipSession::enter) },
+                    onPictureInPictureChange = { onEvent(PlayerState.Event.PictureInPictureToggled(it)) },
                 ),
                 onDismiss = {
                     settingsMenuOpen = false

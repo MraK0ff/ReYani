@@ -1,29 +1,29 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import su.afk.yummy.tv.core.utils.formatting.millisToClockTime
-import su.afk.yummy.tv.feature.player.common.view.bufferedTrackOverlay
 
 @Composable
 internal fun MobilePlayerProgressRow(
@@ -37,12 +37,10 @@ internal fun MobilePlayerProgressRow(
     videoBottomInset: Dp = 0.dp,
     modifier: Modifier = Modifier,
 ) {
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-    val safeHorizontalInset = with(density) {
+    val safeHorizontalInset = with(androidx.compose.ui.platform.LocalDensity.current) {
         maxOf(
-            WindowInsets.safeDrawing.getLeft(this, layoutDirection),
-            WindowInsets.safeDrawing.getRight(this, layoutDirection),
+            WindowInsets.safeDrawing.getLeft(this, androidx.compose.ui.platform.LocalLayoutDirection.current),
+            WindowInsets.safeDrawing.getRight(this, androidx.compose.ui.platform.LocalLayoutDirection.current),
         ).toDp()
     }
     Box(
@@ -56,71 +54,92 @@ internal fun MobilePlayerProgressRow(
                 .offset(y = -videoBottomInset)
                 .padding(horizontal = 20.dp, vertical = 6.dp),
         ) {
-            MobileBufferedSlider(
-                value = seekProgress.coerceIn(0f, 1f), bufferedProgress = bufferedProgress,
-                // На мобильном плеере оставляем одну непрерывную дорожку без отдельной метки опенинга.
-                openingRange = null,
-                onValueChange = onSeekChange, onValueChangeFinished = onSeekFinished,
-                enabled = duration > 0, modifier = Modifier.fillMaxWidth(),
+            MobilePlayerTimeline(
+                progress = seekProgress.coerceIn(0f, 1f),
+                bufferedProgress = bufferedProgress.coerceIn(seekProgress.coerceIn(0f, 1f), 1f),
+                enabled = duration > 0L,
+                onValueChange = onSeekChange,
+                onValueChangeFinished = onSeekFinished,
+                modifier = Modifier.fillMaxWidth(),
             )
             Text(
                 text = "${displayTime.millisToClockTime()}/${duration.millisToClockTime()}",
                 style = MaterialTheme.typography.labelSmall,
-                color = Color.White.copy(alpha = 0.92f),
-                modifier = Modifier.align(Alignment.End).padding(top = 4.dp, end = 10.dp),
+                color = Color.White.copy(alpha = 0.94f),
+                modifier = Modifier.padding(start = 2.dp, top = 3.dp),
             )
         }
     }
 }
 
+/** Своя дорожка вместо Material Slider: тонкая линия, цвет темы, белый бегунок и буферизация. */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun MobileBufferedSlider(
-    value: Float,
+private fun MobilePlayerTimeline(
+    progress: Float,
     bufferedProgress: Float,
-    openingRange: ClosedFloatingPointRange<Float>?,
+    enabled: Boolean,
     onValueChange: (Float) -> Unit,
     onValueChangeFinished: () -> Unit,
-    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val activeProgress = value.coerceIn(0f, 1f)
-    val buffered = bufferedProgress.coerceIn(activeProgress, 1f)
-    val trackColor = Color.Black.copy(alpha = 0.48f)
-    val playedColor = MaterialTheme.colorScheme.primary
+    val accent = MaterialTheme.colorScheme.primary
     val colors = SliderDefaults.colors(
         thumbColor = Color.Transparent,
-        // Единая нейтральная основа: просмотренная часть выделяется серым, не белым.
-        activeTrackColor = trackColor,
-        inactiveTrackColor = trackColor,
+        activeTrackColor = Color.Transparent,
+        inactiveTrackColor = Color.Transparent,
         disabledThumbColor = Color.Transparent,
-        disabledActiveTrackColor = Color(0xFF777B7D),
-        disabledInactiveTrackColor = Color.Black.copy(alpha = 0.24f),
-        activeTickColor = Color.Transparent, inactiveTickColor = Color.Transparent,
+        disabledActiveTrackColor = Color.Transparent,
+        disabledInactiveTrackColor = Color.Transparent,
+        activeTickColor = Color.Transparent,
+        inactiveTickColor = Color.Transparent,
     )
-    val sliderState = remember { SliderState(value = activeProgress) }
-    sliderState.value = activeProgress
     Slider(
-        state = sliderState, onValueChange = onValueChange, onValueChangeFinished = onValueChangeFinished,
-        enabled = enabled, modifier = modifier, colors = colors,
+        value = progress,
+        onValueChange = onValueChange,
+        onValueChangeFinished = onValueChangeFinished,
+        enabled = enabled,
+        modifier = modifier.height(24.dp),
+        colors = colors,
         thumb = {},
         track = { state ->
-            SliderDefaults.Track(
-                sliderState = state,
-                enabled = enabled,
-                colors = colors,
-                // The invisible thumb must not cut a visual gap into the continuous timeline.
-                thumbTrackGapSize = 0.dp,
-                modifier = Modifier.bufferedTrackOverlay(
-                    activeProgress = activeProgress,
-                    bufferedProgress = buffered,
-                    color = trackColor,
-                    openingRange = openingRange,
-                    openingColor = Color(0xFFD7D1C6),
-                    playedColor = playedColor,
-                    gap = 0.dp,
-                ),
-            )
+            Canvas(Modifier.fillMaxWidth().height(24.dp)) {
+                val centerY = size.height / 2f
+                val stroke = 3.5.dp.toPx()
+                val radius = stroke / 2f
+                val endX = size.width
+                val playedX = endX * state.value.coerceIn(0f, 1f)
+                val bufferedX = endX * bufferedProgress.coerceIn(state.value, 1f)
+                drawRoundRect(
+                    color = Color.White.copy(alpha = 0.54f),
+                    topLeft = Offset(0f, centerY - radius),
+                    size = Size(endX, stroke),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
+                )
+                if (bufferedX > playedX) {
+                    drawRoundRect(
+                        color = Color.White.copy(alpha = 0.82f),
+                        topLeft = Offset(playedX, centerY - radius),
+                        size = Size(bufferedX - playedX, stroke),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
+                    )
+                }
+                if (playedX > 0f) {
+                    drawRoundRect(
+                        color = accent,
+                        topLeft = Offset(0f, centerY - radius),
+                        size = Size(playedX, stroke),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
+                    )
+                }
+                if (enabled) {
+                    drawCircle(
+                        color = Color.White,
+                        radius = 6.dp.toPx(),
+                        center = Offset(playedX.coerceIn(0f, endX), centerY),
+                    )
+                }
+            }
         },
     )
 }

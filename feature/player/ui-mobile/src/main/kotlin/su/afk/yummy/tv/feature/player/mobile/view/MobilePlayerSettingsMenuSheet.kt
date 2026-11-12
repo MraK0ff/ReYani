@@ -129,10 +129,8 @@ internal fun MobilePlayerSettingsMenuSheet(
             MobilePlayerSettingsPage.CastAndPip -> MobilePlayerCastPipPage(
                 showPictureInPicture = model.showPictureInPicture,
                 showCast = model.showCast,
-                onPictureInPicture = {
-                    onDismiss()
-                    actions.onPictureInPicture()
-                },
+                pictureInPictureEnabled = model.pictureInPictureEnabled,
+                onPictureInPictureChange = actions.onPictureInPictureChange,
                 onBack = goBack,
             )
 
