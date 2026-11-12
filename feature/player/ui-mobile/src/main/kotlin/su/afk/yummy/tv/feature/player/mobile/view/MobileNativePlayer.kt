@@ -175,6 +175,7 @@ internal fun MobileNativePlayer(
     var orientationSheetOpen by remember { mutableStateOf(false) }
     var qualitySheetOpen by remember { mutableStateOf(false) }
     var speedSheetOpen by remember { mutableStateOf(false) }
+    var showRemainingTime by rememberSaveable { mutableStateOf(false) }
     var wantsPlay by remember { mutableStateOf(true) }
     // Замок управления: гасит жесты и панели, чтобы свайп к статус-бару не перематывал видео.
     var locked by rememberSaveable { mutableStateOf(false) }
@@ -944,6 +945,8 @@ internal fun MobileNativePlayer(
             videoWidthFraction = videoWidthFraction,
             videoBottomInset = videoBottomInsetDp,
             timeDisplaySettings = timeDisplaySettings,
+            showRemainingTime = showRemainingTime,
+            onTimeCodeClick = { showRemainingTime = !showRemainingTime },
         )
 
         MobilePlayerTimeOverlay(
@@ -951,12 +954,11 @@ internal fun MobileNativePlayer(
             displayTimeMs = progress.displayTimeMs,
             durationMs = progress.duration,
             controlsActive = overlay.visible && !locked && !isInPictureInPictureMode,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(x = videoLeftDp, y = videoTopDp)
-                .width(videoWidthDp)
-                .height(videoHeightDp)
-                .padding(horizontal = 12.dp),
+            sideInset = videoLeftInsetDp,
+            videoTopInset = videoTopDp,
+            showRemainingTime = showRemainingTime,
+            onTimeCodeClick = { showRemainingTime = !showRemainingTime },
+            modifier = Modifier.fillMaxSize(),
         )
 
         val skipButtonBottomPadding by animateDpAsState(
