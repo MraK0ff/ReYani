@@ -85,8 +85,8 @@ internal fun MobilePlayerCenterControls(
     }
 }
 
-private const val CENTER_SWITCH_SCALE = 1.25f
-private const val CENTER_SWITCH_ICON_SCALE = 0.78f
+private const val CENTER_SWITCH_SCALE = 1.5f
+private const val CENTER_SWITCH_ICON_SCALE = 0.88f
 private val CENTER_CONTROLS_GAP = 32.dp
 private val CENTER_SWITCH_SLOT = 80.dp
 private val CENTER_PLAY_SIZE = 88.dp
