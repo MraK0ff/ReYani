@@ -1,10 +1,10 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,13 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplayMode
 import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.core.utils.formatting.millisToClockTime
-import su.afk.yummy.tv.feature.player.presentation.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,6 +33,10 @@ internal fun MobilePlayerTimeOverlay(
     displayTimeMs: Long,
     durationMs: Long,
     controlsActive: Boolean,
+    sideInset: Dp,
+    videoTopInset: Dp,
+    showRemainingTime: Boolean,
+    onTimeCodeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var nowMs by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -49,43 +52,86 @@ internal fun MobilePlayerTimeOverlay(
     val finishAt = clockFormat.format(Date(nowMs + remainingMs))
     val showClock = shouldShow(settings.systemClock, controlsActive)
     val showFinish = durationMs > 0L && shouldShow(settings.finishAt, controlsActive)
-    if (!showClock && !showFinish && !(settings.elapsed == PlayerTimeDisplayMode.ALWAYS && !controlsActive)) return
+    val showElapsed = durationMs > 0L && settings.elapsed == PlayerTimeDisplayMode.ALWAYS && !controlsActive
+
     Box(modifier = modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(top = 76.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
+        // При FIT боковые чёрные поля — отдельная зона интерфейса, не часть видеокадра.
+        // Не кладём часы поверх заголовка: используем именно letterbox-поля.
+        if (sideInset >= 44.dp) {
             if (showClock) {
                 Text(
-                    text = stringResource(R.string.player_time_display_clock_value, systemClock),
+                    text = systemClock,
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.White,
                     maxLines = 1,
-                    modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 9.dp, vertical = 6.dp),
+                    modifier = Modifier.align(Alignment.TopStart)
+                        .padding(start = 6.dp)
+                        .padding(top = videoTopInset + 96.dp)
+                        .mobilePlayerGlassSurface()
+                        .padding(horizontal = 7.dp, vertical = 5.dp),
                 )
             }
             if (showFinish) {
                 Text(
-                    text = stringResource(R.string.player_time_display_finish_value, finishAt),
+                    text = finishAt,
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.White,
                     maxLines = 1,
-                    modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 9.dp, vertical = 6.dp),
+                    modifier = Modifier.align(Alignment.TopEnd)
+                        .padding(end = 6.dp)
+                        .padding(top = videoTopInset + 96.dp)
+                        .mobilePlayerGlassSurface()
+                        .padding(horizontal = 7.dp, vertical = 5.dp),
+                )
+            }
+        } else if (showClock || showFinish) {
+            Row(
+                modifier = Modifier.align(Alignment.BottomCenter)
+                    .padding(horizontal = 12.dp, vertical = 58.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (showClock) TimeChip(systemClock)
+                if (showFinish) TimeChip(finishAt)
+            }
+        }
+
+        if (showElapsed) {
+            val remaining = (durationMs - displayTimeMs).coerceAtLeast(0L)
+            Row(
+                modifier = Modifier.align(Alignment.BottomStart)
+                    .padding(start = 20.dp, bottom = 14.dp)
+                    .mobilePlayerGlassSurface()
+                    .clickable(onClick = onTimeCodeClick)
+                    .padding(horizontal = 9.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = if (showRemainingTime) "-${remaining.millisToClockTime().padStart(5, '0')}"
+                        else displayTimeMs.millisToClockTime().padStart(5, '0'),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.96f),
+                )
+                Text("/", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.58f))
+                Text(
+                    text = durationMs.millisToClockTime().padStart(5, '0'),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.62f),
                 )
             }
         }
-        if (settings.elapsed == PlayerTimeDisplayMode.ALWAYS && !controlsActive && durationMs > 0L) {
-            val shownDuration = if (settings.showRemainingInsteadOfDuration) remainingMs else durationMs
-            Text(
-                text = "${displayTimeMs.millisToClockTime().padStart(5, '0')} / ${shownDuration.millisToClockTime().padStart(5, '0')}",
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White.copy(alpha = 0.96f),
-                modifier = Modifier.align(Alignment.BottomCenter)
-                    .mobilePlayerGlassSurface()
-                    .padding(horizontal = 9.dp, vertical = 5.dp),
-            )
-        }
     }
+}
+
+@Composable
+private fun TimeChip(value: String) {
+    Text(
+        text = value,
+        style = MaterialTheme.typography.labelMedium,
+        color = Color.White,
+        maxLines = 1,
+        modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 7.dp, vertical = 5.dp),
+    )
 }
 
 private fun shouldShow(mode: PlayerTimeDisplayMode, controlsActive: Boolean): Boolean =
