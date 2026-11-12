@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -298,12 +299,16 @@ internal fun MobilePlayerTopBar(
                     initialFirstVisibleItemIndex = speedOptions.indexOfFirst { it >= 0.75f }.coerceAtLeast(0),
                 )
                 DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
-                    LazyColumn(state = speedListState, modifier = Modifier.heightIn(max = 384.dp)) {
+                    LazyColumn(state = speedListState, modifier = Modifier.heightIn(max = 352.dp)) {
                         itemsIndexed(speedOptions) { _, speed ->
-                            DropdownMenuItem(
-                                text = { Text(if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x") },
-                                onClick = { onSpeedSelected(speed); speedExpanded = false },
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth().height(44.dp)
+                                    .clickable { onSpeedSelected(speed); speedExpanded = false }
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x")
+                            }
                         }
                     }
                 }
