@@ -82,7 +82,7 @@ internal fun playerQualityButtonLabel(
     val compact = raw.replace(" ", "").removeSuffix("p").removeSuffix("P").ifBlank { "AUTO" }
     return when {
         compact == "AUTO" -> compact
-        adaptiveQuality -> "A${compact}p"
+        adaptiveQuality -> "${compact}p"
         else -> "${compact}p"
     }
 }

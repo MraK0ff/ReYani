@@ -686,11 +686,36 @@ internal fun MobileNativePlayer(
                 adaptiveLimitQuality = ui.adaptiveLimitLabel,
                 adaptiveLimitBest = ui.adaptiveLimitBest,
             ),
-            titleStartPadding = maxOf(
-                controlSize + 12.dp,
-                if (!hasSideLetterboxing && videoBottomInsetDp < controlSize && videoTopDp < controlSize)
-                    controlSize * 2 + 24.dp else 4.dp,
-            ),
+            adaptiveQuality = ui.adaptiveQuality,
+            qualities = ui.qualityLabels,
+            selectedQuality = selectedQuality,
+            adaptiveLimitQuality = ui.adaptiveLimitLabel,
+            adaptiveLimitBest = ui.adaptiveLimitBest,
+            onAdaptiveQualityChange = { onEvent(PlayerState.Event.AdaptiveQualityToggled(it)) },
+            onQualitySelected = { quality ->
+                val position = player.currentPosition.coerceAtLeast(0L)
+                reporter.saveProgress(position, progress.duration)
+                onEvent(PlayerState.Event.QualitySelected(quality, position))
+            },
+            onAdaptiveLimitSelected = { quality ->
+                onEvent(PlayerState.Event.AdaptiveQualityLimitSelected(quality, player.currentPosition.coerceAtLeast(0L)))
+            },
+            onAdaptiveLimitBestSelected = { onEvent(PlayerState.Event.AdaptiveQualityLimitBestSelected) },
+            selectedSpeed = selectedSpeed,
+            speedOptions = PlayerSpeedOptions.values,
+            onSpeedSelected = { onEvent(PlayerState.Event.SpeedSelected(it)); overlay.show() },
+            autoBrightness = gestures.autoBrightness,
+            onAutoBrightnessChange = { gestures.setAutoBrightness(it) },
+            showAudioTracks = trackMenu.showAudioChoice,
+            showSubtitleTracks = trackMenu.showSubtitleChoice,
+            showCast = supportsPictureInPicture || castSupported,
+            onMorePageSelected = { page ->
+                endFlow.hideAll()
+                settingsMenuPage = page
+                settingsMenuOpen = true
+                overlay.visible = true
+                overlay.cancelHide()
+            },
             onEpisodeClick = {
                 onEpisodesExpandedChange(!episodesExpanded)
                 if (!episodesExpanded) overlay.cancelHide() else overlay.show()
@@ -702,30 +727,6 @@ internal fun MobileNativePlayer(
                     overlay.visible = true
                     overlay.cancelHide()
                 }
-            },
-            onMoreActions = {
-                endFlow.hideAll()
-                settingsMenuPage = MobilePlayerSettingsPage.Root
-                settingsMenuOpen = true
-                overlay.visible = true
-                overlay.cancelHide()
-            },
-            onQualityClick = {
-                endFlow.hideAll()
-                qualitySheetOpen = true
-                overlay.cancelHide()
-            },
-            selectedSpeed = selectedSpeed,
-            onSpeedClick = {
-                val options = PlayerSpeedOptions.values
-                val nextIndex = (PlayerSpeedOptions.nearestIndex(selectedSpeed) + 1) % options.size
-                onEvent(PlayerState.Event.SpeedSelected(options[nextIndex]))
-                overlay.show()
-            },
-            onSpeedLongPress = {
-                endFlow.hideAll()
-                speedSheetOpen = true
-                overlay.cancelHide()
             },
             visible = overlay.visible && !locked && !isInPictureInPictureMode && !tutorialBlocksPlayback,
             modifier = Modifier.offset(x = videoLeftDp, y = videoTopDp).width(videoWidthDp),
@@ -929,16 +930,14 @@ internal fun MobileNativePlayer(
                 .padding(end = 18.dp, bottom = skipButtonBottomPadding),
         )
 
-        MobilePlayerSeekToast(
+        MobilePlayerSeekRipple(
             text = stepSeekToast.text.takeUnless {
                 isInPictureInPictureMode || tutorialBlocksPlayback
             },
-            icon = stepSeekToast.direction.toastIcon,
+            direction = stepSeekToast.direction,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                // Тост всегда в одной координате, независимо от видимости control panel.
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(bottom = 112.dp),
+                .align(Alignment.Center)
+                .windowInsetsPadding(WindowInsets.navigationBars),
         )
 
         MobilePlayerSkipToast(

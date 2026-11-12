@@ -61,8 +61,8 @@ internal fun MobilePlayerCenterControls(
             modifier = Modifier
                 .size(CENTER_PLAY_SIZE)
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.14f))
-                .border(1.dp, Color.White.copy(alpha = 0.20f), CircleShape)
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.90f))
+                
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -75,7 +75,7 @@ internal fun MobilePlayerCenterControls(
                 Icon(
                     imageVector = if (wantsPlay) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                     contentDescription = playPauseDescription,
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(CENTER_PLAY_ICON_SIZE),
                 )
             }
