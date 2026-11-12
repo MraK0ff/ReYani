@@ -1230,7 +1230,8 @@ internal fun MobileNativePlayer(
             visible = locked && unlockVisible && !isInPictureInPictureMode && !tutorialBlocksPlayback,
             onUnlock = {
                 locked = false
-                overlay.show()
+                overlay.visible = false
+                overlay.cancelHide()
             },
             holdRequired = state.holdToConfirmEnabled,
             onTouched = { unlockTouchToken++ },
