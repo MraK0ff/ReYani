@@ -102,7 +102,7 @@
     <string name="player_mobile_settings_title">Настройки плеера</string>
     <string name="player_mobile_track_settings_title">Озвучка и балансер</string>
     <string name="player_mobile_playback_settings_title">Настройки плеера</string>
-            <string name="player_mobile_episode_number">%1$s Серия</string>
+            <string name="player_mobile_episode_number">Серия %1$s</string>
     <string name="player_mobile_previous_episode">Предыдущая</string>
     <string name="player_mobile_next_episode">Следующая</string>
     <string name="player_mobile_details">Детали</string>
@@ -249,7 +249,7 @@
     <string name="player_time_display_title">Время на экране</string>
     <string name="player_time_display_system_clock">Системное время</string>
     <string name="player_time_display_elapsed">Время просмотра</string>
-    <string name="player_time_display_remaining">Время до конца серии</string>
+    <string name="player_time_display_remaining">Вместо продолжительности показывать оставшееся время</string>
     <string name="player_time_display_finish_at">Время окончания серии</string>
     <string name="player_time_display_always">Всегда</string>
     <string name="player_time_display_never">Никогда</string>
