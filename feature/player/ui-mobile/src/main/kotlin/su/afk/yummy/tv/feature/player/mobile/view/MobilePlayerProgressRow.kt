@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +25,8 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplayMode
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.core.utils.formatting.millisToClockTime
 
 @Composable
@@ -35,6 +39,7 @@ internal fun MobilePlayerProgressRow(
     onSeekFinished: () -> Unit,
     videoWidthFraction: Float = 1f,
     videoBottomInset: Dp = 0.dp,
+    timeDisplaySettings: PlayerTimeDisplaySettings = PlayerTimeDisplaySettings(),
     modifier: Modifier = Modifier,
 ) {
     val safeHorizontalInset = with(androidx.compose.ui.platform.LocalDensity.current) {
@@ -62,12 +67,32 @@ internal fun MobilePlayerProgressRow(
                 onValueChangeFinished = onSeekFinished,
                 modifier = Modifier.fillMaxWidth(),
             )
-            Text(
-                text = "${displayTime.millisToClockTime().padStart(5, '0')}/${duration.millisToClockTime().padStart(5, '0')}",
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White.copy(alpha = 0.94f),
-                modifier = Modifier.padding(start = 2.dp, top = 3.dp),
-            )
+            val showRemaining = timeDisplaySettings.remaining != PlayerTimeDisplayMode.NEVER
+            Row(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .mobilePlayerGlassSurface()
+                    .padding(horizontal = 9.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = displayTime.millisToClockTime().padStart(5, '0'),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.96f),
+                )
+                Text(
+                    text = "/",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.58f),
+                )
+                Text(
+                    text = (if (showRemaining) (duration - displayTime).coerceAtLeast(0L) else duration)
+                        .millisToClockTime().padStart(5, '0'),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.62f),
+                )
+            }
         }
     }
 }
