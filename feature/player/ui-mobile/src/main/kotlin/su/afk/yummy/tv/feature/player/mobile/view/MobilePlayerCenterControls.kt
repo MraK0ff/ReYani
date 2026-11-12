@@ -33,6 +33,7 @@ import su.afk.yummy.tv.feature.player.presentation.R
 internal fun MobilePlayerCenterControls(
     wantsPlay: Boolean,
     hasPrevEpisode: Boolean,
+    hasNextEpisode: Boolean,
     onPlayPause: () -> Unit,
     onPrevEpisode: () -> Unit,
     onNextEpisode: () -> Unit,
@@ -81,6 +82,7 @@ internal fun MobilePlayerCenterControls(
         MobilePlayerActionButton(
             icon = Icons.Filled.SkipNext,
             contentDescription = stringResource(R.string.player_mobile_next_episode),
+            enabled = hasNextEpisode,
             onClick = onNextEpisode,
             sizeMultiplier = CENTER_SWITCH_SCALE,
         )

@@ -63,11 +63,11 @@ internal fun MobilePlayerActionButton(
     }
     val holdProgress = remember { Animatable(0f) }
     val buttonSize = mobilePlayerControlButtonSize(primary) * sizeMultiplier
-    val borderColor = Color.Black.copy(alpha = 0.78f)
+    val borderColor = Color.White.copy(alpha = 0.10f)
     val surfaceFill = when {
         !enabled -> Color.Black.copy(alpha = 0.10f)
         primary -> MaterialTheme.colorScheme.primary
-        else -> MobilePlayerGlassFill
+        else -> Color.White.copy(alpha = 0.10f)
     }
 
     val baseViewConfiguration = LocalViewConfiguration.current
@@ -81,7 +81,7 @@ internal fun MobilePlayerActionButton(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(buttonSize)
-            .mobilePlayerGlassSurface(shape = shape, fill = surfaceFill, borderColor = borderColor)
+            .mobilePlayerGlassSurface(shape = shape, fill = surfaceFill, borderColor = borderColor, elevation = 0.dp)
             .then(
                 if (onHold == null && onLongPress != null) {
                     Modifier.pointerInput(enabled, onLongPress, onClick) {

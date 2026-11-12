@@ -55,7 +55,7 @@ internal fun MobilePlayerSkipButton(
     val shape = CircleShape
 
     AnimatedVisibility(
-        visible = skip != null,
+        visible = skip != null || countdownSeconds != null,
         modifier = modifier,
         enter = fadeIn() + slideInHorizontally { it / 2 },
         exit = fadeOut() + slideOutHorizontally { it / 2 },

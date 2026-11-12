@@ -46,7 +46,6 @@ import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import su.afk.yummy.tv.core.utils.cast.CastSupport
-import su.afk.yummy.tv.core.model.settings.PlayerResizeMode
 import su.afk.yummy.tv.feature.player.PlayerState
 import su.afk.yummy.tv.feature.player.common.PlayerBlackBackdrop
 import su.afk.yummy.tv.feature.player.common.PlayerSpeedOptions
@@ -77,6 +76,10 @@ import su.afk.yummy.tv.feature.player.common.rememberPlayerSkipUiState
 import su.afk.yummy.tv.feature.player.common.rememberPlayerStepSeekToastState
 import su.afk.yummy.tv.feature.player.common.rememberPlayerSystemVolumeController
 import su.afk.yummy.tv.feature.player.common.rememberPlayerTrackMenu
+import su.afk.yummy.tv.feature.player.mobile.model.MobilePlayerSettingsPage
+import su.afk.yummy.tv.feature.player.mobile.model.MobilePlayerSettingsMenuModel
+import su.afk.yummy.tv.feature.player.mobile.model.MobilePlayerSettingsMenuActions
+import su.afk.yummy.tv.feature.player.common.rememberPlayerSleepTimer
 import su.afk.yummy.tv.feature.player.common.rememberPlayerVolumeController
 import su.afk.yummy.tv.feature.player.common.service.rememberPlayerMediaController
 import su.afk.yummy.tv.feature.player.common.toastIcon
@@ -156,8 +159,9 @@ internal fun MobileNativePlayer(
         initialDurationMs = state.playbackDurationMs,
     )
     var trackSheetOpen by remember { mutableStateOf(false) }
-    var sidePanelOpen by remember { mutableStateOf(false) }
-    var showActionsSheet by remember { mutableStateOf(false) }
+    var settingsMenuOpen by remember { mutableStateOf(false) }
+    var settingsMenuPage by remember { mutableStateOf(MobilePlayerSettingsPage.Root) }
+    var orientationSheetOpen by remember { mutableStateOf(false) }
     var qualitySheetOpen by remember { mutableStateOf(false) }
     var speedSheetOpen by remember { mutableStateOf(false) }
     var wantsPlay by remember { mutableStateOf(true) }
@@ -212,8 +216,8 @@ internal fun MobileNativePlayer(
         canHide = {
             wantsPlay &&
                 !trackSheetOpen &&
-                !sidePanelOpen &&
-                !showActionsSheet &&
+                !settingsMenuOpen &&
+                !orientationSheetOpen &&
                 !qualitySheetOpen &&
                 !speedSheetOpen &&
                 !episodesExpanded &&
@@ -239,8 +243,8 @@ internal fun MobileNativePlayer(
         wantsPlay,
         overlay.visible,
         trackSheetOpen,
-        sidePanelOpen,
-        showActionsSheet,
+        settingsMenuOpen,
+        orientationSheetOpen,
         qualitySheetOpen,
         speedSheetOpen,
         episodesExpanded,
@@ -323,6 +327,7 @@ internal fun MobileNativePlayer(
     }
 
     val trackMenu = rememberPlayerTrackMenu(player, state)
+    val sleepTimer = rememberPlayerSleepTimer(player = player, onElapsed = { overlay.show() })
 
     LaunchedEffect(tutorialBlocksPlayback, isInPictureInPictureMode, player) {
         if (tutorialBlocksPlayback) {
@@ -476,8 +481,8 @@ internal fun MobileNativePlayer(
         overlay.show()
     }
 
-    BackHandler(enabled = sidePanelOpen && !isInPictureInPictureMode) {
-        sidePanelOpen = false
+    BackHandler(enabled = orientationSheetOpen && !isInPictureInPictureMode) {
+        orientationSheetOpen = false
         overlay.show()
     }
 
@@ -691,7 +696,10 @@ internal fun MobileNativePlayer(
                 overlay.cancelHide()
             },
             onMoreActions = {
-                showActionsSheet = true
+                endFlow.hideAll()
+                settingsMenuPage = MobilePlayerSettingsPage.Root
+                settingsMenuOpen = true
+                overlay.visible = true
                 overlay.cancelHide()
             },
             onQualityClick = {
@@ -727,35 +735,97 @@ internal fun MobileNativePlayer(
             modifier = Modifier.align(Alignment.TopStart).offset(x = videoLeftDp + 8.dp, y = videoTopDp + 8.dp),
         )
 
-        MobilePlayerActionsSheets(
-            showActions = showActionsSheet,
-            onActionsDismiss = {
-                showActionsSheet = false
-                overlay.show()
-            },
-            orientationMode = state.playerOrientationMode,
-            onOrientationSelected = { onEvent(PlayerState.Event.OrientationModeSelected(it)) },
-            onPlayerSettings = {
-                endFlow.hideAll()
-                sidePanelOpen = true
-                overlay.visible = true
-                overlay.cancelHide()
-            },
-            onDetails = { onEvent(PlayerState.Event.OpenDetails) },
-            onPictureInPicture = { activity?.let(pipSession::enter) },
-            showDetails = state.animeId > 0,
-            showPictureInPicture = state.pictureInPictureEnabled &&
-                supportsPictureInPicture &&
-                !isInPictureInPictureMode &&
-                !castConnection.isCasting,
-            showCast = castSupported && !isInPictureInPictureMode,
-        )
+        if (settingsMenuOpen && !isInPictureInPictureMode && !tutorialBlocksPlayback) {
+            MobilePlayerSettingsMenuSheet(
+                model = MobilePlayerSettingsMenuModel(
+                    qualities = ui.qualityLabels,
+                    selectedQuality = selectedQuality,
+                    adaptiveQuality = ui.adaptiveQuality,
+                    adaptiveLimitQuality = ui.adaptiveLimitLabel,
+                    adaptiveLimitBest = ui.adaptiveLimitBest,
+                    speed = selectedSpeed,
+                    audioTrackNames = trackMenu.audioOptions.map(PlayerTrackOption::label),
+                    selectedAudioTrackIndex = trackMenu.selectedAudioIndex,
+                    showAudioTracks = trackMenu.showAudioChoice,
+                    subtitleTrackNames = trackMenu.subtitleOptions.map(PlayerTrackOption::label),
+                    selectedSubtitleTrackIndex = trackMenu.selectedSubtitleIndex,
+                    showSubtitleTracks = trackMenu.showSubtitleChoice,
+                    subtitleStyle = state.subtitleStyle,
+                    resizeMode = state.resizeMode,
+                    autoBrightness = gestures.autoBrightness,
+                    showVolume = advancedVolumeEnabled,
+                    volumePercent = playerVolumePercent,
+                    showStabilization = state.volumeStabilizationSupported,
+                    stabilizationEnabled = state.volumeStabilizationEnabled,
+                    sleepTimerMinutes = sleepTimer.selectedMinutes,
+                    showDetails = state.animeId > 0,
+                    showPictureInPicture = state.pictureInPictureEnabled &&
+                        supportsPictureInPicture &&
+                        !castConnection.isCasting,
+                    showCast = castSupported,
+                ),
+                actions = MobilePlayerSettingsMenuActions(
+                    onQualitySelected = { quality ->
+                        val position = player.currentPosition.coerceAtLeast(0)
+                        reporter.saveProgress(position, progress.duration)
+                        onEvent(PlayerState.Event.QualitySelected(quality, position))
+                    },
+                    onAdaptiveQualityChange = { onEvent(PlayerState.Event.AdaptiveQualityToggled(it)) },
+                    onAdaptiveLimitSelected = { quality ->
+                        onEvent(
+                            PlayerState.Event.AdaptiveQualityLimitSelected(
+                                quality,
+                                player.currentPosition.coerceAtLeast(0),
+                            ),
+                        )
+                    },
+                    onAdaptiveLimitBestSelected = { onEvent(PlayerState.Event.AdaptiveQualityLimitBestSelected) },
+                    onSpeedSelected = { onEvent(PlayerState.Event.SpeedSelected(it)) },
+                    onAudioTrackSelected = { index ->
+                        trackMenu.selectAudio(index, player.currentPosition.coerceAtLeast(0L), onEvent)
+                    },
+                    onSubtitleTrackSelected = { index ->
+                        trackMenu.selectSubtitle(index, player.currentPosition.coerceAtLeast(0L), onEvent)
+                    },
+                    onSubtitleStyleChange = { onEvent(PlayerState.Event.SubtitleStyleChanged(it)) },
+                    onResizeModeSelected = { onEvent(PlayerState.Event.ResizeModeSelected(it)) },
+                    onAutoBrightnessChange = { gestures.setAutoBrightness(it) },
+                    onVolumeChange = { volumeController.setPercent(it) },
+                    onStabilizationChange = { onEvent(PlayerState.Event.VolumeStabilizationToggled(it)) },
+                    onSleepTimerSelected = { minutes ->
+                        if (minutes > 0) sleepTimer.set(minutes) else sleepTimer.cancel()
+                    },
+                    onDetails = { onEvent(PlayerState.Event.OpenDetails) },
+                    onPictureInPicture = { activity?.let(pipSession::enter) },
+                ),
+                onDismiss = {
+                    settingsMenuOpen = false
+                    overlay.show()
+                },
+                initialPage = settingsMenuPage,
+            )
+        }
+
+        if (orientationSheetOpen && !isInPictureInPictureMode && !tutorialBlocksPlayback) {
+            MobilePlayerOrientationSheet(
+                selected = state.playerOrientationMode,
+                onSelected = { mode ->
+                    orientationSheetOpen = false
+                    onEvent(PlayerState.Event.OrientationModeSelected(mode))
+                    overlay.show()
+                },
+                onDismiss = {
+                    orientationSheetOpen = false
+                    overlay.show()
+                },
+            )
+        }
 
         MobilePlayerOverlay(
             modifier = Modifier.align(Alignment.Center),
             visible = overlay.visible && !locked && !isInPictureInPictureMode &&
-                !tutorialBlocksPlayback && !trackSheetOpen && !sidePanelOpen &&
-                !showActionsSheet && !qualitySheetOpen && !speedSheetOpen,
+                !tutorialBlocksPlayback && !trackSheetOpen &&
+                !settingsMenuOpen && !qualitySheetOpen && !speedSheetOpen,
             wantsPlay = wantsPlay,
             progress = progress,
             hasPrevEpisode = ui.hasPrevEpisode,
@@ -799,12 +869,6 @@ internal fun MobileNativePlayer(
                 showActionsSheet = true
                 overlay.cancelHide()
             },
-            onPlayerSettings = {
-                endFlow.hideAll()
-                sidePanelOpen = true
-                overlay.visible = true
-                overlay.cancelHide()
-            },
             episodesAvailable = episodesHandleVisible,
             episodesExpanded = episodesExpanded,
             episodesStripVisible = episodesStripVisible,
@@ -837,7 +901,7 @@ internal fun MobileNativePlayer(
 
         // TODO(Android TV): перенести ручные кнопки пропуска в Android TV-версию и только после этого удалять их из Android-кода.
         MobilePlayerSkipButton(
-            skip = null,
+            skip = activeSkip,
             countdownSeconds = skipUi.autoSkipRemainingSeconds(activeSkip?.key),
             countdownProgress = skipUi.autoSkipProgress(activeSkip?.key),
             onStay = {
@@ -1051,57 +1115,7 @@ internal fun MobileNativePlayer(
             )
         }
 
-        MobilePlayerSidePanel(
-            visible = sidePanelOpen && !isInPictureInPictureMode && !tutorialBlocksPlayback,
-            qualities = ui.qualityLabels,
-            selectedQuality = selectedQuality,
-            onQualitySelected = { quality ->
-                val position = player.currentPosition.coerceAtLeast(0)
-                reporter.saveProgress(position, progress.duration)
-                onEvent(PlayerState.Event.QualitySelected(quality, position))
-            },
-            selectedSpeed = selectedSpeed,
-            onSpeedSelected = { onEvent(PlayerState.Event.SpeedSelected(it)) },
-            selectedResizeMode = state.resizeMode,
-            onResizeModeSelected = { onEvent(PlayerState.Event.ResizeModeSelected(it)) },
-            audioTrackNames = trackMenu.audioOptions.map(PlayerTrackOption::label),
-            selectedAudioTrackIndex = trackMenu.selectedAudioIndex,
-            showAudioTracks = trackMenu.showAudioChoice,
-            onAudioTrackSelected = { index ->
-                trackMenu.selectAudio(index, player.currentPosition.coerceAtLeast(0L), onEvent)
-            },
-            subtitleTrackNames = trackMenu.subtitleOptions.map(PlayerTrackOption::label),
-            selectedSubtitleTrackIndex = trackMenu.selectedSubtitleIndex,
-            showSubtitleTracks = trackMenu.showSubtitleChoice,
-            onSubtitleTrackSelected = { index ->
-                trackMenu.selectSubtitle(index, player.currentPosition.coerceAtLeast(0L), onEvent)
-            },
-            subtitleStyle = state.subtitleStyle,
-            onSubtitleStyleChange = { onEvent(PlayerState.Event.SubtitleStyleChanged(it)) },
-            showVolume = advancedVolumeEnabled,
-            volumePercent = playerVolumePercent,
-            onVolumeChange = { volumeController.setPercent(it) },
-            showStabilization = state.volumeStabilizationSupported,
-            stabilizationEnabled = state.volumeStabilizationEnabled,
-            onStabilizationChange = { onEvent(PlayerState.Event.VolumeStabilizationToggled(it)) },
-            adaptiveQuality = ui.adaptiveQuality,
-            adaptiveLimitQuality = ui.adaptiveLimitLabel,
-            adaptiveLimitBest = ui.adaptiveLimitBest,
-            onAdaptiveLimitBestSelected = { onEvent(PlayerState.Event.AdaptiveQualityLimitBestSelected) },
-            onAdaptiveLimitSelected = { quality ->
-                onEvent(
-                    PlayerState.Event.AdaptiveQualityLimitSelected(
-                        quality,
-                        player.currentPosition.coerceAtLeast(0),
-                    ),
-                )
-            },
-            onAdaptiveQualityChange = { onEvent(PlayerState.Event.AdaptiveQualityToggled(it)) },
-            onDismiss = {
-                sidePanelOpen = false
-                overlay.show()
-            },
-        )
+
 
         if (
             trackSheetOpen &&

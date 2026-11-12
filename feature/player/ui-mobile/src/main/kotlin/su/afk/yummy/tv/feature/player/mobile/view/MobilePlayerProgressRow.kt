@@ -56,18 +56,18 @@ internal fun MobilePlayerProgressRow(
                 .offset(y = -videoBottomInset)
                 .padding(horizontal = 20.dp, vertical = 6.dp),
         ) {
-            Text(
-                text = "${displayTime.millisToClockTime()}/${duration.millisToClockTime()}",
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White,
-                modifier = Modifier.padding(start = 10.dp, bottom = 2.dp),
-            )
             MobileBufferedSlider(
                 value = seekProgress.coerceIn(0f, 1f), bufferedProgress = bufferedProgress,
                 // На мобильном плеере оставляем одну непрерывную дорожку без отдельной метки опенинга.
                 openingRange = null,
                 onValueChange = onSeekChange, onValueChangeFinished = onSeekFinished,
                 enabled = duration > 0, modifier = Modifier.fillMaxWidth(),
+            )
+            Text(
+                text = "${displayTime.millisToClockTime()}/${duration.millisToClockTime()}",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.92f),
+                modifier = Modifier.align(Alignment.End).padding(top = 4.dp, end = 10.dp),
             )
         }
     }
@@ -87,7 +87,7 @@ private fun MobileBufferedSlider(
     val activeProgress = value.coerceIn(0f, 1f)
     val buffered = bufferedProgress.coerceIn(activeProgress, 1f)
     val trackColor = Color.Black.copy(alpha = 0.48f)
-    val playedColor = Color(0xFF5C6060)
+    val playedColor = MaterialTheme.colorScheme.primary
     val colors = SliderDefaults.colors(
         thumbColor = Color.Transparent,
         // Единая нейтральная основа: просмотренная часть выделяется серым, не белым.

@@ -1,6 +1,5 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -28,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -87,9 +84,6 @@ internal fun MobilePlayerTopBar(
     if (!visible) return
     Row(
         modifier = modifier.fillMaxWidth()
-            .background(Brush.verticalGradient(listOf(
-                Color.Black.copy(alpha = 0.58f), Color.Black.copy(alpha = 0.20f), Color.Transparent,
-            )))
             .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
             .padding(start = 8.dp, end = 12.dp, top = 6.dp, bottom = 8.dp),
         verticalAlignment = Alignment.Top,
@@ -102,13 +96,12 @@ internal fun MobilePlayerTopBar(
                 Text(
                     title, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(6.dp))
-                        .background(Color.Black.copy(alpha = 0.42f)).padding(horizontal = 4.dp, vertical = 2.dp),
+                    modifier = Modifier.padding(vertical = 2.dp),
                 )
             }
             if (episode.isNotBlank()) {
                 Row(
-                    modifier = Modifier.mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape).clickable(onClick = onEpisodeClick)
+                    modifier = Modifier.clickable(onClick = onEpisodeClick)
                         .padding(start = 8.dp, end = 9.dp, top = 5.dp, bottom = 5.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(3.dp),
@@ -121,7 +114,7 @@ internal fun MobilePlayerTopBar(
             }
             if (dubbing.isNotBlank() || playerName.isNotBlank()) {
                 Row(
-                    modifier = Modifier.mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape).clickable(onClick = onDubbingClick)
+                    modifier = Modifier.clickable(onClick = onDubbingClick)
                     .padding(horizontal = 9.dp, vertical = 6.dp),
                     horizontalArrangement = Arrangement.spacedBy(7.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -179,7 +172,6 @@ private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
         contentAlignment = Alignment.Center,
         modifier = Modifier.widthIn(min = 54.dp, max = 72.dp)
             .size(height = mobilePlayerControlButtonSize(), width = 64.dp)
-            .mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape)
             .clickable(onClick = onClick)
             .padding(horizontal = 5.dp),
     ) {
@@ -203,7 +195,6 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: ()
     androidx.compose.foundation.layout.Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(width = 64.dp, height = mobilePlayerControlButtonSize())
-            .mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape)
             .pointerInput(onClick, onLongPress) {
                 detectTapGestures(onTap = { onClick() }, onLongPress = { onLongPress() })
             },
@@ -225,7 +216,7 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: ()
 private fun TopBarAction(icon: ImageVector, description: String, onClick: () -> Unit) {
     androidx.compose.foundation.layout.Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(mobilePlayerControlButtonSize()).mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape).clickable(onClick = onClick),
+        modifier = Modifier.size(mobilePlayerControlButtonSize()).clickable(onClick = onClick),
     ) {
         Icon(icon, description, tint = Color.White, modifier = Modifier.size(24.dp))
     }
