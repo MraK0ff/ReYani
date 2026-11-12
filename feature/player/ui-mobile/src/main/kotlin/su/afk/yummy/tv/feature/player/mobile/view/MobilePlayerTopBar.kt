@@ -36,10 +36,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import su.afk.yummy.tv.core.designsystem.utils.dubbingDisplayName
 import su.afk.yummy.tv.core.model.anime.EpisodeFlags
 import su.afk.yummy.tv.feature.player.presentation.R
@@ -54,12 +55,9 @@ internal fun MobilePlayerBackButton(
     modifier: Modifier = Modifier,
 ) {
     if (!visible) return
-    androidx.compose.foundation.layout.Box(
+    Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .padding(top = topInset + 8.dp)
-            .size(buttonSize)
-            .clickable(onClick = onBack),
+        modifier = modifier.padding(top = topInset + 8.dp).size(buttonSize).clickable(onClick = onBack),
     ) {
         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(DesignSystemR.string.common_back),
             tint = Color.White, modifier = Modifier.size(24.dp))
@@ -93,14 +91,16 @@ internal fun MobilePlayerTopBar(
             .padding(start = 8.dp, end = 12.dp, top = 6.dp, bottom = 8.dp),
     ) {
         Column(
-            Modifier.align(Alignment.TopCenter).fillMaxWidth(0.62f).padding(top = 2.dp),
+            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.62f).padding(top = 2.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             if (title.isNotBlank()) {
                 Text(
                     title, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(vertical = 2.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
                 )
             }
             if (episode.isNotBlank()) {
@@ -111,7 +111,8 @@ internal fun MobilePlayerTopBar(
                     horizontalArrangement = Arrangement.spacedBy(3.dp),
                 ) {
                     Text(stringResource(R.string.player_mobile_episode_number, episode),
-                        color = Color.White.copy(alpha = 0.88f), maxLines = 1, style = MaterialTheme.typography.bodySmall)
+                        color = Color.White.copy(alpha = 0.88f), maxLines = 1,
+                        style = MaterialTheme.typography.bodySmall)
                     Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.player_episodes_list_title),
                         tint = Color.White.copy(alpha = 0.88f), modifier = Modifier.size(18.dp))
                 }
@@ -124,39 +125,24 @@ internal fun MobilePlayerTopBar(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (dubbing.isNotBlank()) {
-                        Row(
-                            modifier = Modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp),
-                        ) {
-                            Text(
-                                dubbing.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
-                                color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium,
-                            )
-                        }
+                        Text(
+                            dubbing.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
+                            color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium,
+                        )
                     }
                     if (dubbing.isNotBlank() && playerName.isNotBlank()) {
                         Text("|", color = Color.White.copy(alpha = 0.72f), style = MaterialTheme.typography.labelSmall)
                     }
                     if (offlinePlayback) {
-                        Icon(
-                            imageVector = Icons.Filled.Download,
-                            contentDescription = null,
-                            tint = Color.White.copy(alpha = 0.92f),
-                            modifier = Modifier.size(16.dp),
-                        )
+                        Icon(Icons.Filled.Download, contentDescription = null,
+                            tint = Color.White.copy(alpha = 0.92f), modifier = Modifier.size(16.dp))
                     } else if (playerName.isNotBlank()) {
-                        Row(
-                            modifier = Modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp),
-                        ) {
-                            Text(
-                                playerName.uppercase(), color = Color.White, maxLines = 1,
+                        Row(verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(playerName.uppercase(), color = Color.White, maxLines = 1,
                                 overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Medium,
-                            )
+                                fontWeight = FontWeight.Medium)
                             Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.player_balancer_name_prefix),
                                 tint = Color.White.copy(alpha = 0.82f), modifier = Modifier.size(16.dp))
                         }
@@ -179,25 +165,20 @@ internal fun MobilePlayerTopBar(
 
 @Composable
 private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
-    androidx.compose.foundation.layout.Box(
+    Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.widthIn(min = 72.dp, max = 104.dp)
-            .size(height = mobilePlayerControlButtonSize(), width = 96.dp)
+        modifier = Modifier.widthIn(min = 72.dp, max = 112.dp)
+            .size(height = mobilePlayerControlButtonSize(), width = 104.dp)
             .clickable(onClick = onClick)
-            .padding(horizontal = 5.dp),
+            .padding(horizontal = 4.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
             Icon(Icons.Filled.HighQuality, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
             BasicText(
-            text = label,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                background = Color.Transparent,
-            ),
-            maxLines = 1,
-            softWrap = false,
+                text = label,
+                style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                maxLines = 1,
+                softWrap = false,
             )
         }
     }
@@ -206,7 +187,7 @@ private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
 @Composable
 private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: () -> Unit) {
     val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
-    androidx.compose.foundation.layout.Box(
+    Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(width = 56.dp, height = mobilePlayerControlButtonSize())
             .pointerInput(onClick, onLongPress) {
@@ -215,23 +196,16 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: ()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
             Icon(Icons.Filled.Speed, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
-            BasicText(
-            text = label,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                background = Color.Transparent,
-            ),
-            maxLines = 1,
-            )
+            BasicText(text = label,
+                style = TextStyle(color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold),
+                maxLines = 1)
         }
     }
 }
 
 @Composable
 private fun TopBarAction(icon: ImageVector, description: String, onClick: () -> Unit) {
-    androidx.compose.foundation.layout.Box(
+    Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(width = 44.dp, height = mobilePlayerControlButtonSize()).clickable(onClick = onClick),
     ) {

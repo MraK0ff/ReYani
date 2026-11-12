@@ -1,7 +1,6 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -21,16 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import su.afk.yummy.tv.feature.player.presentation.R
 
-/**
- * Центральный кластер как у YouTube: «предыдущая серия», крупный play/pause и «следующая серия»
- * поверх видео. Смена серии срабатывает сразу по тапу.
- */
 @Composable
 internal fun MobilePlayerCenterControls(
     wantsPlay: Boolean,
@@ -39,7 +33,6 @@ internal fun MobilePlayerCenterControls(
     onPlayPause: () -> Unit,
     onPrevEpisode: () -> Unit,
     onNextEpisode: () -> Unit,
-    /** Идёт буферизация: поверх кнопки крутится индикатор, значок play/pause прячем. */
     loading: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -48,7 +41,7 @@ internal fun MobilePlayerCenterControls(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(CENTER_CONTROLS_GAP),
     ) {
-        Box(Modifier.size(CENTER_SWITCH_SLOT)) {
+        Box(Modifier.size(CENTER_SWITCH_SLOT), contentAlignment = Alignment.Center) {
             if (hasPrevEpisode) MobilePlayerActionButton(
                 icon = Icons.Filled.SkipPrevious,
                 contentDescription = stringResource(R.string.player_mobile_previous_episode),
@@ -61,11 +54,8 @@ internal fun MobilePlayerCenterControls(
         )
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(CENTER_PLAY_SIZE)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.90f))
-                
+            modifier = Modifier.size(CENTER_PLAY_SIZE).clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.92f))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -83,7 +73,7 @@ internal fun MobilePlayerCenterControls(
                 )
             }
         }
-        Box(Modifier.size(CENTER_SWITCH_SLOT)) {
+        Box(Modifier.size(CENTER_SWITCH_SLOT), contentAlignment = Alignment.Center) {
             if (hasNextEpisode) MobilePlayerActionButton(
                 icon = Icons.Filled.SkipNext,
                 contentDescription = stringResource(R.string.player_mobile_next_episode),
@@ -94,7 +84,6 @@ internal fun MobilePlayerCenterControls(
     }
 }
 
-/** Кнопки смены серии крупнее обычных на 10%, чтобы не терялись рядом с play/pause. */
 private const val CENTER_SWITCH_SCALE = 1.1f
 private val CENTER_CONTROLS_GAP = 40.dp
 private val CENTER_SWITCH_SLOT = 64.dp
