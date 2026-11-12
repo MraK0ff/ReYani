@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import su.afk.yummy.tv.core.designsystem.utils.dubbingDisplayName
 import su.afk.yummy.tv.core.model.anime.EpisodeFlags
+import su.afk.yummy.tv.feature.player.mobile.model.MobilePlayerSettingsPage
 import su.afk.yummy.tv.feature.player.presentation.R
 import su.afk.yummy.tv.core.designsystem.R as DesignSystemR
 
@@ -102,6 +103,7 @@ internal fun MobilePlayerTopBar(
     onEpisodeClick: () -> Unit,
     onDubbingClick: () -> Unit,
     onMoreActions: () -> Unit,
+    onMoreMenuItem: (MobilePlayerSettingsPage) -> Unit,
     onQualityClick: () -> Unit,
     selectedSpeed: Float,
     onSpeedClick: () -> Unit,
@@ -113,6 +115,7 @@ internal fun MobilePlayerTopBar(
     var qualityExpanded by remember { mutableStateOf(false) }
     var qualityPreviewIndex by remember { mutableIntStateOf(-1) }
     var qualityPreviewOffsetPx by remember { mutableFloatStateOf(0f) }
+    var moreExpanded by remember { mutableStateOf(false) }
     val density = LocalDensity.current
     Box(
         modifier = modifier.fillMaxWidth()
@@ -302,7 +305,37 @@ internal fun MobilePlayerTopBar(
                 TopBarSpeedAction(selectedSpeed, onSpeedClick)
 
             }
-            TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions), onMoreActions)
+            Box {
+                TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions)) {
+                    moreExpanded = true
+                }
+                DropdownMenu(expanded = moreExpanded, onDismissRequest = { moreExpanded = false }) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_sleep_title)) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.SleepTimer) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_resize_title)) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Resize) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_time_display_title)) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.TimeDisplay) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_menu_display)) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Display) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_menu_cast_pip)) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.CastAndPip) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_mobile_actions)) },
+                        onClick = { moreExpanded = false; onMoreActions() },
+                    )
+                }
+            }
         }
     }
 }
