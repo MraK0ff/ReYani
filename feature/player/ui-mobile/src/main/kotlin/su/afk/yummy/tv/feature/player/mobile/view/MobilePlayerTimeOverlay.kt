@@ -57,7 +57,7 @@ internal fun MobilePlayerTimeOverlay(
     Box(modifier = modifier.fillMaxSize()) {
         // При FIT боковые чёрные поля — отдельная зона интерфейса, не часть видеокадра.
         // Не кладём часы поверх заголовка: используем именно letterbox-поля.
-        if (sideInset >= 44.dp) {
+        if (sideInset >= 32.dp) {
             if (showClock) {
                 Text(
                     text = systemClock,
@@ -65,10 +65,10 @@ internal fun MobilePlayerTimeOverlay(
                     color = Color.White,
                     maxLines = 1,
                     modifier = Modifier.align(Alignment.TopStart)
-                        .padding(start = 6.dp)
+                        .padding(start = 2.dp)
                         .padding(top = videoTopInset + 96.dp)
                         .mobilePlayerGlassSurface()
-                        .padding(horizontal = 7.dp, vertical = 5.dp),
+                        .padding(horizontal = 3.dp, vertical = 4.dp),
                 )
             }
             if (showFinish) {
@@ -78,7 +78,7 @@ internal fun MobilePlayerTimeOverlay(
                     color = Color.White,
                     maxLines = 1,
                     modifier = Modifier.align(Alignment.TopEnd)
-                        .padding(end = 6.dp)
+                        .padding(end = 2.dp)
                         .padding(top = videoTopInset + 96.dp)
                         .mobilePlayerGlassSurface()
                         .padding(horizontal = 7.dp, vertical = 5.dp),
