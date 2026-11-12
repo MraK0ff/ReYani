@@ -102,7 +102,8 @@ internal fun MobilePlayerTopBar(
     titleStartPadding: Dp = 4.dp,
     onEpisodeClick: () -> Unit,
     onDubbingClick: () -> Unit,
-    onMoreActions: () -> Unit,
+    showAudioTracks: Boolean,
+    showSubtitleTracks: Boolean,
     onMoreMenuItem: (MobilePlayerSettingsPage) -> Unit,
     onQualityClick: () -> Unit,
     selectedSpeed: Float,
@@ -224,7 +225,6 @@ internal fun MobilePlayerTopBar(
                                 .fillMaxWidth()
                                 .heightIn(max = 320.dp)
                                 .pointerInput(choices) {
-                                    val rowHeight = with(density) { 48.dp.toPx() }
                                     fun updatePreview(y: Float) {
                                         qualityPreviewOffsetPx = y.coerceIn(0f, size.height.toFloat())
                                         qualityPreviewIndex = ((y / size.height.toFloat()) * choices.size).toInt()
@@ -310,6 +310,14 @@ internal fun MobilePlayerTopBar(
                     moreExpanded = true
                 }
                 DropdownMenu(expanded = moreExpanded, onDismissRequest = { moreExpanded = false }) {
+                    if (showAudioTracks) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_menu_audio_track)) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.AudioTrack) },
+                    )
+                    if (showSubtitleTracks) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_menu_subtitles)) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Subtitles) },
+                    )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_sleep_title)) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.SleepTimer) },
@@ -329,10 +337,6 @@ internal fun MobilePlayerTopBar(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.player_menu_cast_pip)) },
                         onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.CastAndPip) },
-                    )
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.player_mobile_actions)) },
-                        onClick = { moreExpanded = false; onMoreActions() },
                     )
                 }
             }
