@@ -161,7 +161,7 @@ internal fun MobilePlayerTopBar(
                         horizontalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
                         Icon(
-                            if (episodeExpanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                            if (episodeExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                             stringResource(R.string.player_episodes_list_title),
                             tint = Color.White.copy(alpha = 0.62f),
                             modifier = Modifier.size(20.dp),
