@@ -33,6 +33,8 @@ import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.browserU
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.libraryContinueWatchingCardSizeKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.homeBlocksKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.libraryTabOrderKey
+import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.mobilePlayerAutoBrightnessEnabledKey
+import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.mobilePlayerBrightnessPercentKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.newEpisodesSectionEnabledKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.seasonalAnnouncedKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.accountShortcutsExpandedKey
