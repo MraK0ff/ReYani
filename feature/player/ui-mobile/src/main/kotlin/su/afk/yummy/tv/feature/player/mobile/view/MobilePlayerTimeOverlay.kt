@@ -35,6 +35,7 @@ internal fun MobilePlayerTimeOverlay(
     controlsActive: Boolean,
     sideInset: Dp,
     videoTopInset: Dp,
+    videoBottomInset: Dp,
     showRemainingTime: Boolean,
     onTimeCodeClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -99,7 +100,7 @@ internal fun MobilePlayerTimeOverlay(
             val remaining = (durationMs - displayTimeMs).coerceAtLeast(0L)
             Row(
                 modifier = Modifier.align(Alignment.BottomStart)
-                    .padding(start = 20.dp, bottom = 14.dp)
+                    .padding(start = 20.dp, bottom = videoBottomInset + 14.dp)
                     .mobilePlayerGlassSurface()
                     .clickable(onClick = onTimeCodeClick)
                     .padding(horizontal = 9.dp, vertical = 4.dp),
