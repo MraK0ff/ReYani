@@ -46,6 +46,7 @@ import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import su.afk.yummy.tv.core.utils.cast.CastSupport
+import su.afk.yummy.tv.core.model.settings.PlayerResizeMode
 import su.afk.yummy.tv.feature.player.PlayerState
 import su.afk.yummy.tv.feature.player.common.PlayerBlackBackdrop
 import su.afk.yummy.tv.feature.player.common.PlayerSpeedOptions
@@ -866,7 +867,10 @@ internal fun MobileNativePlayer(
                 overlay.cancelHide()
             },
             onMoreActions = {
-                showActionsSheet = true
+                endFlow.hideAll()
+                settingsMenuPage = MobilePlayerSettingsPage.Root
+                settingsMenuOpen = true
+                overlay.visible = true
                 overlay.cancelHide()
             },
             episodesAvailable = episodesHandleVisible,
