@@ -632,10 +632,6 @@ internal fun MobileNativePlayer(
             modifier = Modifier.fillMaxSize(),
         )
 
-        PlayerBufferingIndicator(
-            visible = isBuffering || showRecoveryIndicator,
-            modifier = Modifier.align(Alignment.Center),
-        )
 
         MobilePlayerGestureLayer(
             enabled = !isInPictureInPictureMode && !tutorialBlocksPlayback,
@@ -761,7 +757,9 @@ internal fun MobileNativePlayer(
                 overlay.cancelHide()
             },
             visible = overlay.visible && !locked && !isInPictureInPictureMode && !tutorialBlocksPlayback,
-            modifier = Modifier.offset(x = videoLeftDp, y = videoTopDp).width(videoWidthDp),
+            episodeExpanded = episodesExpanded,
+            dubbingExpanded = trackSheetOpen,
+            modifier = Modifier.offset(x = videoLeftDp, y = videoTopDp).width(videoWidthDp).height(videoHeightDp),
         )
 
         // Рисуем кнопку после градиентной верхней панели: фон видео не должен затемнять Back.
@@ -871,6 +869,7 @@ internal fun MobileNativePlayer(
                 !tutorialBlocksPlayback && !trackSheetOpen &&
                 !settingsMenuOpen && !qualitySheetOpen && !speedSheetOpen,
             wantsPlay = wantsPlay,
+            loading = isBuffering || showRecoveryIndicator,
             progress = progress,
             hasPrevEpisode = ui.hasPrevEpisode,
             hasNextEpisode = ui.hasNextEpisode,
