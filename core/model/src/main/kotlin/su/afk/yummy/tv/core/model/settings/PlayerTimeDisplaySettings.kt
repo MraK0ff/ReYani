@@ -13,10 +13,9 @@ enum class PlayerTimeDisplayMode {
 data class PlayerTimeDisplaySettings(
     val systemClock: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
     val elapsed: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
-    val remaining: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
     val finishAt: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
 ) {
-    fun encode(): String = listOf(systemClock, elapsed, remaining, finishAt).joinToString("|")
+    fun encode(): String = listOf(systemClock, elapsed, finishAt).joinToString("|")
 
     companion object {
         fun decode(value: String?): PlayerTimeDisplaySettings {
@@ -27,8 +26,7 @@ data class PlayerTimeDisplaySettings(
             return PlayerTimeDisplaySettings(
                 systemClock = mode(0),
                 elapsed = mode(1),
-                remaining = mode(2),
-                finishAt = mode(3),
+                finishAt = mode(3).takeIf { parts.size > 3 } ?: mode(2),
             )
         }
     }
