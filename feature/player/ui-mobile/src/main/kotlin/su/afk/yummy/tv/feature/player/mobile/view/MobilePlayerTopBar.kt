@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -211,29 +213,19 @@ internal fun MobilePlayerTopBar(
                 Box {
                     TopBarQualityAction(qualityLabel) { qualityExpanded = true }
                     DropdownMenu(expanded = qualityExpanded, onDismissRequest = { qualityExpanded = false }) {
-                        DropdownMenuItem(
-                            text = { Text("Адаптивное качество") },
-                            onClick = { onAdaptiveQualityChange(true); qualityExpanded = false },
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Лучшее доступное") },
-                            onClick = {
-                                onAdaptiveQualityChange(false)
-                                qualityOptions.lastOrNull()?.let(onQualitySelected)
-                                qualityExpanded = false
-                            },
-                        )
                         val descendingQualities = qualityOptions.asReversed()
+                        val choices = listOf("Адаптивное качество", "Лучшее доступное") +
+                            descendingQualities + "Худшее доступное"
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 280.dp)
-                                .pointerInput(descendingQualities) {
+                                .heightIn(max = 320.dp)
+                                .pointerInput(choices) {
                                     val rowHeight = with(density) { 48.dp.toPx() }
                                     fun updatePreview(y: Float) {
                                         qualityPreviewOffsetPx = y.coerceIn(0f, size.height.toFloat())
                                         qualityPreviewIndex = (y / rowHeight).toInt()
-                                            .coerceIn(0, (descendingQualities.lastIndex).coerceAtLeast(0))
+                                            .coerceIn(0, choices.lastIndex)
                                     }
                                     detectDragGestures(
                                         onDragStart = { updatePreview(it.y) },
@@ -242,9 +234,21 @@ internal fun MobilePlayerTopBar(
                                             updatePreview(change.position.y)
                                         },
                                         onDragEnd = {
-                                            descendingQualities.getOrNull(qualityPreviewIndex)?.let { quality ->
-                                                onAdaptiveQualityChange(false)
-                                                onQualitySelected(quality)
+                                            when (qualityPreviewIndex) {
+                                                0 -> onAdaptiveQualityChange(true)
+                                                1 -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    qualityOptions.lastOrNull()?.let(onQualitySelected)
+                                                }
+                                                choices.lastIndex -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    qualityOptions.firstOrNull()?.let(onQualitySelected)
+                                                }
+                                                else -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    descendingQualities.getOrNull(qualityPreviewIndex - 2)
+                                                        ?.let(onQualitySelected)
+                                                }
                                             }
                                             qualityPreviewIndex = -1
                                             qualityExpanded = false
@@ -253,13 +257,26 @@ internal fun MobilePlayerTopBar(
                                     )
                                 },
                         ) {
-                            Column {
-                                descendingQualities.forEach { quality ->
+                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                                choices.forEachIndexed { index, choice ->
                                     DropdownMenuItem(
-                                        text = { Text(quality) },
+                                        text = { Text(choice) },
                                         onClick = {
-                                            onAdaptiveQualityChange(false)
-                                            onQualitySelected(quality)
+                                            when (index) {
+                                                0 -> onAdaptiveQualityChange(true)
+                                                1 -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    qualityOptions.lastOrNull()?.let(onQualitySelected)
+                                                }
+                                                choices.lastIndex -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    qualityOptions.firstOrNull()?.let(onQualitySelected)
+                                                }
+                                                else -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    descendingQualities.getOrNull(index - 2)?.let(onQualitySelected)
+                                                }
+                                            }
                                             qualityExpanded = false
                                         },
                                     )
@@ -267,7 +284,7 @@ internal fun MobilePlayerTopBar(
                             }
                             if (qualityPreviewIndex >= 0) {
                                 Text(
-                                    text = descendingQualities.getOrNull(qualityPreviewIndex).orEmpty(),
+                                    text = choices.getOrNull(qualityPreviewIndex).orEmpty(),
                                     color = MaterialTheme.colorScheme.onPrimary,
                                     style = MaterialTheme.typography.labelLarge,
                                     modifier = Modifier
@@ -278,14 +295,6 @@ internal fun MobilePlayerTopBar(
                                 )
                             }
                         }
-                        DropdownMenuItem(
-                            text = { Text("Худшее доступное") },
-                            onClick = {
-                                onAdaptiveQualityChange(false)
-                                qualityOptions.firstOrNull()?.let(onQualitySelected)
-                                qualityExpanded = false
-                            },
-                        )
                     }
                 }
             }
