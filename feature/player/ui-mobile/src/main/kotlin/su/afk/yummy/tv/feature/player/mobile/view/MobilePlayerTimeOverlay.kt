@@ -82,7 +82,7 @@ internal fun MobilePlayerTimeOverlay(
                         .padding(end = 2.dp)
                         .padding(top = videoTopInset + 96.dp)
                         .mobilePlayerGlassSurface()
-                        .padding(horizontal = 7.dp, vertical = 5.dp),
+                        .padding(horizontal = 3.dp, vertical = 4.dp),
                 )
             }
         } else if (showClock || showFinish) {
