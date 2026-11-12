@@ -55,6 +55,7 @@ internal fun MobilePlayerActionButton(
     onLongPress: (() -> Unit)? = null,
     sizeMultiplier: Float = 1f,
     iconScale: Float = 0.55f,
+    surface: Boolean = true,
 ) {
     val shape = CircleShape
     val contentColor = when {
@@ -82,7 +83,7 @@ internal fun MobilePlayerActionButton(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(buttonSize)
-            .mobilePlayerGlassSurface(shape = shape, fill = surfaceFill, borderColor = borderColor, elevation = 0.dp)
+            .then(if (surface) Modifier.mobilePlayerGlassSurface(shape = shape, fill = surfaceFill, borderColor = borderColor, elevation = 0.dp) else Modifier)
             .then(
                 if (onHold == null && onLongPress != null) {
                     Modifier.pointerInput(enabled, onLongPress, onClick) {
