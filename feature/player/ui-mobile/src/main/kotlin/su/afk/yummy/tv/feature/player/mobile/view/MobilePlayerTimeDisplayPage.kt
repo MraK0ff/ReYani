@@ -38,10 +38,14 @@ internal fun MobilePlayerTimeDisplayPage(
             mode = settings.elapsed,
             onSelected = { onSettingsChange(settings.copy(elapsed = it)) },
         )
-        TimeDisplayModeRow(
+        MobilePlayerMenuRow(
             label = stringResource(R.string.player_time_display_remaining),
-            mode = settings.remaining,
-            onSelected = { onSettingsChange(settings.copy(remaining = it)) },
+            trailing = MobilePlayerMenuRowTrailing.Toggle(settings.showRemainingInsteadOfDuration),
+            onClick = {
+                onSettingsChange(settings.copy(
+                    showRemainingInsteadOfDuration = !settings.showRemainingInsteadOfDuration,
+                ))
+            },
         )
         TimeDisplayModeRow(
             label = stringResource(R.string.player_time_display_finish_at),
