@@ -746,7 +746,11 @@ internal fun MobileNativePlayer(
                 overlay.cancelHide()
             },
             selectedSpeed = selectedSpeed,
-            onSpeedClick = { overlay.show() },
+            onSpeedClick = {
+                endFlow.hideAll()
+                speedSheetOpen = true
+                overlay.cancelHide()
+            },
             onSpeedLongPress = {
                 endFlow.hideAll()
                 speedSheetOpen = true
