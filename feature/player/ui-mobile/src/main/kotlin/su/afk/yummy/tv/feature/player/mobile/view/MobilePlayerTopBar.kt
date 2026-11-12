@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -27,6 +28,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +65,7 @@ internal fun MobilePlayerBackButton(
     if (!visible) return
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.padding(top = topInset + 8.dp).size(buttonSize).clickable(onClick = onBack),
+        modifier = modifier.padding(top = topInset).size(buttonSize).clickable(onClick = onBack),
     ) {
         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(DesignSystemR.string.common_back),
             tint = Color.White, modifier = Modifier.size(24.dp))
@@ -100,95 +104,132 @@ internal fun MobilePlayerTopBar(
     if (!visible) return
     var qualityExpanded by remember { mutableStateOf(false) }
     var speedExpanded by remember { mutableStateOf(false) }
-    var moreExpanded by remember { mutableStateOf(false) }
     Box(
         modifier = modifier.fillMaxWidth()
             .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
-            .padding(start = 8.dp, end = 12.dp, top = 6.dp, bottom = 8.dp),
+            .padding(start = 0.dp, end = 0.dp, top = 0.dp, bottom = 8.dp),
     ) {
         Column(
-            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.62f).padding(top = 2.dp),
+            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.70f).padding(top = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             if (title.isNotBlank()) {
                 Text(
-                    title, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    title,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
-            if (episode.isNotBlank()) {
-                Row(
-                    modifier = Modifier.clickable(onClick = onEpisodeClick)
-                        .padding(start = 8.dp, end = 9.dp, top = 5.dp, bottom = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(3.dp),
-                ) {
-                    Text(stringResource(R.string.player_mobile_episode_number, episode),
-                        color = Color.White.copy(alpha = 0.88f), maxLines = 1,
-                        style = MaterialTheme.typography.bodySmall)
-                    Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.player_episodes_list_title),
-                        tint = Color.White.copy(alpha = 0.88f), modifier = Modifier.size(18.dp))
-                }
-            }
-            if (offlinePlayback || dubbing.isNotBlank() || playerName.isNotBlank()) {
-                Row(
-                    modifier = (if (offlinePlayback) Modifier else Modifier.clickable(onClick = onDubbingClick))
-                        .padding(horizontal = 6.dp, vertical = 2.dp),
-                    horizontalArrangement = Arrangement.spacedBy(7.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (dubbing.isNotBlank()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                if (episode.isNotBlank()) {
+                    Row(
+                        modifier = Modifier.clickable(onClick = onEpisodeClick).padding(horizontal = 4.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
                         Text(
-                            dubbing.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
-                            color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium,
+                            stringResource(R.string.player_mobile_episode_number, episode),
+                            color = Color.White,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        Icon(
+                            Icons.Filled.KeyboardArrowDown,
+                            stringResource(R.string.player_episodes_list_title),
+                            tint = Color.White.copy(alpha = 0.9f),
+                            modifier = Modifier.size(20.dp),
                         )
                     }
-                    if (dubbing.isNotBlank() && playerName.isNotBlank()) {
-                        Text("|", color = Color.White.copy(alpha = 0.72f), style = MaterialTheme.typography.labelSmall)
-                    }
-                    if (offlinePlayback) {
-                        Icon(Icons.Filled.Download, contentDescription = null,
-                            tint = Color.White.copy(alpha = 0.92f), modifier = Modifier.size(16.dp))
-                    } else if (playerName.isNotBlank()) {
-                        Row(verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            Text(playerName.uppercase(), color = Color.White, maxLines = 1,
-                                overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Medium)
-                            Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.player_balancer_name_prefix),
-                                tint = Color.White.copy(alpha = 0.82f), modifier = Modifier.size(16.dp))
+                }
+                if (dubbing.isNotBlank() || playerName.isNotBlank() || offlinePlayback) {
+                    Text(" · ", color = Color.White.copy(alpha = 0.82f), style = MaterialTheme.typography.bodyLarge)
+                    Row(
+                        modifier = (if (offlinePlayback) Modifier else Modifier.clickable(onClick = onDubbingClick))
+                            .padding(horizontal = 3.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        if (dubbing.isNotBlank()) {
+                            Text(
+                                dubbing.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                            )
+                        }
+                        if (offlinePlayback) {
+                            Icon(Icons.Filled.Download, contentDescription = null,
+                                tint = Color.White.copy(alpha = 0.92f), modifier = Modifier.size(18.dp))
+                        } else if (playerName.isNotBlank()) {
+                            Text("|", color = Color.White.copy(alpha = 0.82f), style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                playerName,
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                            )
+                            Icon(
+                                Icons.Filled.KeyboardArrowDown,
+                                stringResource(R.string.player_balancer_name_prefix),
+                                tint = Color.White.copy(alpha = 0.9f),
+                                modifier = Modifier.size(20.dp),
+                            )
                         }
                     }
                 }
             }
-            MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 3.dp))
+            MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
         Row(
             Modifier.align(Alignment.TopEnd).padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Box {
-                TopBarQualityAction(qualityLabel) { qualityExpanded = true }
-                DropdownMenu(expanded = qualityExpanded, onDismissRequest = { qualityExpanded = false }) {
-                    DropdownMenuItem(
-                        text = { Text("Адаптивное качество") },
-                        onClick = { onAdaptiveQualityChange(!adaptiveQuality); qualityExpanded = false },
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Лучшее доступное") },
-                        onClick = { onAdaptiveLimitBestSelected(); qualityExpanded = false },
-                    )
-                    qualityOptions.forEach { quality ->
+            if (!offlinePlayback && qualityOptions.isNotEmpty()) {
+                Box {
+                    TopBarQualityAction(qualityLabel) { qualityExpanded = true }
+                    DropdownMenu(expanded = qualityExpanded, onDismissRequest = { qualityExpanded = false }) {
                         DropdownMenuItem(
-                            text = { Text(quality) },
+                            text = { Text("Адаптивное качество") },
+                            onClick = { onAdaptiveQualityChange(true); qualityExpanded = false },
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Лучшее доступное") },
                             onClick = {
-                                if (adaptiveQuality) onAdaptiveLimitSelected(quality)
-                                else onQualitySelected(quality)
+                                onAdaptiveQualityChange(false)
+                                qualityOptions.lastOrNull()?.let(onQualitySelected)
+                                qualityExpanded = false
+                            },
+                        )
+                        qualityOptions.asReversed().forEach { quality ->
+                            DropdownMenuItem(
+                                text = { Text(quality) },
+                                onClick = {
+                                    onAdaptiveQualityChange(false)
+                                    onQualitySelected(quality)
+                                    qualityExpanded = false
+                                },
+                            )
+                        }
+                        DropdownMenuItem(
+                            text = { Text("Худшее доступное") },
+                            onClick = {
+                                onAdaptiveQualityChange(false)
+                                qualityOptions.firstOrNull()?.let(onQualitySelected)
                                 qualityExpanded = false
                             },
                         )
@@ -197,24 +238,21 @@ internal fun MobilePlayerTopBar(
             }
             Box {
                 TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
+                val speedListState = rememberLazyListState(
+                    initialFirstVisibleItemIndex = speedOptions.indexOfFirst { it >= 0.75f }.coerceAtLeast(0),
+                )
                 DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
-                    speedOptions.forEach { speed ->
-                        DropdownMenuItem(
-                            text = { Text(if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x") },
-                            onClick = { onSpeedSelected(speed); speedExpanded = false },
-                        )
+                    LazyColumn(state = speedListState, modifier = Modifier.heightIn(max = 320.dp)) {
+                        itemsIndexed(speedOptions) { _, speed ->
+                            DropdownMenuItem(
+                                text = { Text(if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x") },
+                                onClick = { onSpeedSelected(speed); speedExpanded = false },
+                            )
+                        }
                     }
                 }
             }
-            Box {
-                TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions)) { moreExpanded = true }
-                DropdownMenu(expanded = moreExpanded, onDismissRequest = { moreExpanded = false }) {
-                    DropdownMenuItem(
-                        text = { Text("Дополнительные настройки") },
-                        onClick = { moreExpanded = false; onMoreActions() },
-                    )
-                }
-            }
+            TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions), onMoreActions)
         }
     }
 }
