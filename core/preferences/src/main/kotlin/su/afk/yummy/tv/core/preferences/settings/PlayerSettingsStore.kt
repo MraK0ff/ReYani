@@ -56,6 +56,7 @@ interface PlayerSettingsStore {
 
     /** Яркость мобильного плеера в процентах; `null` — пользователь её не менял, действует системная. */
     val mobilePlayerBrightnessPercent: Flow<Int?>
+    val mobilePlayerAutoBrightnessEnabled: Flow<Boolean>
 
     /** Скорость воспроизведения, выбранная в плеере последней; общая для всех тайтлов. */
     val playerPlaybackSpeed: Flow<Float>
@@ -119,6 +120,7 @@ interface PlayerSettingsStore {
 
     /** Сбрасывает ручную яркость плеера: дальше действует системная (авто). */
     suspend fun clearMobilePlayerBrightness()
+    suspend fun setMobilePlayerAutoBrightnessEnabled(enabled: Boolean)
     suspend fun setPlayerPlaybackSpeed(speed: Float)
     suspend fun setVolumeStabilizationEnabled(enabled: Boolean)
     suspend fun setAudioFocusDisabled(disabled: Boolean)
