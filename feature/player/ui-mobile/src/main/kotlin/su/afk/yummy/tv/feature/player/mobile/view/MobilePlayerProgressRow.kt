@@ -67,7 +67,7 @@ internal fun MobilePlayerProgressRow(
                 onValueChangeFinished = onSeekFinished,
                 modifier = Modifier.fillMaxWidth(),
             )
-            val showRemaining = timeDisplaySettings.remaining != PlayerTimeDisplayMode.NEVER
+            val showRemaining = timeDisplaySettings.showRemainingInsteadOfDuration
             Row(
                 modifier = Modifier
                     .align(Alignment.End)
