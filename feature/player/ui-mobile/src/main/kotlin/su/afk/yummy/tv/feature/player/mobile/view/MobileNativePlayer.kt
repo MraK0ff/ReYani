@@ -940,6 +940,7 @@ internal fun MobileNativePlayer(
             },
             videoWidthFraction = videoWidthFraction,
             videoBottomInset = videoBottomInsetDp,
+            timeDisplaySettings = timeDisplaySettings,
         )
 
         MobilePlayerTimeOverlay(
@@ -948,9 +949,10 @@ internal fun MobileNativePlayer(
             durationMs = progress.duration,
             controlsActive = overlay.visible && !locked && !isInPictureInPictureMode,
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = -videoLeftInsetDp, y = videoTopDp + 76.dp)
-                .padding(end = 12.dp),
+                .align(Alignment.TopCenter)
+                .offset(x = videoLeftDp, y = videoTopDp + 76.dp)
+                .width(videoWidthDp)
+                .padding(horizontal = 12.dp),
         )
 
         val skipButtonBottomPadding by animateDpAsState(
