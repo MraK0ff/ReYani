@@ -2,6 +2,8 @@ package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -34,6 +37,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,6 +52,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import su.afk.yummy.tv.core.designsystem.utils.dubbingDisplayName
@@ -103,6 +109,9 @@ internal fun MobilePlayerTopBar(
 ) {
     if (!visible) return
     var qualityExpanded by remember { mutableStateOf(false) }
+    var qualityPreviewIndex by remember { mutableIntStateOf(-1) }
+    var qualityPreviewOffsetPx by remember { mutableFloatStateOf(0f) }
+    val density = LocalDensity.current
     var speedExpanded by remember { mutableStateOf(false) }
     Box(
         modifier = modifier.fillMaxWidth()
@@ -215,15 +224,60 @@ internal fun MobilePlayerTopBar(
                                 qualityExpanded = false
                             },
                         )
-                        qualityOptions.asReversed().forEach { quality ->
-                            DropdownMenuItem(
-                                text = { Text(quality) },
-                                onClick = {
-                                    onAdaptiveQualityChange(false)
-                                    onQualitySelected(quality)
-                                    qualityExpanded = false
+                        val descendingQualities = qualityOptions.asReversed()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 280.dp)
+                                .pointerInput(descendingQualities) {
+                                    val rowHeight = with(density) { 48.dp.toPx() }
+                                    fun updatePreview(y: Float) {
+                                        qualityPreviewOffsetPx = y.coerceIn(0f, size.height.toFloat())
+                                        qualityPreviewIndex = (y / rowHeight).toInt()
+                                            .coerceIn(0, (descendingQualities.lastIndex).coerceAtLeast(0))
+                                    }
+                                    detectDragGestures(
+                                        onDragStart = { updatePreview(it.y) },
+                                        onDrag = { change, _ ->
+                                            change.consume()
+                                            updatePreview(change.position.y)
+                                        },
+                                        onDragEnd = {
+                                            descendingQualities.getOrNull(qualityPreviewIndex)?.let { quality ->
+                                                onAdaptiveQualityChange(false)
+                                                onQualitySelected(quality)
+                                            }
+                                            qualityPreviewIndex = -1
+                                            qualityExpanded = false
+                                        },
+                                        onDragCancel = { qualityPreviewIndex = -1 },
+                                    )
                                 },
-                            )
+                        ) {
+                            Column {
+                                descendingQualities.forEach { quality ->
+                                    DropdownMenuItem(
+                                        text = { Text(quality) },
+                                        onClick = {
+                                            onAdaptiveQualityChange(false)
+                                            onQualitySelected(quality)
+                                            qualityExpanded = false
+                                        },
+                                    )
+                                }
+                            }
+                            if (qualityPreviewIndex >= 0) {
+                                Text(
+                                    text = descendingQualities.getOrNull(qualityPreviewIndex).orEmpty(),
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .offset(y = with(density) { qualityPreviewOffsetPx.toDp() } - 18.dp)
+                                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
+                                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                                )
+                            }
                         }
                         DropdownMenuItem(
                             text = { Text("Худшее доступное") },
