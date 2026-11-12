@@ -82,6 +82,12 @@ internal fun SettingsMobilePlayerContent(
                     )
                 },
             )
+            SettingsMobileToggleRow(
+                label = stringResource(R.string.settings_mobile_player_auto_brightness),
+                hint = stringResource(R.string.settings_mobile_player_auto_brightness_hint),
+                enabled = state.mobilePlayerAutoBrightnessEnabled,
+                onClick = { onEvent(SettingsState.Event.MobilePlayerAutoBrightnessToggled) },
+            )
             SettingsMobileOptionRow(
                 label = stringResource(R.string.settings_player_orientation_title),
                 value = state.playerOrientationMode.label(),
