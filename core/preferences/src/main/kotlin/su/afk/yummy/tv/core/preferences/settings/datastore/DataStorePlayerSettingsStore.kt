@@ -135,8 +135,9 @@ internal class DataStorePlayerSettingsStore @Inject constructor(
         prefs[mobilePlayerBrightnessPercentKey]?.coerceIn(MIN_BRIGHTNESS_PERCENT, MAX_VOLUME_PERCENT)
     }
 
-    override val mobilePlayerAutoBrightnessEnabled: Flow<Boolean> =
-        store.boolean(mobilePlayerAutoBrightnessEnabledKey, true)
+    override val mobilePlayerAutoBrightnessEnabled: Flow<Boolean> = store.data.map { prefs ->
+        prefs[mobilePlayerAutoBrightnessEnabledKey] ?: (prefs[mobilePlayerBrightnessPercentKey] == null)
+    }
 
     override val playerPlaybackSpeed: Flow<Float> = store.data.map { prefs ->
         (prefs[playerPlaybackSpeedKey] ?: DEFAULT_PLAYBACK_SPEED)
