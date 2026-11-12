@@ -104,8 +104,13 @@ internal class MobilePlayerGestureController(
     fun applyVerticalGesture(zone: MobileVerticalGestureZone, deltaFraction: Float) {
         when (zone) {
             MobileVerticalGestureZone.Brightness -> {
-                rawBrightnessLevel = (rawBrightnessLevel + deltaFraction)
-                    .coerceIn(MOBILE_PLAYER_MIN_BRIGHTNESS, 1f)
+                rawBrightnessLevel = (rawBrightnessLevel + deltaFraction).coerceIn(0f, 1f)
+                if (rawBrightnessLevel <= 0.001f) {
+                    // Нулевая позиция — явный жест «вернуть системную яркость/авто».
+                    setAutoBrightness(true)
+                    brightnessLevel = readSystemBrightnessFraction(context)
+                    return
+                }
                 val stepped = rawBrightnessLevel.quantizeToGestureStep()
                     .coerceIn(MOBILE_PLAYER_MIN_BRIGHTNESS, 1f)
                 if (stepped == brightnessLevel) return
@@ -130,8 +135,14 @@ internal class MobilePlayerGestureController(
 
     /** Включает автояркость или фиксирует текущую системную яркость как ручную. */
     fun setAutoBrightness(auto: Boolean) {
+        autoBrightness = auto
         if (auto) {
             brightnessController.setAuto()
+            activity?.window?.let { window ->
+                window.attributes = window.attributes.apply {
+                    screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+                }
+            }
         } else {
             val current = activity?.window?.attributes?.screenBrightness
                 ?.takeIf { it in 0f..1f }
