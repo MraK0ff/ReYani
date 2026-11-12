@@ -33,12 +33,14 @@ internal class PlayerSetupSettingsHandler @Inject constructor(
             store.autoSkipOpeningsEndings,
             store.autoPlayNextEpisode,
             store.suggestNextEpisodeOnWatched,
-        ) { showOpening, autoSkip, autoPlay, suggestNext ->
+            store.mobilePlayerAutoBrightnessEnabled,
+        ) { showOpening, autoSkip, autoPlay, suggestNext, autoBrightness ->
             PlayerSetupState.State(
                 showOpeningOnTimeline = showOpening,
                 autoSkipOpeningsEndings = autoSkip,
                 autoPlayNextEpisode = autoPlay,
                 suggestNextEpisodeOnWatched = suggestNext,
+                autoBrightnessEnabled = autoBrightness,
             )
         },
         combine(
@@ -91,6 +93,9 @@ internal class PlayerSetupSettingsHandler @Inject constructor(
 
 
     suspend fun setPictureInPictureEnabled(enabled: Boolean) = store.setPictureInPictureEnabled(enabled)
+
+    suspend fun setAutoBrightnessEnabled(enabled: Boolean) =
+        store.setMobilePlayerAutoBrightnessEnabled(enabled)
 
     fun setInterfaceLanguage(language: AppInterfaceLanguage) = interfaceLanguagePreferences.select(language)
 
