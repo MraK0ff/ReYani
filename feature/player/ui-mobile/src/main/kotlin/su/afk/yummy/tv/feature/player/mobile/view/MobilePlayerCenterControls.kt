@@ -80,14 +80,15 @@ internal fun MobilePlayerCenterControls(
                 contentDescription = stringResource(R.string.player_mobile_next_episode),
                 onClick = onNextEpisode,
                 sizeMultiplier = CENTER_SWITCH_SCALE,
+                iconScale = CENTER_SWITCH_ICON_SCALE,
             )
         }
     }
 }
 
-private const val CENTER_SWITCH_SCALE = 1.5f
+private const val CENTER_SWITCH_SCALE = 1.38f
 private const val CENTER_SWITCH_ICON_SCALE = 0.88f
-private val CENTER_CONTROLS_GAP = 32.dp
+private val CENTER_CONTROLS_GAP = 28.dp
 private val CENTER_SWITCH_SLOT = 80.dp
-private val CENTER_PLAY_SIZE = 88.dp
-private val CENTER_PLAY_ICON_SIZE = 76.dp
+private val CENTER_PLAY_SIZE = 82.dp
+private val CENTER_PLAY_ICON_SIZE = 70.dp
