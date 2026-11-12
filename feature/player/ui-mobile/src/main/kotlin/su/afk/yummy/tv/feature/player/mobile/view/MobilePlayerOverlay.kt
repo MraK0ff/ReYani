@@ -56,6 +56,8 @@ internal fun MobilePlayerOverlay(
     videoWidthFraction: Float = 1f,
     videoBottomInset: androidx.compose.ui.unit.Dp = 0.dp,
     timeDisplaySettings: PlayerTimeDisplaySettings = PlayerTimeDisplaySettings(),
+    showRemainingTime: Boolean = false,
+    onTimeCodeClick: () -> Unit = {},
 ) {
     if (!visible) return
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -92,6 +94,8 @@ internal fun MobilePlayerOverlay(
                 videoWidthFraction = videoWidthFraction,
                 videoBottomInset = videoBottomInset,
                 timeDisplaySettings = timeDisplaySettings,
+                showRemainingTime = showRemainingTime,
+                onTimeCodeClick = onTimeCodeClick,
             )
             if (episodesAvailable) {
                 AnimatedVisibility(
