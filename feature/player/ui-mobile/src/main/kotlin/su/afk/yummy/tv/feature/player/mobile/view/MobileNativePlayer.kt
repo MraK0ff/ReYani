@@ -740,6 +740,13 @@ internal fun MobileNativePlayer(
                 overlay.visible = true
                 overlay.cancelHide()
             },
+            onMoreMenuItem = { page ->
+                endFlow.hideAll()
+                settingsMenuPage = page
+                settingsMenuOpen = true
+                overlay.visible = true
+                overlay.cancelHide()
+            },
             onQualityClick = {
                 endFlow.hideAll()
                 qualitySheetOpen = true
