@@ -138,6 +138,17 @@ internal fun MobilePlayerTopBar(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
+            if (title.isNotBlank()) {
+                Text(
+                    title,
+                    color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Clip,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -150,9 +161,9 @@ internal fun MobilePlayerTopBar(
                     ) {
                         Text(
                             stringResource(R.string.player_mobile_episode_number, episode),
-                            color = Color.White,
+                            color = Color.White.copy(alpha = 0.78f),
                             maxLines = 1,
-                            style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                            style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                         )
                         Icon(
                             if (episodeExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
@@ -173,10 +184,10 @@ internal fun MobilePlayerTopBar(
                         if (dubbing.isNotBlank()) {
                             Text(
                                 dubbing.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
-                                color = Color.White,
+                                color = Color.White.copy(alpha = 0.78f),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                                style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                             )
                         }
                         if (offlinePlayback) {
@@ -186,10 +197,10 @@ internal fun MobilePlayerTopBar(
                             Text("|", color = Color.White.copy(alpha = 0.82f), style = MaterialTheme.typography.bodyMedium)
                             Text(
                                 playerName,
-                                color = Color.White,
+                                color = Color.White.copy(alpha = 0.78f),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                                style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                             )
                             Icon(
                                 if (dubbingExpanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
@@ -200,17 +211,6 @@ internal fun MobilePlayerTopBar(
                         }
                     }
                 }
-            }
-            if (title.isNotBlank()) {
-                Text(
-                    title,
-                    color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Clip,
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold),
-                    modifier = Modifier.fillMaxWidth(),
-                )
             }
             MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
