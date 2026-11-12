@@ -223,7 +223,7 @@ internal fun MobilePlayerTopBar(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = minOf(420.dp, choices.size * 48.dp))
+                                .heightIn(max = minOf(420.dp, 48.dp * choices.size))
                                 .pointerInput(choices) {
                                     val rowHeight = with(density) { 48.dp.toPx() }
                                     fun updatePreview(y: Float) {
