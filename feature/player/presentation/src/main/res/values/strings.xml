@@ -246,4 +246,16 @@
     <string name="player_speed_slower">Slower</string>
     <string name="player_speed_faster">Faster</string>
     <string name="player_menu_cast_pip">PiP and Cast</string>
+    <string name="player_time_display_title">On-screen time</string>
+    <string name="player_time_display_system_clock">System clock</string>
+    <string name="player_time_display_elapsed">Watched time</string>
+    <string name="player_time_display_remaining">Time remaining</string>
+    <string name="player_time_display_finish_at">Episode end time</string>
+    <string name="player_time_display_always">Always</string>
+    <string name="player_time_display_never">Never</string>
+    <string name="player_time_display_controls">When controls are visible</string>
+    <string name="player_time_display_clock_value">Now · %1$s</string>
+    <string name="player_time_display_elapsed_value">Watched · %1$s</string>
+    <string name="player_time_display_remaining_value">Remaining · %1$s</string>
+    <string name="player_time_display_finish_value">Ends · %1$s</string>
 </resources>
