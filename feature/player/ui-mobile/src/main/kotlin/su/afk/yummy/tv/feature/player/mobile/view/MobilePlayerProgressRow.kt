@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -14,6 +13,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -21,6 +24,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.unit.Dp
@@ -39,18 +43,14 @@ internal fun MobilePlayerProgressRow(
     videoWidthFraction: Float = 1f,
     videoBottomInset: Dp = 0.dp,
     timeDisplaySettings: PlayerTimeDisplaySettings = PlayerTimeDisplaySettings(),
+    showRemainingTime: Boolean = false,
+    onTimeCodeClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val safeHorizontalInset = with(androidx.compose.ui.platform.LocalDensity.current) {
-        maxOf(
-            WindowInsets.safeDrawing.getLeft(this, androidx.compose.ui.platform.LocalLayoutDirection.current),
-            WindowInsets.safeDrawing.getRight(this, androidx.compose.ui.platform.LocalLayoutDirection.current),
-        ).toDp()
-    }
     Box(
         modifier = modifier
             .fillMaxWidth(videoWidthFraction.coerceIn(0.1f, 1f))
-            .padding(horizontal = safeHorizontalInset),
+
     ) {
         Column(
             modifier = Modifier.align(Alignment.BottomCenter)
@@ -66,17 +66,18 @@ internal fun MobilePlayerProgressRow(
                 onValueChangeFinished = onSeekFinished,
                 modifier = Modifier.fillMaxWidth(),
             )
-            val showRemaining = timeDisplaySettings.showRemainingInsteadOfDuration
+            val remaining = (duration - displayTime).coerceAtLeast(0L)
             Row(
                 modifier = Modifier
-                    .align(Alignment.End)
+                    .align(Alignment.Start)
                     .mobilePlayerGlassSurface()
+                    .clickable(onClick = onTimeCodeClick)
                     .padding(horizontal = 9.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = displayTime.millisToClockTime().padStart(5, '0'),
+                    text = (if (showRemainingTime) "-${remaining.millisToClockTime().padStart(5, '0')}" else displayTime.millisToClockTime().padStart(5, '0')),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(alpha = 0.96f),
                 )
@@ -86,8 +87,7 @@ internal fun MobilePlayerProgressRow(
                     color = Color.White.copy(alpha = 0.58f),
                 )
                 Text(
-                    text = (if (showRemaining) (duration - displayTime).coerceAtLeast(0L) else duration)
-                        .millisToClockTime().padStart(5, '0'),
+                    text = duration.millisToClockTime().padStart(5, '0'),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(alpha = 0.62f),
                 )
