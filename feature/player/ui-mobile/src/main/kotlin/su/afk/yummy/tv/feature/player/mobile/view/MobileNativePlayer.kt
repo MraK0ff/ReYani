@@ -956,6 +956,7 @@ internal fun MobileNativePlayer(
             controlsActive = overlay.visible && !locked && !isInPictureInPictureMode,
             sideInset = videoLeftInsetDp,
             videoTopInset = videoTopDp,
+            videoBottomInset = videoBottomInsetDp,
             showRemainingTime = showRemainingTime,
             onTimeCodeClick = { showRemainingTime = !showRemainingTime },
             modifier = Modifier.fillMaxSize(),
