@@ -1,6 +1,7 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,24 +43,29 @@ internal fun MobilePlayerTimeOverlay(
     val clockFormat = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
     val systemClock = clockFormat.format(Date(nowMs))
     val finishAt = clockFormat.format(Date(nowMs + remainingMs))
-    val visibleRows = listOf(
-        shouldShow(settings.systemClock, controlsActive) to stringResource(R.string.player_time_display_clock_value, systemClock),
-        shouldShow(settings.elapsed, controlsActive) to stringResource(R.string.player_time_display_elapsed_value, displayTimeMs.millisToClockTime()),
-        (durationMs > 0L && shouldShow(settings.remaining, controlsActive)) to stringResource(R.string.player_time_display_remaining_value, remainingMs.millisToClockTime()),
-        (durationMs > 0L && shouldShow(settings.finishAt, controlsActive)) to stringResource(R.string.player_time_display_finish_value, finishAt),
-    ).filter { it.first }.map { it.second }
-    if (visibleRows.isEmpty()) return
-    Column(
-        modifier = modifier
-            .mobilePlayerGlassSurface()
-            .padding(horizontal = 10.dp, vertical = 7.dp),
+    val showClock = shouldShow(settings.systemClock, controlsActive)
+    val showFinish = durationMs > 0L && shouldShow(settings.finishAt, controlsActive)
+    if (!showClock && !showFinish) return
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        visibleRows.forEach { value ->
+        if (showClock) {
             Text(
-                text = value,
+                text = stringResource(R.string.player_time_display_clock_value, systemClock),
                 style = MaterialTheme.typography.labelMedium,
                 color = Color.White,
                 maxLines = 1,
+                modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 9.dp, vertical = 6.dp),
+            )
+        }
+        if (showFinish) {
+            Text(
+                text = stringResource(R.string.player_time_display_finish_value, finishAt),
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White,
+                maxLines = 1,
+                modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 9.dp, vertical = 6.dp),
             )
         }
     }
