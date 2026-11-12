@@ -62,8 +62,6 @@
     <string name="settings_nav_transition_none">Без анимации</string>
     <string name="settings_nav_transition_none_hint">Экраны меняются мгновенно</string>
     <string name="settings_interface_type">Тип интерфейса</string>
-    <string name="settings_interface_auto">Автоматически</string>
-    <string name="settings_interface_auto_hint">Определять интерфейс по типу устройства</string>
     <string name="settings_interface_mobile">Мобильный</string>
     <string name="settings_interface_mobile_hint">Управление с сенсорного экрана</string>
     <string name="settings_interface_tv">ТВ</string>

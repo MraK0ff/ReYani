@@ -62,8 +62,6 @@
     <string name="settings_nav_transition_none">None</string>
     <string name="settings_nav_transition_none_hint">No animation</string>
     <string name="settings_interface_type">Interface type</string>
-    <string name="settings_interface_auto">Automatic</string>
-    <string name="settings_interface_auto_hint">Choose the interface based on the device type</string>
     <string name="settings_interface_mobile">Mobile</string>
     <string name="settings_interface_mobile_hint">Optimized for touchscreen controls</string>
     <string name="settings_interface_tv">TV</string>

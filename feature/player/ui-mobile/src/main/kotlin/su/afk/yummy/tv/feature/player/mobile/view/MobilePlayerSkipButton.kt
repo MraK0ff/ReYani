@@ -1,9 +1,6 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -56,20 +53,14 @@ internal fun MobilePlayerSkipButton(
     var lastType by remember { mutableStateOf(PlayerSkipType.Opening) }
     skip?.type?.let { lastType = it }
     val shape = CircleShape
-    val displayedCountdown by animateIntAsState(
-        targetValue = countdownSeconds ?: 0,
-        animationSpec = tween(durationMillis = 180),
-        label = "skipCountdown",
-    )
 
     AnimatedVisibility(
         visible = skip != null || countdownSeconds != null,
         modifier = modifier,
-        enter = fadeIn(animationSpec = tween(220)) + slideInHorizontally(animationSpec = tween(220)) { it / 3 },
-        exit = fadeOut(animationSpec = tween(180)) + slideOutHorizontally(animationSpec = tween(180)) { it / 3 },
+        enter = fadeIn() + slideInHorizontally { it / 2 },
+        exit = fadeOut() + slideOutHorizontally { it / 2 },
     ) {
         Row(
-            modifier = Modifier.animateContentSize(animationSpec = tween(180)),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -94,7 +85,7 @@ internal fun MobilePlayerSkipButton(
                 modifier = Modifier
                     .clip(shape)
                     .background(YummySemanticColors.PanelScrim)
-                    .autoSkipProgressFill(countdownProgress, MaterialTheme.colorScheme.primary.copy(alpha = 0.28f), 24.dp)
+                    .autoSkipProgressFill(countdownProgress, Color.White.copy(alpha = 0.22f), 24.dp)
                     .border(1.dp, Color.White.copy(alpha = 0.18f), shape)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
@@ -118,7 +109,7 @@ internal fun MobilePlayerSkipButton(
                                 PlayerSkipType.Opening -> R.string.player_mobile_skip_opening_countdown
                                 PlayerSkipType.Ending -> R.string.player_mobile_skip_ending_countdown
                             },
-                            displayedCountdown,
+                            countdownSeconds,
                         )
                     } else {
                         stringResource(

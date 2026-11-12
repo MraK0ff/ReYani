@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +18,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.consume
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import su.afk.yummy.tv.core.utils.formatting.millisToClockTime
@@ -74,7 +75,6 @@ internal fun MobilePlayerProgressRow(
 
 /** Своя дорожка вместо Material Slider: тонкая линия, цвет темы, белый бегунок и буферизация. */
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun MobilePlayerTimeline(
     progress: Float,
     bufferedProgress: Float,
@@ -84,62 +84,71 @@ private fun MobilePlayerTimeline(
     modifier: Modifier = Modifier,
 ) {
     val accent = MaterialTheme.colorScheme.primary
-    val colors = SliderDefaults.colors(
-        thumbColor = Color.Transparent,
-        activeTrackColor = Color.Transparent,
-        inactiveTrackColor = Color.Transparent,
-        disabledThumbColor = Color.Transparent,
-        disabledActiveTrackColor = Color.Transparent,
-        disabledInactiveTrackColor = Color.Transparent,
-        activeTickColor = Color.Transparent,
-        inactiveTickColor = Color.Transparent,
-    )
-    Slider(
-        value = progress,
-        onValueChange = onValueChange,
-        onValueChangeFinished = onValueChangeFinished,
-        enabled = enabled,
-        modifier = modifier.height(24.dp),
-        colors = colors,
-        thumb = {},
-        track = { state ->
-            Canvas(Modifier.fillMaxWidth().height(24.dp)) {
-                val centerY = size.height / 2f
-                val stroke = 3.5.dp.toPx()
-                val radius = stroke / 2f
-                val endX = size.width
-                val playedX = endX * state.value.coerceIn(0f, 1f)
-                val bufferedX = endX * bufferedProgress.coerceIn(state.value, 1f)
-                drawRoundRect(
-                    color = Color.White.copy(alpha = 0.54f),
-                    topLeft = Offset(0f, centerY - radius),
-                    size = Size(endX, stroke),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
-                )
-                if (bufferedX > playedX) {
-                    drawRoundRect(
-                        color = Color.White.copy(alpha = 0.82f),
-                        topLeft = Offset(playedX, centerY - radius),
-                        size = Size(bufferedX - playedX, stroke),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
-                    )
-                }
-                if (playedX > 0f) {
-                    drawRoundRect(
-                        color = accent,
-                        topLeft = Offset(0f, centerY - radius),
-                        size = Size(playedX, stroke),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
-                    )
-                }
+    val safeProgress = progress.coerceIn(0f, 1f)
+    Box(
+        modifier = modifier
+            .height(24.dp)
+            .pointerInput(enabled, onValueChange) {
                 if (enabled) {
-                    drawCircle(
-                        color = Color.White,
-                        radius = 6.dp.toPx(),
-                        center = Offset(playedX.coerceIn(0f, endX), centerY),
-                    )
+                    detectTapGestures { position ->
+                        val fraction = (position.x / size.width.toFloat()).coerceIn(0f, 1f)
+                        onValueChange(fraction)
+                        onValueChangeFinished()
+                    }
                 }
             }
-        },
-    )
+            .pointerInput(enabled, onValueChange, onValueChangeFinished) {
+                if (enabled) {
+                    detectDragGestures(
+                        onDragStart = { position ->
+                            onValueChange((position.x / size.width.toFloat()).coerceIn(0f, 1f))
+                        },
+                        onDrag = { change, _ ->
+                            change.consume()
+                            onValueChange((change.position.x / size.width.toFloat()).coerceIn(0f, 1f))
+                        },
+                        onDragEnd = onValueChangeFinished,
+                        onDragCancel = onValueChangeFinished,
+                    )
+                }
+            },
+    ) {
+        Canvas(Modifier.fillMaxWidth().height(24.dp)) {
+            val centerY = size.height / 2f
+            val stroke = 3.5.dp.toPx()
+            val radius = stroke / 2f
+            val endX = size.width
+            val playedX = endX * safeProgress
+            val bufferedX = endX * bufferedProgress.coerceIn(safeProgress, 1f)
+            drawRoundRect(
+                color = Color.White.copy(alpha = 0.54f),
+                topLeft = Offset(0f, centerY - radius),
+                size = Size(endX, stroke),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
+            )
+            if (bufferedX > playedX) {
+                drawRoundRect(
+                    color = Color.White.copy(alpha = 0.82f),
+                    topLeft = Offset(playedX, centerY - radius),
+                    size = Size(bufferedX - playedX, stroke),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
+                )
+            }
+            if (playedX > 0f) {
+                drawRoundRect(
+                    color = accent,
+                    topLeft = Offset(0f, centerY - radius),
+                    size = Size(playedX, stroke),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
+                )
+            }
+            if (enabled) {
+                drawCircle(
+                    color = Color.White,
+                    radius = 6.dp.toPx(),
+                    center = Offset(playedX.coerceIn(0f, endX), centerY),
+                )
+            }
+        }
+    }
 }

@@ -9,14 +9,6 @@ internal class SharedPreferencesAppInterfaceModePreferences @Inject constructor(
 ) : AppInterfaceModePreferences {
     private val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-    override val selectedMode: AppInterfaceMode?
-        get() = preferences.getString(PLAYER_INTERFACE_MODE_KEY, null)
-            ?.let { runCatching { AppInterfaceMode.valueOf(it) }.getOrNull() }
-
-    override fun select(mode: AppInterfaceMode) {
-        preferences.edit().putString(PLAYER_INTERFACE_MODE_KEY, mode.name).apply()
-    }
-
     override fun consumePlayerSetupPending(): Boolean {
         if (preferences.getBoolean(PLAYER_SETUP_SHOWN_KEY, false)) return false
         preferences.edit().putBoolean(PLAYER_SETUP_SHOWN_KEY, true).apply()
@@ -26,6 +18,5 @@ internal class SharedPreferencesAppInterfaceModePreferences @Inject constructor(
     private companion object {
         const val PREFERENCES_NAME = "app_interface_mode"
         const val PLAYER_SETUP_SHOWN_KEY = "player_setup_shown"
-        const val PLAYER_INTERFACE_MODE_KEY = "manual_mode"
     }
 }

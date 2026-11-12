@@ -53,11 +53,6 @@ internal class PlayerPreferencesBinder @Inject constructor(
         }
     }
 
-    fun setPictureInPictureEnabled(host: PlayerStateHost, enabled: Boolean) {
-        host.update { copy(pictureInPictureEnabled = enabled) }
-        host.scope.launch { settings.savePictureInPictureEnabled(enabled) }
-    }
-
     fun selectOrientationMode(host: PlayerStateHost, mode: PlayerOrientationMode) {
         host.scope.launch { settings.saveOrientationMode(mode) }
     }

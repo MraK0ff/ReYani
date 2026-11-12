@@ -19,9 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.HighQuality
-import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -71,7 +68,6 @@ internal fun MobilePlayerTopBar(
     episode: String,
     dubbing: String,
     playerName: String,
-    offlinePlayback: Boolean = false,
     episodeFlags: EpisodeFlags?,
     qualityLabel: String,
     titleStartPadding: Dp = 4.dp,
@@ -94,7 +90,7 @@ internal fun MobilePlayerTopBar(
     ) {
         Column(
             Modifier.weight(1f).padding(start = titleStartPadding, top = 2.dp, end = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             if (title.isNotBlank()) {
                 Text(
@@ -116,10 +112,10 @@ internal fun MobilePlayerTopBar(
                         tint = Color.White.copy(alpha = 0.88f), modifier = Modifier.size(18.dp))
                 }
             }
-            if (offlinePlayback || dubbing.isNotBlank() || playerName.isNotBlank()) {
+            if (dubbing.isNotBlank() || playerName.isNotBlank()) {
                 Row(
-                    modifier = (if (offlinePlayback) Modifier else Modifier.clickable(onClick = onDubbingClick))
-                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                    modifier = Modifier.clickable(onClick = onDubbingClick)
+                    .padding(horizontal = 9.dp, vertical = 6.dp),
                     horizontalArrangement = Arrangement.spacedBy(7.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -139,14 +135,7 @@ internal fun MobilePlayerTopBar(
                     if (dubbing.isNotBlank() && playerName.isNotBlank()) {
                         Text("|", color = Color.White.copy(alpha = 0.72f), style = MaterialTheme.typography.labelSmall)
                     }
-                    if (offlinePlayback) {
-                        Icon(
-                            imageVector = Icons.Filled.Download,
-                            contentDescription = null,
-                            tint = Color.White.copy(alpha = 0.92f),
-                            modifier = Modifier.size(16.dp),
-                        )
-                    } else if (playerName.isNotBlank()) {
+                    if (playerName.isNotBlank()) {
                         Row(
                             modifier = Modifier,
                             verticalAlignment = Alignment.CenterVertically,
@@ -168,7 +157,7 @@ internal fun MobilePlayerTopBar(
         Row(
             Modifier.padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             TopBarQualityAction(qualityLabel, onQualityClick)
             TopBarSpeedAction(selectedSpeed, onSpeedClick, onSpeedLongPress)
@@ -182,13 +171,11 @@ private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
     androidx.compose.foundation.layout.Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.widthIn(min = 54.dp, max = 72.dp)
-            .size(height = mobilePlayerControlButtonSize(), width = 56.dp)
+            .size(height = mobilePlayerControlButtonSize(), width = 64.dp)
             .clickable(onClick = onClick)
             .padding(horizontal = 5.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-            Icon(Icons.Filled.HighQuality, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
-            BasicText(
+        BasicText(
             text = label,
             style = TextStyle(
                 color = Color.White,
@@ -198,8 +185,7 @@ private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
             ),
             maxLines = 1,
             softWrap = false,
-            )
-        }
+        )
     }
 }
 
@@ -208,14 +194,12 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: ()
     val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
     androidx.compose.foundation.layout.Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(width = 56.dp, height = mobilePlayerControlButtonSize())
+        modifier = Modifier.size(width = 64.dp, height = mobilePlayerControlButtonSize())
             .pointerInput(onClick, onLongPress) {
                 detectTapGestures(onTap = { onClick() }, onLongPress = { onLongPress() })
             },
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-            Icon(Icons.Filled.Speed, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
-            BasicText(
+        BasicText(
             text = label,
             style = TextStyle(
                 color = Color.White,
@@ -224,8 +208,7 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: ()
                 background = Color.Transparent,
             ),
             maxLines = 1,
-            )
-        }
+        )
     }
 }
 
@@ -233,7 +216,7 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: ()
 private fun TopBarAction(icon: ImageVector, description: String, onClick: () -> Unit) {
     androidx.compose.foundation.layout.Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(width = 44.dp, height = mobilePlayerControlButtonSize()).clickable(onClick = onClick),
+        modifier = Modifier.size(mobilePlayerControlButtonSize()).clickable(onClick = onClick),
     ) {
         Icon(icon, description, tint = Color.White, modifier = Modifier.size(24.dp))
     }

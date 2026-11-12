@@ -18,7 +18,6 @@ import su.afk.yummy.tv.core.model.settings.PlayerSubtitleEdge
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleTextColor
 import su.afk.yummy.tv.core.model.settings.AppInterfaceLanguage
 import su.afk.yummy.tv.core.model.settings.YaniContentLanguage
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.feature.settings.SettingsState
 import su.afk.yummy.tv.feature.settings.mobile.model.SettingsMobilePicker
 import su.afk.yummy.tv.feature.settings.mobile.model.SettingsMobilePickerOption
@@ -51,19 +50,6 @@ internal fun SettingsMobileDialogsHost(
     onEvent: (SettingsState.Event) -> Unit,
 ) {
     when (dialogs.activePicker) {
-        SettingsMobilePicker.INTERFACE_MODE -> SettingsMobilePickerSheet(
-            title = stringResource(R.string.settings_interface_type),
-            selectedValue = state.interfaceMode,
-            options = AppInterfaceMode.entries.map {
-                SettingsMobilePickerOption(it, it.label(), it.hint())
-            },
-            onDismiss = { dialogs.activePicker = null },
-            onSelected = {
-                onEvent(SettingsState.Event.InterfaceModeSelected(it))
-                dialogs.activePicker = null
-            },
-        )
-
         SettingsMobilePicker.NEW_EPISODES_SOURCES -> SettingsMobileMultiPickerSheet(
             title = stringResource(R.string.settings_new_episodes_sources_title),
             selectedValues = state.newEpisodesSources,

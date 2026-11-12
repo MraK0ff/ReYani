@@ -1,7 +1,6 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -47,9 +46,10 @@ internal fun MobilePlayerCenterControls(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(CENTER_CONTROLS_GAP),
     ) {
-        if (hasPrevEpisode) MobilePlayerActionButton(
+        MobilePlayerActionButton(
             icon = Icons.Filled.SkipPrevious,
             contentDescription = stringResource(R.string.player_mobile_previous_episode),
+            enabled = hasPrevEpisode,
             onClick = onPrevEpisode,
             sizeMultiplier = CENTER_SWITCH_SCALE,
         )
@@ -61,8 +61,7 @@ internal fun MobilePlayerCenterControls(
             modifier = Modifier
                 .size(CENTER_PLAY_SIZE)
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.14f))
-                .border(1.dp, Color.White.copy(alpha = 0.20f), CircleShape)
+                .background(Color.Black.copy(alpha = 0.45f))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -80,9 +79,10 @@ internal fun MobilePlayerCenterControls(
                 )
             }
         }
-        if (hasNextEpisode) MobilePlayerActionButton(
+        MobilePlayerActionButton(
             icon = Icons.Filled.SkipNext,
             contentDescription = stringResource(R.string.player_mobile_next_episode),
+            enabled = hasNextEpisode,
             onClick = onNextEpisode,
             sizeMultiplier = CENTER_SWITCH_SCALE,
         )

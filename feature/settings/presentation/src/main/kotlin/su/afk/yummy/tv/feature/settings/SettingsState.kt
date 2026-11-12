@@ -29,7 +29,6 @@ import su.afk.yummy.tv.core.mvi.UiEffect
 import su.afk.yummy.tv.core.mvi.UiEvent
 import su.afk.yummy.tv.core.mvi.UiState
 import su.afk.yummy.tv.core.preferences.settings.SettingsStore
-import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.core.utils.system.CacheStorageEntry
 import su.afk.yummy.tv.core.utils.system.PlatformInfo
 import su.afk.yummy.tv.feature.settings.model.DetailsButtonMoveDirection
@@ -40,7 +39,6 @@ import su.afk.yummy.tv.feature.settings.navigator.SettingsCategory
 class SettingsState {
     @Immutable
     data class State(
-        val interfaceMode: AppInterfaceMode = AppInterfaceMode.AUTO,
         val appTheme: AppTheme = AppTheme.GRAPHITE,
         val backgroundStyle: BackgroundStyle = BackgroundStyle.AMOLED,
         val navTransitionStyle: NavTransitionStyle = NavTransitionStyle.FADE_SCALE,
@@ -130,9 +128,6 @@ class SettingsState {
     sealed interface Event : UiEvent {
         /** Пользователь нажал кнопку возврата. */
         data object BackSelected : Event
-
-        /** Выбор автоматического определения или ручного интерфейса приложения. */
-        data class InterfaceModeSelected(val mode: AppInterfaceMode) : Event
 
         /** Пользователь выбрал тему приложения. */
         data class AppThemeSelected(val theme: AppTheme) : Event

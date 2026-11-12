@@ -62,8 +62,6 @@
     <string name="settings_nav_transition_none">Без анімації</string>
     <string name="settings_nav_transition_none_hint">Екрани змінюються миттєво</string>
     <string name="settings_interface_type">Тип інтерфейсу</string>
-    <string name="settings_interface_auto">Автоматично</string>
-    <string name="settings_interface_auto_hint">Визначати інтерфейс за типом пристрою</string>
     <string name="settings_interface_mobile">Мобільний</string>
     <string name="settings_interface_mobile_hint">Керування із сенсорного екрана</string>
     <string name="settings_interface_tv">ТВ</string>
