@@ -1,13 +1,11 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -19,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -55,8 +52,7 @@ internal fun MobilePlayerCenterControls(
         )
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.size(CENTER_PLAY_SIZE).clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.92f))
+            modifier = Modifier.size(CENTER_PLAY_SIZE)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -69,7 +65,7 @@ internal fun MobilePlayerCenterControls(
                 Icon(
                     imageVector = if (wantsPlay) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                     contentDescription = playPauseDescription,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(CENTER_PLAY_ICON_SIZE),
                 )
             }
@@ -86,9 +82,9 @@ internal fun MobilePlayerCenterControls(
     }
 }
 
-private const val CENTER_SWITCH_SCALE = 1.38f
+private const val CENTER_SWITCH_SCALE = 1.035f
 private const val CENTER_SWITCH_ICON_SCALE = 0.88f
-private val CENTER_CONTROLS_GAP = 28.dp
+private val CENTER_CONTROLS_GAP = 20.dp
 private val CENTER_SWITCH_SLOT = 80.dp
 private val CENTER_PLAY_SIZE = 82.dp
 private val CENTER_PLAY_ICON_SIZE = 70.dp
