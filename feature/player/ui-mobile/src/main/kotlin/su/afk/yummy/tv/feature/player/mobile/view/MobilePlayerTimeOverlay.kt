@@ -45,8 +45,8 @@ internal fun MobilePlayerTimeOverlay(
     val visibleRows = listOf(
         shouldShow(settings.systemClock, controlsActive) to stringResource(R.string.player_time_display_clock_value, systemClock),
         shouldShow(settings.elapsed, controlsActive) to stringResource(R.string.player_time_display_elapsed_value, displayTimeMs.millisToClockTime()),
-        shouldShow(settings.remaining, controlsActive) to stringResource(R.string.player_time_display_remaining_value, remainingMs.millisToClockTime()),
-        shouldShow(settings.finishAt, controlsActive) to stringResource(R.string.player_time_display_finish_value, finishAt),
+        (durationMs > 0L && shouldShow(settings.remaining, controlsActive)) to stringResource(R.string.player_time_display_remaining_value, remainingMs.millisToClockTime()),
+        (durationMs > 0L && shouldShow(settings.finishAt, controlsActive)) to stringResource(R.string.player_time_display_finish_value, finishAt),
     ).filter { it.first }.map { it.second }
     if (visibleRows.isEmpty()) return
     Column(
