@@ -25,6 +25,7 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.feature.player.common.model.PlayerPlaybackProgressState
 import su.afk.yummy.tv.feature.player.common.model.StepSeekDirection
 import su.afk.yummy.tv.feature.player.presentation.R
@@ -54,6 +55,7 @@ internal fun MobilePlayerOverlay(
     episodesStrip: @Composable () -> Unit = {},
     videoWidthFraction: Float = 1f,
     videoBottomInset: androidx.compose.ui.unit.Dp = 0.dp,
+    timeDisplaySettings: PlayerTimeDisplaySettings = PlayerTimeDisplaySettings(),
 ) {
     if (!visible) return
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -89,6 +91,7 @@ internal fun MobilePlayerOverlay(
                 onSeekFinished = onSeekFinished,
                 videoWidthFraction = videoWidthFraction,
                 videoBottomInset = videoBottomInset,
+                timeDisplaySettings = timeDisplaySettings,
             )
             if (episodesAvailable) {
                 AnimatedVisibility(
