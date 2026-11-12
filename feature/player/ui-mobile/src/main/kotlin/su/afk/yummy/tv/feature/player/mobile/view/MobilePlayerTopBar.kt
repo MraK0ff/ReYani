@@ -2,7 +2,6 @@ package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,15 +23,20 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.HighQuality
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.Icon
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.TextStyle
@@ -73,6 +77,15 @@ internal fun MobilePlayerTopBar(
     offlinePlayback: Boolean = false,
     episodeFlags: EpisodeFlags?,
     qualityLabel: String,
+    qualityOptions: List<String>,
+    selectedQuality: String?,
+    adaptiveQuality: Boolean,
+    onAdaptiveQualityChange: (Boolean) -> Unit,
+    onQualitySelected: (String) -> Unit,
+    onAdaptiveLimitSelected: (String) -> Unit,
+    onAdaptiveLimitBestSelected: () -> Unit,
+    speedOptions: List<Float>,
+    onSpeedSelected: (Float) -> Unit,
     titleStartPadding: Dp = 4.dp,
     onEpisodeClick: () -> Unit,
     onDubbingClick: () -> Unit,
@@ -85,6 +98,9 @@ internal fun MobilePlayerTopBar(
     modifier: Modifier = Modifier,
 ) {
     if (!visible) return
+    var qualityExpanded by remember { mutableStateOf(false) }
+    var speedExpanded by remember { mutableStateOf(false) }
+    var moreExpanded by remember { mutableStateOf(false) }
     Box(
         modifier = modifier.fillMaxWidth()
             .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
@@ -156,9 +172,49 @@ internal fun MobilePlayerTopBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            TopBarQualityAction(qualityLabel, onQualityClick)
-            TopBarSpeedAction(selectedSpeed, onSpeedClick, onSpeedLongPress)
-            TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions), onMoreActions)
+            Box {
+                TopBarQualityAction(qualityLabel) { qualityExpanded = true }
+                DropdownMenu(expanded = qualityExpanded, onDismissRequest = { qualityExpanded = false }) {
+                    DropdownMenuItem(
+                        text = { Text("Адаптивное качество") },
+                        onClick = { onAdaptiveQualityChange(!adaptiveQuality); qualityExpanded = false },
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Лучшее доступное") },
+                        onClick = { onAdaptiveLimitBestSelected(); qualityExpanded = false },
+                    )
+                    qualityOptions.forEach { quality ->
+                        DropdownMenuItem(
+                            text = { Text(quality) },
+                            onClick = {
+                                if (adaptiveQuality) onAdaptiveLimitSelected(quality)
+                                else onQualitySelected(quality)
+                                qualityExpanded = false
+                            },
+                        )
+                    }
+                }
+            }
+            Box {
+                TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
+                DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
+                    speedOptions.forEach { speed ->
+                        DropdownMenuItem(
+                            text = { Text(if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x") },
+                            onClick = { onSpeedSelected(speed); speedExpanded = false },
+                        )
+                    }
+                }
+            }
+            Box {
+                TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions)) { moreExpanded = true }
+                DropdownMenu(expanded = moreExpanded, onDismissRequest = { moreExpanded = false }) {
+                    DropdownMenuItem(
+                        text = { Text("Дополнительные настройки") },
+                        onClick = { moreExpanded = false; onMoreActions() },
+                    )
+                }
+            }
         }
     }
 }
@@ -185,14 +241,12 @@ private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: () -> Unit) {
+private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit) {
     val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(width = 56.dp, height = mobilePlayerControlButtonSize())
-            .pointerInput(onClick, onLongPress) {
-                detectTapGestures(onTap = { onClick() }, onLongPress = { onLongPress() })
-            },
+            .clickable(onClick = onClick),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
             Icon(Icons.Filled.Speed, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
