@@ -32,9 +32,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -115,14 +112,13 @@ internal fun MobilePlayerTopBar(
     var qualityPreviewIndex by remember { mutableIntStateOf(-1) }
     var qualityPreviewOffsetPx by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
-    var speedExpanded by remember { mutableStateOf(false) }
     Box(
         modifier = modifier.fillMaxWidth()
             .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
             .padding(start = 0.dp, end = 0.dp, top = 0.dp, bottom = 8.dp),
     ) {
         Column(
-            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.70f).padding(top = 24.dp),
+            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.94f).padding(top = 42.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
@@ -130,8 +126,8 @@ internal fun MobilePlayerTopBar(
                 Text(
                     title,
                     color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
+                    overflow = TextOverflow.Clip,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
@@ -207,9 +203,9 @@ internal fun MobilePlayerTopBar(
             MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
         Row(
-            Modifier.align(Alignment.TopEnd).padding(start = 4.dp),
+            Modifier.align(Alignment.TopEnd).padding(end = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             if (!offlinePlayback && qualityOptions.isNotEmpty()) {
                 Box {
@@ -294,24 +290,8 @@ internal fun MobilePlayerTopBar(
                 }
             }
             Box {
-                TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
-                val speedListState = rememberLazyListState(
-                    initialFirstVisibleItemIndex = speedOptions.indexOfFirst { it >= 0.75f }.coerceAtLeast(0),
-                )
-                DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
-                    LazyColumn(state = speedListState, modifier = Modifier.heightIn(max = 352.dp)) {
-                        itemsIndexed(speedOptions) { _, speed ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth().height(44.dp)
-                                    .clickable { onSpeedSelected(speed); speedExpanded = false }
-                                    .padding(horizontal = 16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x")
-                            }
-                        }
-                    }
-                }
+                TopBarSpeedAction(selectedSpeed, onSpeedClick)
+
             }
             TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions), onMoreActions)
         }
@@ -323,7 +303,7 @@ private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.widthIn(min = 72.dp, max = 112.dp)
-            .size(height = mobilePlayerControlButtonSize(), width = 104.dp)
+            .size(height = mobilePlayerControlButtonSize(), width = 92.dp)
             .clickable(onClick = onClick)
             .padding(horizontal = 4.dp),
     ) {
@@ -344,7 +324,7 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit) {
     val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(width = 56.dp, height = mobilePlayerControlButtonSize())
+        modifier = Modifier.size(width = 50.dp, height = mobilePlayerControlButtonSize())
             .clickable(onClick = onClick),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
@@ -360,7 +340,7 @@ private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit) {
 private fun TopBarAction(icon: ImageVector, description: String, onClick: () -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(width = 44.dp, height = mobilePlayerControlButtonSize()).clickable(onClick = onClick),
+        modifier = Modifier.size(width = 40.dp, height = mobilePlayerControlButtonSize()).clickable(onClick = onClick),
     ) {
         Icon(icon, description, tint = Color.White, modifier = Modifier.size(24.dp))
     }
