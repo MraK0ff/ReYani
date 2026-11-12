@@ -686,6 +686,23 @@ internal fun MobileNativePlayer(
                 adaptiveLimitQuality = ui.adaptiveLimitLabel,
                 adaptiveLimitBest = ui.adaptiveLimitBest,
             ),
+            qualityOptions = ui.qualityLabels,
+            selectedQuality = selectedQuality,
+            adaptiveQuality = ui.adaptiveQuality,
+            onAdaptiveQualityChange = { onEvent(PlayerState.Event.AdaptiveQualityToggled(it)) },
+            onQualitySelected = { quality ->
+                val position = player.currentPosition.coerceAtLeast(0L)
+                reporter.saveProgress(position, progress.duration)
+                onEvent(PlayerState.Event.QualitySelected(quality, position))
+            },
+            onAdaptiveLimitSelected = { quality ->
+                onEvent(PlayerState.Event.AdaptiveQualityLimitSelected(
+                    quality, player.currentPosition.coerceAtLeast(0L),
+                ))
+            },
+            onAdaptiveLimitBestSelected = { onEvent(PlayerState.Event.AdaptiveQualityLimitBestSelected) },
+            speedOptions = PlayerSpeedOptions.values,
+            onSpeedSelected = { onEvent(PlayerState.Event.SpeedSelected(it)); overlay.show() },
             titleStartPadding = maxOf(
                 controlSize + 12.dp,
                 if (!hasSideLetterboxing && videoBottomInsetDp < controlSize && videoTopDp < controlSize)
@@ -716,12 +733,7 @@ internal fun MobileNativePlayer(
                 overlay.cancelHide()
             },
             selectedSpeed = selectedSpeed,
-            onSpeedClick = {
-                val options = PlayerSpeedOptions.values
-                val nextIndex = (PlayerSpeedOptions.nearestIndex(selectedSpeed) + 1) % options.size
-                onEvent(PlayerState.Event.SpeedSelected(options[nextIndex]))
-                overlay.show()
-            },
+            onSpeedClick = { overlay.show() },
             onSpeedLongPress = {
                 endFlow.hideAll()
                 speedSheetOpen = true
