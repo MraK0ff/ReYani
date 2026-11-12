@@ -25,6 +25,13 @@ internal fun SettingsTvGeneralContent(
     pickerRow: SettingsTvPickerRow,
 ) {
     pickerRow(
+        SettingsTvPicker.INTERFACE_MODE,
+        Modifier
+            .focusRequester(tabContentFocusRequester)
+            .restoreCategoryFocusOnLeft(tabFocusRequester),
+    )
+    SettingsDivider()
+    pickerRow(
         SettingsTvPicker.INTERFACE_LANGUAGE,
         Modifier
             .focusRequester(tabContentFocusRequester)

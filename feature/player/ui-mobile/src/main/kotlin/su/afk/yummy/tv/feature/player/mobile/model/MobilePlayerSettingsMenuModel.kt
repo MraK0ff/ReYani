@@ -28,6 +28,7 @@ internal data class MobilePlayerSettingsMenuModel(
     val sleepTimerMinutes: Int,
     val showDetails: Boolean,
     val showPictureInPicture: Boolean,
+    val pictureInPictureEnabled: Boolean,
     val showCast: Boolean,
 )
 
@@ -47,5 +48,5 @@ internal class MobilePlayerSettingsMenuActions(
     val onStabilizationChange: (Boolean) -> Unit,
     val onSleepTimerSelected: (Int) -> Unit,
     val onDetails: () -> Unit,
-    val onPictureInPicture: () -> Unit,
+    val onPictureInPictureChange: (Boolean) -> Unit,
 )

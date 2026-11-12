@@ -21,9 +21,29 @@ import su.afk.yummy.tv.core.model.settings.PlayerSubtitleTextColor
 import su.afk.yummy.tv.core.model.settings.PosterCardSize
 import su.afk.yummy.tv.core.model.settings.PreferredVideoQuality
 import su.afk.yummy.tv.core.model.settings.TitleCardLayout
+import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
 import su.afk.yummy.tv.core.model.settings.AppInterfaceLanguage
 import su.afk.yummy.tv.core.model.settings.YaniContentLanguage
 import su.afk.yummy.tv.feature.settings.presentation.R
+
+
+@Composable
+fun AppInterfaceMode.label(): String = stringResource(
+    when (this) {
+        AppInterfaceMode.AUTO -> R.string.settings_interface_auto
+        AppInterfaceMode.MOBILE -> R.string.settings_interface_mobile
+        AppInterfaceMode.TV -> R.string.settings_interface_tv
+    },
+)
+
+@Composable
+fun AppInterfaceMode.hint(): String = stringResource(
+    when (this) {
+        AppInterfaceMode.AUTO -> R.string.settings_interface_auto_hint
+        AppInterfaceMode.MOBILE -> R.string.settings_interface_mobile_hint
+        AppInterfaceMode.TV -> R.string.settings_interface_tv_hint
+    },
+)
 
 @Composable
 fun SeasonalTheme.enabledHint(): String = stringResource(

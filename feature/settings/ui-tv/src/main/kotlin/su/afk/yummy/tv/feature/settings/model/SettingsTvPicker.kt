@@ -5,6 +5,7 @@ import su.afk.yummy.tv.feature.settings.presentation.R
 
 /** Пункты ТВ-настроек с выбором из вариантов: по OK варианты открываются в третьей колонке. */
 internal enum class SettingsTvPicker(@param:StringRes val titleRes: Int) {
+    INTERFACE_MODE(R.string.settings_interface_type),
     INTERFACE_LANGUAGE(R.string.settings_interface_language_title),
     CONTENT_LANGUAGE(R.string.settings_content_language_title),
     THEME(R.string.settings_tab_theme),

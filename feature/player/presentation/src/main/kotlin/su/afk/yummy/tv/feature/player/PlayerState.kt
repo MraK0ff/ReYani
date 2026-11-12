@@ -222,6 +222,9 @@ class PlayerState {
         /** Пользователь включил или выключил стабилизацию громкости в боковой панели плеера. */
         data class VolumeStabilizationToggled(val enabled: Boolean) : Event
 
+        /** Пользователь включил или выключил поддержку PiP из меню плеера. */
+        data class PictureInPictureToggled(val enabled: Boolean) : Event
+
         /** Пользователь выбрал скорость воспроизведения. */
         data class SpeedSelected(val speed: Float) : Event
 
