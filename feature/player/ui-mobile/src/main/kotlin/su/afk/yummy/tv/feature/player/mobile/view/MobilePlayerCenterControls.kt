@@ -85,6 +85,7 @@ internal fun MobilePlayerCenterControls(
                 onClick = onNextEpisode,
                 sizeMultiplier = CENTER_SWITCH_SCALE,
                 iconScale = CENTER_SWITCH_ICON_SCALE,
+                surface = false,
             )
         }
     }
