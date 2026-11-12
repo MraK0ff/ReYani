@@ -2,6 +2,7 @@ package su.afk.yummy.tv.feature.player.mobile.model
 
 import su.afk.yummy.tv.core.model.settings.PlayerResizeMode
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleStyleSettings
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 
 /** Всё, что единое меню настроек показывает: значения пунктов и доступность необязательных. */
 internal data class MobilePlayerSettingsMenuModel(
@@ -29,6 +30,7 @@ internal data class MobilePlayerSettingsMenuModel(
     val showDetails: Boolean,
     val showPictureInPicture: Boolean,
     val pictureInPictureEnabled: Boolean,
+    val timeDisplaySettings: PlayerTimeDisplaySettings,
     val showCast: Boolean,
 )
 
@@ -49,4 +51,5 @@ internal class MobilePlayerSettingsMenuActions(
     val onSleepTimerSelected: (Int) -> Unit,
     val onDetails: () -> Unit,
     val onPictureInPictureChange: (Boolean) -> Unit,
+    val onTimeDisplaySettingsChange: (PlayerTimeDisplaySettings) -> Unit,
 )
