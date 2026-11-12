@@ -34,6 +34,7 @@ import su.afk.yummy.tv.feature.player.presentation.R
 internal fun MobilePlayerOverlay(
     visible: Boolean,
     wantsPlay: Boolean,
+    loading: Boolean = false,
     progress: PlayerPlaybackProgressState,
     hasPrevEpisode: Boolean,
     hasNextEpisode: Boolean,
@@ -74,7 +75,7 @@ internal fun MobilePlayerOverlay(
                 onPlayPause = onPlayPause,
                 onPrevEpisode = onPrevEpisode,
                 onNextEpisode = onNextEpisode,
-                loading = false,
+                loading = loading,
             )
         }
 
