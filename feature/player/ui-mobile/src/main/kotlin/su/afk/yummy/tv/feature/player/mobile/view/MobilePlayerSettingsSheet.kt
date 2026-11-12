@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import su.afk.yummy.tv.core.designsystem.baseScreen.BaseBottomSheetCustom
@@ -72,9 +73,10 @@ internal fun MobilePlayerSettingsSheet(
                 .padding(start = 16.dp, end = 16.dp, bottom = 18.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            MobilePlayerMenuPageHeader(
-                title = stringResource(R.string.player_mobile_track_settings_title),
-                onBack = onDismiss,
+            Text(
+                text = stringResource(R.string.player_mobile_track_settings_title),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
             )
             LazyColumn(
                 state = listState,

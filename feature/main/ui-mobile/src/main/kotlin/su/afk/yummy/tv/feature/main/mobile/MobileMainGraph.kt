@@ -19,6 +19,11 @@ import su.afk.yummy.tv.core.designsystem.locals.LocalLibraryListStatuses
 import su.afk.yummy.tv.core.designsystem.locals.LocalLibraryUserRatings
 import su.afk.yummy.tv.core.designsystem.locals.LocalNowMillis
 import su.afk.yummy.tv.core.designsystem.locals.LocalPosterCardSize
+import su.afk.yummy.tv.core.designsystem.onboarding.LocalOnboardingController
+import su.afk.yummy.tv.core.designsystem.onboarding.OnboardingSpotlightOverlay
+import su.afk.yummy.tv.core.designsystem.onboarding.OnboardingTourEffect
+import su.afk.yummy.tv.core.designsystem.onboarding.OnboardingWelcome
+import su.afk.yummy.tv.core.designsystem.onboarding.rememberOnboardingController
 import su.afk.yummy.tv.core.designsystem.mobile.bar.LocalMobileBottomBarUpFocusRequester
 import su.afk.yummy.tv.core.designsystem.seasonal.LocalSeasonalDecorationsEnabled
 import su.afk.yummy.tv.core.designsystem.theme.YummyTvTheme
@@ -97,6 +102,7 @@ class MobileMainGraph @Inject internal constructor(
                 )
                 CompositionLocalProvider(
                     LocalPosterCardSize provides state.posterCardSize,
+                    LocalOnboardingController provides onboarding,
                     LocalIsOffline provides !state.isOnline,
                     LocalSeasonalDecorationsEnabled provides state.seasonalDecorationsEnabled,
                     LocalNowMillis provides appClock::nowMillis,
@@ -143,6 +149,7 @@ class MobileMainGraph @Inject internal constructor(
                             },
                         )
                     }
+                    OnboardingSpotlightOverlay(controller = onboarding)
                 }
             }
         }

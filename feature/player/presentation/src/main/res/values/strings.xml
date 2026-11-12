@@ -17,8 +17,8 @@
     <string name="player_quoted_message">"%1$s"</string>
     <string name="player_change_player">Change balancer</string>
     <string name="player_change_dubbing">Change dubbing</string>
-    <string name="player_stream_error">Could not load the player stream, try switching the player or voice-over</string>
-    <string name="player_decoder_error">This device could not decode the video, try another quality or source</string>
+    <string name="player_stream_error">Could not load the video stream. Try switching the balancer or dubbing.</string>
+    <string name="player_decoder_error">This device could not decode the video, try a lower quality</string>
     <string name="player_change_quality">Change quality</string>
     <string name="player_no_connection">No internet connection. Playback will resume when the network is back</string>
     <string name="player_recovery_hint_title">Playback is taking long to restore</string>
@@ -45,8 +45,6 @@
     <string name="player_dubbing_title">Dubbing</string>
         <string name="player_speed_title">Speed</string>
     <string name="player_resize_title">Scale</string>
-    <string name="player_brightness_auto_title">Auto brightness</string>
-    <string name="player_brightness_auto_hint">Follow the system brightness. A swipe on the left edge sets it manually.</string>
     <string name="player_volume_title">Volume</string>
     <string name="player_audio_track_title">Alloha</string>
     <string name="player_subtitles_off">Off</string>
@@ -102,14 +100,17 @@
     <string name="player_tv_controls_tutorial_exit_description">Press Back twice to exit the player</string>
     <string name="player_tv_controls_tutorial_illustration">Remote control hint</string>
     <string name="player_mobile_settings_title">Player settings</string>
-    <string name="player_mobile_track_settings_title">Dubbing and player</string>
+    <string name="player_mobile_track_settings_title">Dubbing and balancer</string>
+    <string name="player_mobile_playback_settings_title">Player settings</string>
             <string name="player_mobile_episode_number">Episode %1$s</string>
     <string name="player_mobile_previous_episode">Previous</string>
     <string name="player_mobile_next_episode">Next</string>
     <string name="player_mobile_details">Details</string>
+    <string name="player_mobile_actions">More</string>
     <string name="player_mobile_lock">Lock controls</string>
     <string name="player_mobile_unlock">Unlock controls</string>
     <string name="player_mobile_unlock_hint">Hold to unlock</string>
+    <string name="player_mobile_hold_to_switch_episode">Hold to switch episode</string>
     <string name="player_mobile_cast">Cast</string>
     <string name="player_mobile_pip">Picture-in-Picture</string>
     <string name="player_mobile_forward">Forward</string>
@@ -150,6 +151,7 @@
     <string name="player_toast_balancer_changed">Balancer: %1$s</string>
     <string name="player_side_panel_title">Player settings</string>
     <string name="player_side_panel_open">Player settings</string>
+    <string name="player_side_panel_close">Collapse panel</string>
     <string name="player_subtitle_track_title">Subtitle track</string>
     <string name="player_subtitle_style_title">Subtitle look</string>
     <string name="player_subtitle_size_title">Text size</string>
@@ -192,8 +194,6 @@
     <string name="player_resolve_failed_opening_session">Failed at: opening the source session</string>
     <string name="player_resolve_response_error">Source responded with an error…</string>
     <string name="player_resolve_waiting_for_ad">Preparing access…</string>
-    <string name="player_resolve_waiting_for_torrent">Waiting for you to choose a torrent…</string>
-    <string name="player_resolve_waiting_for_torrent_file">Waiting for you to choose a torrent file…</string>
     <string name="player_resolve_failed_response_error">Failed at: the source responded with an error — it may be down or blocking requests</string>
     <string name="player_resolve_loading_player_script">Loading the player script…</string>
     <string name="player_resolve_selecting_dubbing">Choosing dubbing and episode…</string>
@@ -228,6 +228,10 @@
     <string name="player_problem_player_not_found">The source page has no player for this episode</string>
     <string name="player_problem_link_not_found">The player was found, but it has no video link</string>
     <string name="player_problem_ticket">Could not get access to the 4K dubbing</string>
+    <string name="player_resolve_waiting_for_torrent">Waiting for you to choose a torrent…</string>
+    <string name="player_resolve_waiting_for_torrent_file">Waiting for you to choose a torrent file…</string>
+    <string name="player_brightness_auto_title">Auto brightness</string>
+    <string name="player_brightness_auto_hint">Follow the system brightness. A swipe on the left edge sets it manually.</string>
     <string name="player_badge_downloaded">Downloaded</string>
     <string name="player_menu_subtitles">Subtitles</string>
     <string name="player_menu_audio_track">Audio track</string>

@@ -1,6 +1,10 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -11,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -35,9 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import su.afk.yummy.tv.core.designsystem.theme.overline
-import su.afk.yummy.tv.core.model.anime.EpisodeFlags
 import su.afk.yummy.tv.core.designsystem.utils.dubbingDisplayName
+import su.afk.yummy.tv.core.model.anime.EpisodeFlags
 import su.afk.yummy.tv.feature.player.presentation.R
 import su.afk.yummy.tv.core.designsystem.R as DesignSystemR
 
@@ -68,10 +71,16 @@ internal fun MobilePlayerTopBar(
     episode: String,
     dubbing: String,
     playerName: String,
-    isDownloaded: Boolean,
     episodeFlags: EpisodeFlags?,
-    onLockClick: () -> Unit,
-    onBack: () -> Unit,
+    qualityLabel: String,
+    titleStartPadding: Dp = 4.dp,
+    onEpisodeClick: () -> Unit,
+    onDubbingClick: () -> Unit,
+    onMoreActions: () -> Unit,
+    onQualityClick: () -> Unit,
+    selectedSpeed: Float,
+    onSpeedClick: () -> Unit,
+    onSpeedLongPress: () -> Unit,
     visible: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -130,44 +139,14 @@ internal fun MobilePlayerTopBar(
                             )
                         }
                     }
-                }
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    modifier = Modifier.padding(start = 8.dp),
-                ) {
-                    val badgeText = listOfNotNull(
-                        playerName.takeIf(String::isNotBlank),
-                        stringResource(R.string.player_badge_downloaded).takeIf { isDownloaded },
-                    ).joinToString(" • ")
-                    if (badgeText.isNotBlank()) {
-                        Text(
-                            text = badgeText.uppercase(),
-                            color = Color.Black,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelSmall.overline(),
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.88f))
-                                .padding(horizontal = 12.dp, vertical = 5.dp),
-                        )
+                    if (dubbing.isNotBlank() && playerName.isNotBlank()) {
+                        Text("|", color = Color.White.copy(alpha = 0.72f), style = MaterialTheme.typography.labelSmall)
                     }
-                    MobilePlayerEpisodeFlagLabel(
-                        flags = episodeFlags,
-                        modifier = Modifier.padding(top = 6.dp),
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(top = 6.dp),
-                    ) {
-                        IconButton(
-                            onClick = onLockClick,
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(Color.Black.copy(alpha = 0.36f))
-                                .border(1.dp, Color.White.copy(alpha = 0.28f), CircleShape),
+                    if (playerName.isNotBlank()) {
+                        Row(
+                            modifier = Modifier,
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
                         ) {
                             Text(
                                 playerName.uppercase(), color = Color.White, maxLines = 1,
@@ -191,6 +170,64 @@ internal fun MobilePlayerTopBar(
             TopBarSpeedAction(selectedSpeed, onSpeedClick, onSpeedLongPress)
             TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions), onMoreActions)
         }
+    }
+}
+
+@Composable
+private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
+    androidx.compose.foundation.layout.Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.widthIn(min = 54.dp, max = 72.dp)
+            .size(height = mobilePlayerControlButtonSize(), width = 64.dp)
+            .mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 5.dp),
+    ) {
+        BasicText(
+            text = label,
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                background = Color.Transparent,
+            ),
+            maxLines = 1,
+            softWrap = false,
+        )
+    }
+}
+
+@Composable
+private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: () -> Unit) {
+    val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
+    androidx.compose.foundation.layout.Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(width = 64.dp, height = mobilePlayerControlButtonSize())
+            .mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape)
+            .pointerInput(onClick, onLongPress) {
+                detectTapGestures(onTap = { onClick() }, onLongPress = { onLongPress() })
+            },
+    ) {
+        BasicText(
+            text = label,
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                background = Color.Transparent,
+            ),
+            maxLines = 1,
+        )
+    }
+}
+
+@Composable
+private fun TopBarAction(icon: ImageVector, description: String, onClick: () -> Unit) {
+    androidx.compose.foundation.layout.Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(mobilePlayerControlButtonSize()).mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape).clickable(onClick = onClick),
+    ) {
+        Icon(icon, description, tint = Color.White, modifier = Modifier.size(24.dp))
     }
 }
 
