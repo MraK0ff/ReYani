@@ -26,6 +26,7 @@ import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.autoSkip
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.autoSkipOpeningsEndingsKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.browserUserAgentProfileKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.mobilePlayerBrightnessPercentKey
+import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.mobilePlayerAutoBrightnessEnabledKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.mobilePlayerGestureTutorialDismissedKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.nextEpisodeSwitchDelaySecondsKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.holdToConfirmEnabledKey
@@ -133,6 +134,9 @@ internal class DataStorePlayerSettingsStore @Inject constructor(
     override val mobilePlayerBrightnessPercent: Flow<Int?> = store.data.map { prefs ->
         prefs[mobilePlayerBrightnessPercentKey]?.coerceIn(MIN_BRIGHTNESS_PERCENT, MAX_VOLUME_PERCENT)
     }
+
+    override val mobilePlayerAutoBrightnessEnabled: Flow<Boolean> =
+        store.boolean(mobilePlayerAutoBrightnessEnabledKey, true)
 
     override val playerPlaybackSpeed: Flow<Float> = store.data.map { prefs ->
         (prefs[playerPlaybackSpeedKey] ?: DEFAULT_PLAYBACK_SPEED)
@@ -287,11 +291,26 @@ internal class DataStorePlayerSettingsStore @Inject constructor(
         store.edit { prefs ->
             prefs[mobilePlayerBrightnessPercentKey] =
                 percent.coerceIn(MIN_BRIGHTNESS_PERCENT, MAX_VOLUME_PERCENT)
+            prefs[mobilePlayerAutoBrightnessEnabledKey] = false
         }
     }
 
     override suspend fun clearMobilePlayerBrightness() {
-        store.edit { prefs -> prefs.remove(mobilePlayerBrightnessPercentKey) }
+        store.edit { prefs ->
+            prefs.remove(mobilePlayerBrightnessPercentKey)
+            prefs[mobilePlayerAutoBrightnessEnabledKey] = true
+        }
+    }
+
+    override suspend fun setMobilePlayerAutoBrightnessEnabled(enabled: Boolean) {
+        store.edit { prefs ->
+            prefs[mobilePlayerAutoBrightnessEnabledKey] = enabled
+            if (enabled) {
+                prefs.remove(mobilePlayerBrightnessPercentKey)
+            } else if (prefs[mobilePlayerBrightnessPercentKey] == null) {
+                prefs[mobilePlayerBrightnessPercentKey] = MAX_VOLUME_PERCENT
+            }
+        }
     }
 
     override suspend fun setPlayerPlaybackSpeed(speed: Float) {
