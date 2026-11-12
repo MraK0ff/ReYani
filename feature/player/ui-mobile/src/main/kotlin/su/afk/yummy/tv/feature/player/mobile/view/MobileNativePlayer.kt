@@ -794,6 +794,7 @@ internal fun MobileNativePlayer(
                     showDetails = state.animeId > 0,
                     showPictureInPicture = supportsPictureInPicture && !castConnection.isCasting,
                     pictureInPictureEnabled = state.pictureInPictureEnabled,
+                    timeDisplaySettings = timeDisplaySettings,
                     showCast = castSupported,
                 ),
                 actions = MobilePlayerSettingsMenuActions(
