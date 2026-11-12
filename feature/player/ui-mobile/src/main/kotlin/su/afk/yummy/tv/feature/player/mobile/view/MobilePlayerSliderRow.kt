@@ -1,6 +1,9 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +23,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import kotlin.math.roundToInt
 
 /** Половина ширины ползунка Material3: на столько трек вставлен внутрь с каждой стороны. */
@@ -59,22 +63,40 @@ internal fun MobilePlayerSliderRow(
                 )
             }
         }
-        Slider(
-            value = shownValue.toFloat(),
-            onValueChange = { dragValue = it.roundToInt() },
-            onValueChangeFinished = {
-                val committed = dragValue ?: return@Slider
-                dragValue = null
-                if (committed != value) onValueCommitted(committed)
-            },
-            enabled = enabled,
-            valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
-            steps = (valueRange.last - valueRange.first - 1).coerceAtLeast(0),
-            colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.primary,
-                activeTrackColor = MaterialTheme.colorScheme.primary,
-            ),
-        )
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            Slider(
+                value = shownValue.toFloat(),
+                onValueChange = { dragValue = it.roundToInt() },
+                onValueChangeFinished = {
+                    val committed = dragValue ?: return@Slider
+                    dragValue = null
+                    if (committed != value) onValueCommitted(committed)
+                },
+                enabled = enabled,
+                valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
+                steps = (valueRange.last - valueRange.first - 1).coerceAtLeast(0),
+                colors = SliderDefaults.colors(
+                    thumbColor = MaterialTheme.colorScheme.primary,
+                    activeTrackColor = MaterialTheme.colorScheme.primary,
+                ),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (dragValue != null && valueRange.last > valueRange.first) {
+                val fraction = (shownValue - valueRange.first).toFloat() /
+                    (valueRange.last - valueRange.first).toFloat()
+                Text(
+                    text = valueLabel(shownValue),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .offset(x = (maxWidth - 20.dp) * fraction, y = 0.dp)
+                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 9.dp, vertical = 4.dp),
+                )
+            }
+        }
         if (tickLabels != null && tickLabels.size > 1) {
             MobilePlayerSliderTickLabels(
                 labels = tickLabels,
