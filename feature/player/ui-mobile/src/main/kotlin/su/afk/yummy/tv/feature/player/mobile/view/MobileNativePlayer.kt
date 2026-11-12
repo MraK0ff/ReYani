@@ -631,6 +631,10 @@ internal fun MobileNativePlayer(
             locked = locked,
             onTap = {
                 if (locked) {
+                    // При активной блокировке касание не должно оставлять панель «наготове»:
+                    // после разблокировки она останется скрытой до следующего обычного тапа.
+                    overlay.visible = false
+                    overlay.cancelHide()
                     unlockVisible = true
                     unlockTouchToken++
                 } else if (!castConnection.isCasting) {
@@ -752,7 +756,7 @@ internal fun MobileNativePlayer(
                 }
             },
             buttonSize = 48.dp,
-            modifier = Modifier.align(Alignment.TopStart).offset(x = videoLeftDp + 4.dp, y = videoTopDp + 8.dp),
+            modifier = Modifier.align(Alignment.TopStart).offset(x = videoLeftDp, y = videoTopDp),
         )
 
         if (settingsMenuOpen && !isInPictureInPictureMode && !tutorialBlocksPlayback) {
@@ -851,8 +855,14 @@ internal fun MobileNativePlayer(
             hasNextEpisode = ui.hasNextEpisode,
             holdToSwitchEpisode = state.holdToConfirmEnabled,
             onPlayPause = {
-                if (wantsPlay) player.pause() else player.play()
-                overlay.show()
+                if (wantsPlay) {
+                    player.pause()
+                    overlay.show()
+                } else {
+                    player.play()
+                    overlay.visible = false
+                    overlay.cancelHide()
+                }
             },
             onSeekChange = { value ->
                 progress.isSeeking = true
