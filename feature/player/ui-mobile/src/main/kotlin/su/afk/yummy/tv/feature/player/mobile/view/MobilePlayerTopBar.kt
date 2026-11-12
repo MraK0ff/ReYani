@@ -298,7 +298,7 @@ internal fun MobilePlayerTopBar(
                     initialFirstVisibleItemIndex = speedOptions.indexOfFirst { it >= 0.75f }.coerceAtLeast(0),
                 )
                 DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
-                    LazyColumn(state = speedListState, modifier = Modifier.heightIn(max = 320.dp)) {
+                    LazyColumn(state = speedListState, modifier = Modifier.heightIn(max = 384.dp)) {
                         itemsIndexed(speedOptions) { _, speed ->
                             DropdownMenuItem(
                                 text = { Text(if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x") },
