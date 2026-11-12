@@ -234,7 +234,7 @@ internal fun MobilePlayerTopBar(
                             onDrag = { change, amount ->
                                 change.consume()
                                 dragTotal += amount.y
-                                val index = (1 - (dragTotal / rowHeight).toInt())
+                                val index = (1 + (dragTotal / rowHeight).toInt())
                                     .coerceIn(0, qualityOptions.size + 2)
                                 qualityPreviewIndex = index
                                 qualityPreviewOffsetPx = index * rowHeight
@@ -379,18 +379,33 @@ internal fun MobilePlayerTopBar(
                     TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
                 }
                 DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
-                    Column(
-                        modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
-                    ) {
-                        speedOptions.forEach { speed ->
-                            val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
-                            DropdownMenuItem(
-                                text = { Text(label) },
-                                onClick = {
-                                    onSpeedSelected(speed)
-                                    speedExpanded = false
-                                },
-                            )
+                    Box {
+                        Column(
+                            modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
+                        ) {
+                            speedOptions.forEach { speed ->
+                                val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
+                                DropdownMenuItem(
+                                    text = { Text(label) },
+                                    onClick = {
+                                        onSpeedSelected(speed)
+                                        speedExpanded = false
+                                    },
+                                )
+                            }
+                        }
+                        if (speedPreviewIndex >= 0) {
+                            val preview = speedOptions.getOrNull(speedPreviewIndex)
+                            if (preview != null) {
+                                Text(
+                                    text = if (preview % 1f == 0f) "${preview.toInt()}x" else "${preview}x",
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier.align(Alignment.TopEnd)
+                                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
+                                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                                )
+                            }
                         }
                     }
                 }
