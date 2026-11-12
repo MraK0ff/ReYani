@@ -1,5 +1,8 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
@@ -11,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -18,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplayMode
 import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
+import su.afk.yummy.tv.core.utils.formatting.millisToClockTime
 import su.afk.yummy.tv.feature.player.presentation.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -45,26 +50,39 @@ internal fun MobilePlayerTimeOverlay(
     val showClock = shouldShow(settings.systemClock, controlsActive)
     val showFinish = durationMs > 0L && shouldShow(settings.finishAt, controlsActive)
     if (!showClock && !showFinish) return
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        if (showClock) {
-            Text(
-                text = stringResource(R.string.player_time_display_clock_value, systemClock),
-                style = MaterialTheme.typography.labelMedium,
-                color = Color.White,
-                maxLines = 1,
-                modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 9.dp, vertical = 6.dp),
-            )
+    Box(modifier = modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(top = 76.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            if (showClock) {
+                Text(
+                    text = stringResource(R.string.player_time_display_clock_value, systemClock),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White,
+                    maxLines = 1,
+                    modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 9.dp, vertical = 6.dp),
+                )
+            }
+            if (showFinish) {
+                Text(
+                    text = stringResource(R.string.player_time_display_finish_value, finishAt),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White,
+                    maxLines = 1,
+                    modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 9.dp, vertical = 6.dp),
+                )
+            }
         }
-        if (showFinish) {
+        if (settings.elapsed == PlayerTimeDisplayMode.ALWAYS && !controlsActive && durationMs > 0L) {
+            val shownDuration = if (settings.showRemainingInsteadOfDuration) remainingMs else durationMs
             Text(
-                text = stringResource(R.string.player_time_display_finish_value, finishAt),
-                style = MaterialTheme.typography.labelMedium,
-                color = Color.White,
-                maxLines = 1,
-                modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 9.dp, vertical = 6.dp),
+                text = "${displayTimeMs.millisToClockTime().padStart(5, '0')} / ${shownDuration.millisToClockTime().padStart(5, '0')}",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.96f),
+                modifier = Modifier.align(Alignment.BottomCenter)
+                    .mobilePlayerGlassSurface()
+                    .padding(horizontal = 9.dp, vertical = 5.dp),
             )
         }
     }
