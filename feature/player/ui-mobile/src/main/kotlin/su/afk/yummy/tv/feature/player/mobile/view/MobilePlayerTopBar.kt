@@ -125,6 +125,7 @@ internal fun MobilePlayerTopBar(
     var qualityPreviewOffsetPx by remember { mutableFloatStateOf(0f) }
     var moreExpanded by remember { mutableStateOf(false) }
     var speedExpanded by remember { mutableStateOf(false) }
+    var speedPreviewIndex by remember { mutableIntStateOf(-1) }
     val density = LocalDensity.current
     Box(
         modifier = modifier.fillMaxWidth()
@@ -219,7 +220,49 @@ internal fun MobilePlayerTopBar(
             horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             if (!offlinePlayback && qualityOptions.isNotEmpty()) {
-                Box {
+                Box(
+                    modifier = Modifier.pointerInput(qualityOptions) {
+                        var dragTotal = 0f
+                        val rowHeight = with(density) { 48.dp.toPx() }
+                        detectDragGestures(
+                            onDragStart = {
+                                dragTotal = 0f
+                                qualityExpanded = true
+                                qualityPreviewIndex = 1.coerceAtMost(qualityOptions.size + 2)
+                                qualityPreviewOffsetPx = rowHeight
+                            },
+                            onDrag = { change, amount ->
+                                change.consume()
+                                dragTotal += amount.y
+                                val index = (1 - (dragTotal / rowHeight).toInt())
+                                    .coerceIn(0, qualityOptions.size + 2)
+                                qualityPreviewIndex = index
+                                qualityPreviewOffsetPx = index * rowHeight
+                            },
+                            onDragEnd = {
+                                val descending = qualityOptions.asReversed()
+                                when (qualityPreviewIndex) {
+                                    0 -> onAdaptiveQualityChange(true)
+                                    1 -> {
+                                        onAdaptiveQualityChange(false)
+                                        qualityOptions.lastOrNull()?.let(onQualitySelected)
+                                    }
+                                    qualityOptions.size + 2 -> {
+                                        onAdaptiveQualityChange(false)
+                                        qualityOptions.firstOrNull()?.let(onQualitySelected)
+                                    }
+                                    else -> {
+                                        onAdaptiveQualityChange(false)
+                                        descending.getOrNull(qualityPreviewIndex - 2)?.let(onQualitySelected)
+                                    }
+                                }
+                                qualityPreviewIndex = -1
+                                qualityExpanded = false
+                            },
+                            onDragCancel = { qualityPreviewIndex = -1 },
+                        )
+                    },
+                ) {
                     TopBarQualityAction(qualityLabel) { qualityExpanded = true }
                     DropdownMenu(expanded = qualityExpanded, onDismissRequest = { qualityExpanded = false }) {
                         val descendingQualities = qualityOptions.asReversed()
@@ -307,7 +350,34 @@ internal fun MobilePlayerTopBar(
                 }
             }
             Box {
-                TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
+                Box(
+                    modifier = Modifier.pointerInput(speedOptions, selectedSpeed) {
+                        var dragTotal = 0f
+                        val rowHeight = with(density) { 48.dp.toPx() }
+                        val initialIndex = speedOptions.indexOf(selectedSpeed).coerceAtLeast(0)
+                        detectDragGestures(
+                            onDragStart = {
+                                dragTotal = 0f
+                                speedPreviewIndex = initialIndex
+                                speedExpanded = true
+                            },
+                            onDrag = { change, amount ->
+                                change.consume()
+                                dragTotal += amount.y
+                                speedPreviewIndex = (initialIndex - (dragTotal / rowHeight).toInt())
+                                    .coerceIn(0, speedOptions.lastIndex)
+                            },
+                            onDragEnd = {
+                                speedOptions.getOrNull(speedPreviewIndex)?.let(onSpeedSelected)
+                                speedPreviewIndex = -1
+                                speedExpanded = false
+                            },
+                            onDragCancel = { speedPreviewIndex = -1 },
+                        )
+                    },
+                ) {
+                    TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
+                }
                 DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
                     Column(
                         modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
