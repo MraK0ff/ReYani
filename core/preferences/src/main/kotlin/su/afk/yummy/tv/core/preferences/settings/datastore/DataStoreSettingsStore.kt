@@ -159,7 +159,8 @@ internal class DataStoreSettingsStore @Inject constructor(
             homeBlocks = prefs[homeBlocksKey].toHomeBlocks(prefs[newEpisodesSectionEnabledKey] ?: true),
             seasonalDecorationsEnabled = prefs[seasonalDecorationsEnabledKey] ?: true,
             accountShortcutsExpanded = prefs[accountShortcutsExpandedKey] ?: false,
-            mobilePlayerAutoBrightnessEnabled = prefs[mobilePlayerAutoBrightnessEnabledKey] ?: true,
+            mobilePlayerAutoBrightnessEnabled = prefs[mobilePlayerAutoBrightnessEnabledKey]
+                ?: (prefs[mobilePlayerBrightnessPercentKey] == null),
         )
     }
 
