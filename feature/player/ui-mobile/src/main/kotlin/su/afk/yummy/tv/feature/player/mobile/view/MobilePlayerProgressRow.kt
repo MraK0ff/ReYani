@@ -27,13 +27,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.size
 import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.core.utils.formatting.millisToClockTime
 
@@ -152,15 +152,10 @@ private fun MobilePlayerTimeline(
     onValueChangeFinished: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val accent = MaterialTheme.colorScheme.primary
-    val accentChroma = maxOf(accent.red, accent.green, accent.blue) -
-        minOf(accent.red, accent.green, accent.blue)
-    // Bright, nearly-neutral accents (Graphite) need a grey played segment instead of white.
-    val playedColor = if (accent.luminance() > 0.78f && accentChroma < 0.12f) {
-        Color(0xFFB7BEC7)
-    } else {
-        accent
-    }
+    // Muted neutral hierarchy: played < buffer < unplayed, with the thumb matching played.
+    val playedColor = Color(0xFF858D97)
+    val bufferedColor = Color(0xFFB7BEC7)
+    val unplayedColor = Color(0xFFADB4BD)
     val safeProgress = progress.coerceIn(0f, 1f)
     Box(
         modifier = modifier
@@ -198,14 +193,14 @@ private fun MobilePlayerTimeline(
             val playedX = endX * safeProgress
             val bufferedX = endX * bufferedProgress.coerceIn(safeProgress, 1f)
             drawRoundRect(
-                color = Color(0xFF858D97).copy(alpha = 0.82f),
+                color = unplayedColor,
                 topLeft = Offset(0f, centerY - radius),
                 size = Size(endX, stroke),
                 cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
             )
             if (bufferedX > playedX) {
                 drawRoundRect(
-                    color = Color(0xFFADB4BD).copy(alpha = 0.88f),
+                    color = bufferedColor,
                     topLeft = Offset(playedX, centerY - radius),
                     size = Size(bufferedX - playedX, stroke),
                     cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius, radius),
@@ -221,7 +216,7 @@ private fun MobilePlayerTimeline(
             }
             if (enabled) {
                 drawCircle(
-                    color = Color.White,
+                    color = playedColor,
                     radius = 6.dp.toPx(),
                     center = Offset(playedX.coerceIn(0f, endX), centerY),
                 )
