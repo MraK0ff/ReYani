@@ -44,6 +44,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -133,6 +134,10 @@ internal fun MobilePlayerTopBar(
     var speedExpanded by remember { mutableStateOf(false) }
     var speedPreviewIndex by remember { mutableIntStateOf(-1) }
     val density = LocalDensity.current
+    val speedScrollState = rememberScrollState()
+    LaunchedEffect(speedExpanded) {
+        if (speedExpanded) speedScrollState.scrollTo(with(density) { 48.dp.roundToPx() })
+    }
     SideEffect { onPopupVisibilityChange(qualityExpanded || speedExpanded || moreExpanded) }
     Box(
         modifier = modifier.fillMaxSize(),
@@ -326,7 +331,7 @@ internal fun MobilePlayerTopBar(
                         },
                     ) {
                         Column(
-                            modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
+                            modifier = Modifier.heightIn(max = 420.dp).verticalScroll(speedScrollState),
                         ) {
                             speedOptions.forEachIndexed { index, speed ->
                                 val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
