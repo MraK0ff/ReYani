@@ -28,4 +28,5 @@ data class PlayerDestination(
     val resumeFromMs: Long = 0L,
     val downloadId: Long = 0L,
     val localFileUri: String = "",
+    val episodeTitle: String = "",
 ) : NavKey, FullscreenDestination
