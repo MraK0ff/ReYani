@@ -959,14 +959,6 @@ internal fun MobileNativePlayer(
             onTimeCodeClick = { showRemainingTime = !showRemainingTime },
             dubbingLabel = ui.activeDubbingLabel.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
             balancerLabel = ui.activeBalancerLabel,
-            onTrackSettings = {
-                if (!state.isOfflinePlayback) {
-                    endFlow.hideAll()
-                    trackSheetOpen = true
-                    overlay.visible = true
-                    overlay.cancelHide()
-                }
-            },
         )
 
         MobilePlayerTimeOverlay(
