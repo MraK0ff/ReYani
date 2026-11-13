@@ -142,7 +142,7 @@ internal fun MobilePlayerTopBar(
         modifier = modifier.fillMaxSize(),
     ) {
         Column(
-            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.94f).padding(top = 2.dp),
+            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.94f).padding(top = 36.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
@@ -175,9 +175,9 @@ internal fun MobilePlayerTopBar(
                         )
                         Text(
                             stringResource(R.string.player_mobile_episode_number, episode),
-                            color = Color.White.copy(alpha = 0.78f),
+                            color = Color.White.copy(alpha = 0.62f),
                             maxLines = 1,
-                            style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                            style = TextStyle(color = Color.White.copy(alpha = 0.62f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                         )
                     }
                 }
@@ -210,7 +210,7 @@ internal fun MobilePlayerTopBar(
                             Icon(Icons.Filled.Download, contentDescription = null,
                                 tint = Color.White.copy(alpha = 0.92f), modifier = Modifier.size(18.dp))
                         } else if (playerName.isNotBlank()) {
-                            Text("|", color = Color.White.copy(alpha = 0.82f), style = MaterialTheme.typography.bodyMedium)
+                            Text("*", color = Color.White.copy(alpha = 0.72f), style = TextStyle(fontSize = 19.sp, fontWeight = FontWeight.Bold))
                             Text(
                                 playerName,
                                 color = Color.White.copy(alpha = 0.78f),
