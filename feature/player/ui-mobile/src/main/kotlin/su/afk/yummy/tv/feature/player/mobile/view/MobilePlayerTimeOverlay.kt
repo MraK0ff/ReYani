@@ -61,7 +61,7 @@ internal fun MobilePlayerTimeOverlay(
             TimeChip(
                 value = systemClock,
                 modifier = Modifier.align(Alignment.TopStart)
-                    .padding(start = sideInset + 20.dp, top = edgeTopPadding),
+                    .padding(start = 20.dp, top = edgeTopPadding),
             )
         }
         if (showFinish) {
