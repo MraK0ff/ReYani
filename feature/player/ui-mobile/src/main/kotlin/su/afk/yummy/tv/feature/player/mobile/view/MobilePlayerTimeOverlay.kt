@@ -55,8 +55,8 @@ internal fun MobilePlayerTimeOverlay(
     val finishAt = clockFormat.format(Date(nowMs + remainingMs))
     val showClock = shouldShow(settings.systemClock, controlsActive)
     val showFinish = durationMs > 0L && shouldShow(settings.finishAt, controlsActive)
-    val showElapsed = durationMs > 0L && settings.elapsed == PlayerTimeDisplayMode.ALWAYS && !controlsActive
-    val showDuration = durationMs > 0L && settings.duration == PlayerTimeDisplayMode.ALWAYS && !controlsActive
+    val showElapsed = durationMs > 0L && shouldShow(settings.elapsed, controlsActive)
+    val showDuration = durationMs > 0L && shouldShow(settings.duration, controlsActive)
     val edgeTopPadding = 56.dp + videoTopInset.coerceAtLeast(0.dp)
     val edgeBottomPadding = if (videoBottomInset > 0.dp) videoBottomInset / 2 else 12.dp
 
@@ -127,4 +127,5 @@ private fun shouldShow(mode: PlayerTimeDisplayMode, controlsActive: Boolean): Bo
     when (mode) {
         PlayerTimeDisplayMode.ALWAYS -> true
         PlayerTimeDisplayMode.CONTROLS -> controlsActive
+        PlayerTimeDisplayMode.NEVER -> false
     }
