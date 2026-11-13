@@ -107,8 +107,8 @@ internal fun MobilePlayerOverlay(
             if (dubbingLabel.isNotBlank() || balancerLabel.isNotBlank()) {
                 Row(
                     modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.Center,
+                        .padding(start = 29.dp, end = 20.dp),
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (dubbingLabel.isNotBlank()) {
@@ -122,7 +122,7 @@ internal fun MobilePlayerOverlay(
                         )
                     }
                     if (dubbingLabel.isNotBlank() && balancerLabel.isNotBlank()) {
-                        androidx.compose.material3.Text("*", color = Color.White.copy(alpha = 0.72f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        androidx.compose.material3.Text("|", color = Color.White.copy(alpha = 0.72f), fontSize = 20.sp, fontWeight = FontWeight.Medium)
                     }
                     if (balancerLabel.isNotBlank()) {
                         androidx.compose.material3.Text(
