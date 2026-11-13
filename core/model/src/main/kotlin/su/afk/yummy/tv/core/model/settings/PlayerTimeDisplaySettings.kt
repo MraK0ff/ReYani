@@ -7,13 +7,14 @@ package su.afk.yummy.tv.core.model.settings
 enum class PlayerTimeDisplayMode {
     ALWAYS,
     CONTROLS,
+    NEVER,
 }
 
 data class PlayerTimeDisplaySettings(
-    val systemClock: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
+    val systemClock: PlayerTimeDisplayMode = PlayerTimeDisplayMode.NEVER,
     val elapsed: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
     val duration: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
-    val finishAt: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
+    val finishAt: PlayerTimeDisplayMode = PlayerTimeDisplayMode.NEVER,
 ) {
     fun encode(): String = listOf(systemClock, elapsed, duration, finishAt).joinToString("|")
 
