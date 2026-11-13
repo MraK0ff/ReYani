@@ -55,7 +55,7 @@ internal fun MobilePlayerProgressRow(
         Column(
             modifier = Modifier.align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .offset(y = -(videoBottomInset + 12.dp))
+                .offset(y = -videoBottomInset)
                 .padding(horizontal = 20.dp, vertical = 6.dp),
         ) {
             MobilePlayerTimeline(
