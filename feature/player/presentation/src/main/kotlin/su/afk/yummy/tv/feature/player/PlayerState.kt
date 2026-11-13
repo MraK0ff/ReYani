@@ -28,6 +28,7 @@ class PlayerState {
     data class State(
         val animeTitle: String = "",
         val episodeTitle: String = "",
+        val episodeTitles: Map<String, String> = emptyMap(),
         val animeId: Int = 0,
         val posterUrl: String = "",
         /** Обложка медиа-уведомления/медиа-сессии; считает VM через PlayerArtworkHandler. */
