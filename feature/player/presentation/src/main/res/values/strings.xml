@@ -250,6 +250,7 @@
     <string name="player_time_display_system_clock">System clock</string>
     <string name="player_time_display_duration">Video duration</string>
     <string name="player_time_display_elapsed">Watched time</string>
+    <string name="player_time_display_separate">Separate viewing time and video duration</string>
     <string name="player_time_display_remaining">Show remaining time instead of duration</string>
     <string name="player_time_display_finish_at">Episode end time</string>
     <string name="player_time_display_always">Always</string>
