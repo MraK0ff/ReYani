@@ -31,7 +31,6 @@ internal fun MobilePlayerTimeOverlay(
     displayTimeMs: Long,
     durationMs: Long,
     controlsActive: Boolean,
-    sideInset: Dp,
     videoTopInset: Dp,
     videoBottomInset: Dp,
     showRemainingTime: Boolean,
