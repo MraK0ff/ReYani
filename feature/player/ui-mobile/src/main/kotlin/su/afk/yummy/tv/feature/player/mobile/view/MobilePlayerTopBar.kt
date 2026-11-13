@@ -159,20 +159,32 @@ internal fun MobilePlayerTopBar(
                 )
             }
             if (episode.isNotBlank()) {
-                Text(
-                    buildString {
-                        append(stringResource(R.string.player_mobile_episode_number, episode))
-                        episodeTitle?.takeIf { it.isNotBlank() }?.let { append(" * ").append(it) }
-                    },
-                    color = Color.White.copy(alpha = 0.62f),
-                    maxLines = 1,
-                    style = TextStyle(color = Color.White.copy(alpha = 0.62f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
-                )
+                Row(
+                    modifier = Modifier.clickable(onClick = onEpisodeClick),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    Text(
+                        buildString {
+                            append(stringResource(R.string.player_mobile_episode_number, episode))
+                            episodeTitle?.takeIf { it.isNotBlank() }?.let { append(" * ").append(it) }
+                        },
+                        color = Color.White.copy(alpha = 0.72f),
+                        maxLines = 1,
+                        style = TextStyle(color = Color.White.copy(alpha = 0.72f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                    )
+                    Icon(
+                        imageVector = if (episodeExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.72f),
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
             }
             MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
         Row(
-            Modifier.align(Alignment.BottomEnd).padding(end = 4.dp, bottom = 2.dp),
+            Modifier.align(Alignment.BottomEnd).padding(end = 4.dp, bottom = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
