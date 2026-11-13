@@ -4,6 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,7 +60,7 @@ internal fun MobilePlayerTimeOverlay(
     val edgeTopPadding = if (videoTopInset > 0.dp) videoTopInset / 2 else 12.dp
     val edgeBottomPadding = if (videoBottomInset > 0.dp) videoBottomInset / 2 else 12.dp
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top))) {
         if (showClock) {
             TimeChip(
                 value = systemClock,
@@ -67,7 +72,7 @@ internal fun MobilePlayerTimeOverlay(
             TimeChip(
                 value = finishAt,
                 modifier = Modifier.align(Alignment.TopEnd)
-                    .padding(end = 20.dp, top = edgeTopPadding),
+                    .padding(end = 76.dp, top = edgeTopPadding),
             )
         }
         if (showElapsed) {
