@@ -24,6 +24,7 @@ fun IPlayerNavigator.getPlayerDest(
     posterUrl: String = "",
     resumeFromMs: Long = 0L,
     episodeTitle: String = "",
+    episodeTitles: Map<String, String> = emptyMap(),
 ): NavKey {
     return getPlayerDest(
         iframeUrl = video.iframeUrl,
@@ -40,6 +41,7 @@ fun IPlayerNavigator.getPlayerDest(
         posterUrl = posterUrl,
         resumeFromMs = resumeFromMs,
         episodeTitle = episodeTitle,
+        episodeTitles = episodeTitles,
     )
 }
 
