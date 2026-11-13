@@ -197,14 +197,6 @@ internal fun MobilePlayerTopBar(
                                 overflow = TextOverflow.Ellipsis,
                                 style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                             )
-                            if (!offlinePlayback) {
-                                Icon(
-                                    if (dubbingExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                                    stringResource(R.string.player_dubbing_title),
-                                    tint = Color.White.copy(alpha = 0.62f),
-                                    modifier = Modifier.size(20.dp),
-                                )
-                            }
                         }
                         if (offlinePlayback) {
                             Icon(Icons.Filled.Download, contentDescription = null,
