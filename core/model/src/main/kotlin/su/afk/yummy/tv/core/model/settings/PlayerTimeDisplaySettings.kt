@@ -35,7 +35,10 @@ data class PlayerTimeDisplaySettings(
                 duration = if (legacy) mode(1, PlayerTimeDisplayMode.CONTROLS)
                     else mode(2, PlayerTimeDisplayMode.CONTROLS),
                 finishAt = mode(if (legacy) 2 else 3, PlayerTimeDisplayMode.NEVER),
-                separateTimecodes = parts.getOrNull(4)?.toBooleanStrictOrNull() ?: false,
+                separateTimecodes = parts.getOrNull(4)?.toBooleanStrictOrNull()
+                    ?: (!legacy &&
+                        mode(1, PlayerTimeDisplayMode.CONTROLS) == PlayerTimeDisplayMode.ALWAYS &&
+                        mode(2, PlayerTimeDisplayMode.CONTROLS) == PlayerTimeDisplayMode.ALWAYS),
             )
         }
     }
