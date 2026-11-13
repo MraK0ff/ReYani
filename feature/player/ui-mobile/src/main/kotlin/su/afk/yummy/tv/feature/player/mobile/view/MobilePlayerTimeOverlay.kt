@@ -55,8 +55,9 @@ internal fun MobilePlayerTimeOverlay(
     val finishAt = clockFormat.format(Date(nowMs + remainingMs))
     val showClock = shouldShow(settings.systemClock, controlsActive)
     val showFinish = durationMs > 0L && shouldShow(settings.finishAt, controlsActive)
-    val showElapsed = settings.separateTimecodes && durationMs > 0L && shouldShow(settings.elapsed, controlsActive)
-    val showDuration = settings.separateTimecodes && durationMs > 0L && shouldShow(settings.duration, controlsActive)
+    // Split time chips belong to the idle player only; active controls show one combined timecode.
+    val showElapsed = settings.separateTimecodes && !controlsActive && durationMs > 0L && shouldShow(settings.elapsed, controlsActive)
+    val showDuration = settings.separateTimecodes && !controlsActive && durationMs > 0L && shouldShow(settings.duration, controlsActive)
     val edgeTopPadding = 56.dp + videoTopInset.coerceAtLeast(0.dp)
     val edgeBottomPadding = if (videoBottomInset > 0.dp) videoBottomInset / 2 else 12.dp
 
