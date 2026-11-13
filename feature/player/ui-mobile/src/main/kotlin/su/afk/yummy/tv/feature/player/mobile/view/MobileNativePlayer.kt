@@ -175,6 +175,7 @@ internal fun MobileNativePlayer(
     var orientationSheetOpen by remember { mutableStateOf(false) }
     var qualitySheetOpen by remember { mutableStateOf(false) }
     var speedSheetOpen by remember { mutableStateOf(false) }
+    var topBarPopupOpen by remember { mutableStateOf(false) }
     var showRemainingTime by rememberSaveable { mutableStateOf(false) }
     var wantsPlay by remember { mutableStateOf(true) }
     // Замок управления: гасит жесты и панели, чтобы свайп к статус-бару не перематывал видео.
@@ -232,6 +233,7 @@ internal fun MobileNativePlayer(
                 !orientationSheetOpen &&
                 !qualitySheetOpen &&
                 !speedSheetOpen &&
+                !topBarPopupOpen &&
                 !episodesExpanded &&
                 !progress.isSeeking &&
                 !recoveryHintVisible &&
@@ -268,6 +270,7 @@ internal fun MobileNativePlayer(
         orientationSheetOpen,
         qualitySheetOpen,
         speedSheetOpen,
+        topBarPopupOpen,
         episodesExpanded,
         progress.isSeeking,
         recoveryHintVisible,
@@ -766,6 +769,7 @@ internal fun MobileNativePlayer(
             visible = overlay.visible && !locked && !isInPictureInPictureMode && !tutorialBlocksPlayback,
             episodeExpanded = episodesExpanded,
             dubbingExpanded = trackSheetOpen,
+            onPopupVisibilityChange = { topBarPopupOpen = it },
             modifier = Modifier.offset(x = videoLeftDp, y = videoTopDp).width(videoWidthDp).height(videoHeightDp),
         )
 
