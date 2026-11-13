@@ -224,49 +224,7 @@ internal fun MobilePlayerTopBar(
             horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             if (!offlinePlayback && qualityOptions.isNotEmpty()) {
-                Box(
-                    modifier = Modifier.pointerInput(qualityOptions) {
-                        var dragTotal = 0f
-                        val rowHeight = with(density) { 48.dp.toPx() }
-                        detectDragGestures(
-                            onDragStart = {
-                                dragTotal = 0f
-                                qualityExpanded = true
-                                qualityPreviewIndex = 1.coerceAtMost(qualityOptions.size + 2)
-                                qualityPreviewOffsetPx = rowHeight
-                            },
-                            onDrag = { change, amount ->
-                                change.consume()
-                                dragTotal += amount.y
-                                val index = (1 + (dragTotal / rowHeight).toInt())
-                                    .coerceIn(0, qualityOptions.size + 2)
-                                qualityPreviewIndex = index
-                                qualityPreviewOffsetPx = index * rowHeight
-                            },
-                            onDragEnd = {
-                                val descending = qualityOptions.asReversed()
-                                when (qualityPreviewIndex) {
-                                    0 -> onAdaptiveQualityChange(true)
-                                    1 -> {
-                                        onAdaptiveQualityChange(false)
-                                        qualityOptions.lastOrNull()?.let(onQualitySelected)
-                                    }
-                                    qualityOptions.size + 2 -> {
-                                        onAdaptiveQualityChange(false)
-                                        qualityOptions.firstOrNull()?.let(onQualitySelected)
-                                    }
-                                    else -> {
-                                        onAdaptiveQualityChange(false)
-                                        descending.getOrNull(qualityPreviewIndex - 2)?.let(onQualitySelected)
-                                    }
-                                }
-                                qualityPreviewIndex = -1
-                                qualityExpanded = false
-                            },
-                            onDragCancel = { qualityPreviewIndex = -1 },
-                        )
-                    },
-                ) {
+                Box {
                     TopBarQualityAction(qualityLabel) { qualityExpanded = true }
                     DropdownMenu(expanded = qualityExpanded, onDismissRequest = { qualityExpanded = false }) {
                         val descendingQualities = qualityOptions.asReversed()
@@ -315,7 +273,7 @@ internal fun MobilePlayerTopBar(
                             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                                 choices.forEachIndexed { index, choice ->
                                     DropdownMenuItem(
-                                        text = { Text(choice) },
+                                        text = { Text(choice, modifier = if (index == qualityPreviewIndex) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp) else Modifier) },
                                         onClick = {
                                             when (index) {
                                                 0 -> onAdaptiveQualityChange(true)
@@ -337,60 +295,43 @@ internal fun MobilePlayerTopBar(
                                     )
                                 }
                             }
-                            if (qualityPreviewIndex >= 0) {
-                                Text(
-                                    text = choices.getOrNull(qualityPreviewIndex).orEmpty(),
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .offset(y = with(density) { qualityPreviewOffsetPx.toDp() } - 18.dp)
-                                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
-                                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                                )
-                            }
+
                         }
                     }
                 }
             }
             Box {
-                Box(
-                    modifier = Modifier.pointerInput(speedOptions, selectedSpeed) {
-                        var dragTotal = 0f
-                        val rowHeight = with(density) { 48.dp.toPx() }
-                        val initialIndex = speedOptions.indexOf(selectedSpeed).coerceAtLeast(0)
-                        detectDragGestures(
-                            onDragStart = {
-                                dragTotal = 0f
-                                speedPreviewIndex = initialIndex
-                                speedExpanded = true
-                            },
-                            onDrag = { change, amount ->
-                                change.consume()
-                                dragTotal += amount.y
-                                speedPreviewIndex = (initialIndex - (dragTotal / rowHeight).toInt())
-                                    .coerceIn(0, speedOptions.lastIndex)
-                            },
-                            onDragEnd = {
-                                speedOptions.getOrNull(speedPreviewIndex)?.let(onSpeedSelected)
-                                speedPreviewIndex = -1
-                                speedExpanded = false
-                            },
-                            onDragCancel = { speedPreviewIndex = -1 },
-                        )
-                    },
-                ) {
+                Box {
                     TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
                 }
                 DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
-                    Box {
+                    Box(
+                        modifier = Modifier.pointerInput(speedOptions) {
+                            val rowHeight = with(density) { 48.dp.toPx() }
+                            detectDragGestures(
+                                onDragStart = { position ->
+                                    speedPreviewIndex = (position.y / rowHeight).toInt().coerceIn(0, speedOptions.lastIndex)
+                                },
+                                onDrag = { change, _ ->
+                                    change.consume()
+                                    speedPreviewIndex = (change.position.y / rowHeight).toInt().coerceIn(0, speedOptions.lastIndex)
+                                },
+                                onDragEnd = {
+                                    speedOptions.getOrNull(speedPreviewIndex)?.let(onSpeedSelected)
+                                    speedPreviewIndex = -1
+                                    speedExpanded = false
+                                },
+                                onDragCancel = { speedPreviewIndex = -1 },
+                            )
+                        },
+                    ) {
                         Column(
                             modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
                         ) {
-                            speedOptions.forEach { speed ->
+                            speedOptions.forEachIndexed { index, speed ->
                                 val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
                                 DropdownMenuItem(
-                                    text = { Text(label) },
+                                    text = { Text(label, modifier = if (index == speedPreviewIndex) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp) else Modifier) },
                                     onClick = {
                                         onSpeedSelected(speed)
                                         speedExpanded = false
@@ -398,19 +339,7 @@ internal fun MobilePlayerTopBar(
                                 )
                             }
                         }
-                        if (speedPreviewIndex >= 0) {
-                            val preview = speedOptions.getOrNull(speedPreviewIndex)
-                            if (preview != null) {
-                                Text(
-                                    text = if (preview % 1f == 0f) "${preview.toInt()}x" else "${preview}x",
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    modifier = Modifier.align(Alignment.TopEnd)
-                                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp))
-                                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                                )
-                            }
-                        }
+ }
                     }
                 }
             }
