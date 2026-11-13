@@ -671,7 +671,6 @@ internal fun MobileNativePlayer(
             onLongPressEnd = gestures::endSpeedBoost,
         )
 
-        val videoSize = player.videoSize
         val rootSize = gestures.playerSize
         val density = LocalDensity.current
         // Все элементы интерфейса привязаны к постоянной рамке 16:9.
@@ -964,7 +963,6 @@ internal fun MobileNativePlayer(
             displayTimeMs = progress.displayTimeMs,
             durationMs = progress.duration,
             controlsActive = overlay.visible && !locked && !isInPictureInPictureMode,
-            sideInset = videoLeftInsetDp,
             videoTopInset = videoTopDp,
             videoBottomInset = videoBottomInsetDp,
             showRemainingTime = showRemainingTime,
