@@ -157,68 +157,13 @@ internal fun MobilePlayerTopBar(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                if (episode.isNotBlank()) {
-                    Row(
-                        modifier = Modifier.clickable(onClick = onEpisodeClick).padding(horizontal = 4.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    ) {
-                        Icon(
-                            if (episodeExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                            stringResource(R.string.player_episodes_list_title),
-                            tint = Color.White.copy(alpha = 0.62f),
-                            modifier = Modifier.size(20.dp),
-                        )
-                        Text(
-                            stringResource(R.string.player_mobile_episode_number, episode),
-                            color = Color.White.copy(alpha = 0.62f),
-                            maxLines = 1,
-                            style = TextStyle(color = Color.White.copy(alpha = 0.62f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
-                        )
-                    }
-                }
-                if (dubbing.isNotBlank() || playerName.isNotBlank() || offlinePlayback) {
-                    Text(" · ", color = Color.White.copy(alpha = 0.82f), style = MaterialTheme.typography.bodyLarge)
-                    Row(
-                        modifier = (if (offlinePlayback) Modifier else Modifier.clickable(onClick = onDubbingClick))
-                            .padding(horizontal = 3.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        if (dubbing.isNotBlank()) {
-                            Text(
-                                dubbing.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
-                                color = Color.White.copy(alpha = 0.78f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
-                            )
-                        }
-                        if (offlinePlayback) {
-                            Icon(Icons.Filled.Download, contentDescription = null,
-                                tint = Color.White.copy(alpha = 0.92f), modifier = Modifier.size(18.dp))
-                        } else if (playerName.isNotBlank()) {
-                            Text("*", color = Color.White.copy(alpha = 0.72f), style = TextStyle(fontSize = 19.sp, fontWeight = FontWeight.Bold))
-                            Text(
-                                playerName,
-                                color = Color.White.copy(alpha = 0.78f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
-                            )
-                            Icon(
-                                if (dubbingExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                                stringResource(R.string.player_balancer_name_prefix),
-                                tint = Color.White.copy(alpha = 0.62f),
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-                    }
-                }
+            if (episode.isNotBlank()) {
+                Text(
+                    stringResource(R.string.player_mobile_episode_number, episode),
+                    color = Color.White.copy(alpha = 0.62f),
+                    maxLines = 1,
+                    style = TextStyle(color = Color.White.copy(alpha = 0.62f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                )
             }
             MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
