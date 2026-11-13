@@ -113,6 +113,7 @@ import su.afk.yummy.tv.feature.player.mobile.pip.MobilePlayerPipController
 import su.afk.yummy.tv.feature.player.mobile.utils.gestureIcon
 import su.afk.yummy.tv.feature.player.mobile.utils.toGesturePercentText
 import su.afk.yummy.tv.feature.player.mobile.utils.toMobilePlayerKeyAction
+import su.afk.yummy.tv.core.designsystem.utils.dubbingDisplayName
 import su.afk.yummy.tv.feature.player.mobile.view.tutorial.MobilePlayerGestureTutorial
 import kotlinx.coroutines.launch
 import su.afk.yummy.tv.feature.player.model.PlayerFinalEpisodeAction
@@ -955,6 +956,16 @@ internal fun MobileNativePlayer(
             timeDisplaySettings = timeDisplaySettings,
             showRemainingTime = showRemainingTime,
             onTimeCodeClick = { showRemainingTime = !showRemainingTime },
+            dubbingLabel = ui.activeDubbingLabel.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
+            balancerLabel = ui.activeBalancerLabel,
+            onTrackSettings = {
+                if (!state.isOfflinePlayback) {
+                    endFlow.hideAll()
+                    trackSheetOpen = true
+                    overlay.visible = true
+                    overlay.cancelHide()
+                }
+            },
         )
 
         MobilePlayerTimeOverlay(
