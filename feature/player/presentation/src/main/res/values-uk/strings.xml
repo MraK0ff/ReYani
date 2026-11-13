@@ -248,6 +248,7 @@
     <string name="player_menu_cast_pip">PiP і Cast</string>
     <string name="player_time_display_title">Час на екрані</string>
     <string name="player_time_display_system_clock">Системний час</string>
+    <string name="player_time_display_duration">Тривалість відео</string>
     <string name="player_time_display_elapsed">Час перегляду</string>
     <string name="player_time_display_remaining">Час до кінця серії</string>
     <string name="player_time_display_finish_at">Час завершення серії</string>
