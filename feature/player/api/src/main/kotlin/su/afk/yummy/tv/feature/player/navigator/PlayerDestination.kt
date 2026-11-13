@@ -29,4 +29,5 @@ data class PlayerDestination(
     val downloadId: Long = 0L,
     val localFileUri: String = "",
     val episodeTitle: String = "",
+    val episodeTitles: Map<String, String> = emptyMap(),
 ) : NavKey, FullscreenDestination
