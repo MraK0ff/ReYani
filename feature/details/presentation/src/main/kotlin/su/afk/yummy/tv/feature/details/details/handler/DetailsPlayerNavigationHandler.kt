@@ -59,8 +59,14 @@ internal class DetailsPlayerNavigationHandler @Inject constructor(
         episodeTitles: Map<String, String> = emptyMap(),
     ): NavKey =
         playerNavigator.getPlayerDest(
-            video = video,
+            iframeUrl = video.iframeUrl,
             animeTitle = animeTitle,
+            episode = video.episode,
+            playerName = video.player,
+            dubbing = video.dubbing,
+            selectedVideoId = video.id,
+            selectedPlayerId = video.playerId,
+            selectedScreenshotUrl = video.iframeUrl,
             animeId = animeId,
             posterUrl = posterUrl,
             resumeFromMs = resumeFromMs,
