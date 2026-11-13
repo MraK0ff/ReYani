@@ -15,6 +15,7 @@ interface IPlayerNavigator {
         animeId: Int = 0,
         posterUrl: String = "",
         resumeFromMs: Long = 0L,
+        episodeTitle: String = "",
     ): NavKey
 
     fun getDownloadedPlayerDest(downloadId: Long, resumeFromMs: Long = 0L): NavKey
