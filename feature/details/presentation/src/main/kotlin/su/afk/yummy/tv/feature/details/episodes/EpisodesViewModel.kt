@@ -836,6 +836,7 @@ class EpisodesViewModel @AssistedInject internal constructor(
                     animeId = animeId,
                     posterUrl = posterUrl,
                     resumeFromMs = currentState.watchProgress.resumeFromMsFor(video),
+                    episodeTitle = currentState.episodeInfo[video.episode]?.title.orEmpty(),
                 ),
             )
         }
