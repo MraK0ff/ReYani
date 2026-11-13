@@ -26,7 +26,7 @@ import kotlin.math.roundToInt
 @OptIn(FlowPreview::class)
 @Singleton
 class PlayerBrightnessController @Inject constructor(
-    settingsStore: PlayerSettingsStore,
+    private val settingsStore: PlayerSettingsStore,
     @DefaultApplicationScope private val scope: CoroutineScope,
 ) {
     private val _brightness = MutableStateFlow<Float?>(null)
@@ -40,12 +40,24 @@ class PlayerBrightnessController @Inject constructor(
 
     init {
         scope.launch {
+            val autoEnabled = settingsStore.mobilePlayerAutoBrightnessEnabled.first()
             val storedPercent = settingsStore.mobilePlayerBrightnessPercent.first()
             // Жест мог успеть сработать раньше, чем DataStore ответил: его значение главнее.
-            if (_brightness.value == null && storedPercent != null) {
-                _brightness.value = (storedPercent / 100f).coerceIn(MIN_BRIGHTNESS, MAX_BRIGHTNESS)
+            if (_brightness.value == null) {
+                _brightness.value = if (autoEnabled) null else
+                    ((storedPercent ?: 100) / 100f).coerceIn(MIN_BRIGHTNESS, MAX_BRIGHTNESS)
             }
             restored = true
+        }
+        scope.launch {
+            settingsStore.mobilePlayerAutoBrightnessEnabled.distinctUntilChanged().collect { enabled ->
+                if (enabled) {
+                    _brightness.value = null
+                } else if (_brightness.value == null) {
+                    val percent = settingsStore.mobilePlayerBrightnessPercent.first() ?: 100
+                    _brightness.value = (percent / 100f).coerceIn(MIN_BRIGHTNESS, MAX_BRIGHTNESS)
+                }
+            }
         }
         scope.launch {
             _brightness
@@ -63,11 +75,13 @@ class PlayerBrightnessController @Inject constructor(
 
     fun setFraction(value: Float) {
         _brightness.value = value.coerceIn(MIN_BRIGHTNESS, MAX_BRIGHTNESS)
+        scope.launch { settingsStore.setMobilePlayerAutoBrightnessEnabled(false) }
     }
 
     /** Возвращает автояркость: ручное значение снимается и в памяти, и в хранилище. */
     fun setAuto() {
         _brightness.value = null
+        scope.launch { settingsStore.setMobilePlayerAutoBrightnessEnabled(true) }
     }
 
     companion object {

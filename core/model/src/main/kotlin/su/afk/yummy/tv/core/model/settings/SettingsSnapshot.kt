@@ -42,4 +42,5 @@ data class SettingsSnapshot(
     val accountShortcutsExpanded: Boolean = false,
     val libraryTabOrder: List<LibraryTabKind> = LibraryTabKind.entries,
     val homeBlocks: List<HomeBlockConfig> = HomeBlockConfig.default,
+    val mobilePlayerAutoBrightnessEnabled: Boolean = true,
 )

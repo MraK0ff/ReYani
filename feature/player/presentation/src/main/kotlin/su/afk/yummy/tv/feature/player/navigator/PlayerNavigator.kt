@@ -17,6 +17,8 @@ class PlayerNavigator @Inject constructor() : IPlayerNavigator {
         animeId: Int,
         posterUrl: String,
         resumeFromMs: Long,
+        episodeTitle: String,
+        episodeTitles: Map<String, String>,
     ): NavKey = PlayerDestination(
         iframeUrl = iframeUrl,
         animeTitle = animeTitle,
@@ -29,6 +31,8 @@ class PlayerNavigator @Inject constructor() : IPlayerNavigator {
         selectedPlayerId = selectedPlayerId,
         selectedScreenshotUrl = selectedScreenshotUrl,
         resumeFromMs = resumeFromMs,
+        episodeTitle = episodeTitle,
+        episodeTitles = episodeTitles,
     )
 
     override fun getDownloadedPlayerDest(downloadId: Long, resumeFromMs: Long): NavKey =

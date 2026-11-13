@@ -8,6 +8,7 @@ import su.afk.yummy.tv.core.model.settings.PlayerOrientationMode
 import su.afk.yummy.tv.core.model.settings.PlayerResizeMode
 import su.afk.yummy.tv.core.model.settings.PlayerResizeSettings
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleStyleSettings
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.core.model.settings.PlayerZoomLevel
 import su.afk.yummy.tv.core.model.settings.PreferredVideoQuality
 import su.afk.yummy.tv.core.model.settings.WatchedThresholds
@@ -56,9 +57,11 @@ interface PlayerSettingsStore {
 
     /** Яркость мобильного плеера в процентах; `null` — пользователь её не менял, действует системная. */
     val mobilePlayerBrightnessPercent: Flow<Int?>
+    val mobilePlayerAutoBrightnessEnabled: Flow<Boolean>
 
     /** Скорость воспроизведения, выбранная в плеере последней; общая для всех тайтлов. */
     val playerPlaybackSpeed: Flow<Float>
+    val playerTimeDisplaySettings: Flow<PlayerTimeDisplaySettings>
 
     /** Стабилизация громкости (сжатие динамического диапазона аудио). */
     val volumeStabilizationEnabled: Flow<Boolean>
@@ -119,7 +122,9 @@ interface PlayerSettingsStore {
 
     /** Сбрасывает ручную яркость плеера: дальше действует системная (авто). */
     suspend fun clearMobilePlayerBrightness()
+    suspend fun setMobilePlayerAutoBrightnessEnabled(enabled: Boolean)
     suspend fun setPlayerPlaybackSpeed(speed: Float)
+    suspend fun setPlayerTimeDisplaySettings(settings: PlayerTimeDisplaySettings)
     suspend fun setVolumeStabilizationEnabled(enabled: Boolean)
     suspend fun setAudioFocusDisabled(disabled: Boolean)
     suspend fun setPlayerBufferProfile(profile: PlayerBufferProfile)

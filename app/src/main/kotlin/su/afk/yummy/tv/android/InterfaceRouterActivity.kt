@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import dagger.hilt.android.AndroidEntryPoint
 import su.afk.yummy.tv.core.preferences.interface_language.AppInterfaceLanguageContext
 import su.afk.yummy.tv.core.preferences.device.DeviceTypeDetector
+import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
+import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
 import javax.inject.Inject
 
 /**
@@ -27,6 +29,9 @@ class InterfaceRouterActivity : ComponentActivity() {
     @Inject
     lateinit var deviceTypeDetector: DeviceTypeDetector
 
+    @Inject
+    lateinit var interfaceModePreferences: AppInterfaceModePreferences
+
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(AppInterfaceLanguageContext.wrap(newBase))
     }
@@ -39,7 +44,12 @@ class InterfaceRouterActivity : ComponentActivity() {
     }
 
     private fun openDetectedInterface() {
-        val target = if (deviceTypeDetector.isTv) TvActivity::class.java else MobileActivity::class.java
+        val useTvInterface = when (interfaceModePreferences.selectedMode ?: AppInterfaceMode.AUTO) {
+            AppInterfaceMode.AUTO -> deviceTypeDetector.isTv
+            AppInterfaceMode.MOBILE -> false
+            AppInterfaceMode.TV -> true
+        }
+        val target = if (useTvInterface) TvActivity::class.java else MobileActivity::class.java
         val sourceIntent = intent
         val targetIntent = Intent(this, target).apply {
             action = sourceIntent.action

@@ -10,6 +10,7 @@ import su.afk.yummy.tv.feature.player.PlayerSkips
 data class PlayerPlaybackUiState(
     val activeIframeUrl: String,
     val activeEpisode: String,
+    val activeEpisodeTitle: String?,
     /** Пометка текущей серии (филлер/рекап); null — обычная серия или пометки выключены. */
     val activeEpisodeFlags: EpisodeFlags?,
     val activeVideoId: Int,

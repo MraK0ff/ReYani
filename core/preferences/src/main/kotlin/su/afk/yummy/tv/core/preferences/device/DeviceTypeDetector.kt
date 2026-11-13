@@ -7,6 +7,8 @@ import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
+import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceMode
+import su.afk.yummy.tv.core.preferences.interface_mode.AppInterfaceModePreferences
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,6 +18,7 @@ enum class DeviceType { ANDROID, ANDROID_TV }
 @Singleton
 class DeviceTypeDetector @Inject constructor(
     @ApplicationContext context: Context,
+    private val interfaceModePreferences: AppInterfaceModePreferences,
 ) {
     val hasLeanbackFeature: Boolean =
         context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
@@ -35,7 +38,12 @@ class DeviceTypeDetector @Inject constructor(
         if (isTelevision != hasLeanbackFeature) {
             Log.d(TAG, "UI mode / LEANBACK mismatch (modeType=$modeType, leanback=$hasLeanbackFeature); using UI mode")
         }
-        deviceType = if (isTelevision) DeviceType.ANDROID_TV else DeviceType.ANDROID
+        val detectedType = if (isTelevision) DeviceType.ANDROID_TV else DeviceType.ANDROID
+        deviceType = when (interfaceModePreferences.selectedMode) {
+            AppInterfaceMode.MOBILE -> DeviceType.ANDROID
+            AppInterfaceMode.TV -> DeviceType.ANDROID_TV
+            AppInterfaceMode.AUTO, null -> detectedType
+        }
     }
 
     private companion object { const val TAG = "DeviceTypeDetector" }

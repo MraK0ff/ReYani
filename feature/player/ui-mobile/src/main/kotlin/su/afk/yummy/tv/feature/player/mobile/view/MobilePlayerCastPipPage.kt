@@ -16,7 +16,8 @@ import su.afk.yummy.tv.feature.player.presentation.R
 internal fun MobilePlayerCastPipPage(
     showPictureInPicture: Boolean,
     showCast: Boolean,
-    onPictureInPicture: () -> Unit,
+    pictureInPictureEnabled: Boolean,
+    onPictureInPictureChange: (Boolean) -> Unit,
     onBack: () -> Unit,
 ) {
     Column(
@@ -28,8 +29,8 @@ internal fun MobilePlayerCastPipPage(
             MobilePlayerMenuRow(
                 icon = Icons.Filled.PictureInPictureAlt,
                 label = stringResource(R.string.player_mobile_pip),
-                trailing = MobilePlayerMenuRowTrailing.None,
-                onClick = onPictureInPicture,
+                trailing = MobilePlayerMenuRowTrailing.Toggle(pictureInPictureEnabled),
+                onClick = { onPictureInPictureChange(!pictureInPictureEnabled) },
             )
         }
         if (showCast) MobilePlayerCastRow()

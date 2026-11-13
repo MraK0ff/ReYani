@@ -1,46 +1,75 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.HighQuality
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.Audiotrack
+import androidx.compose.material.icons.filled.Subtitles
+import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.BrightnessMedium
+import androidx.compose.material.icons.filled.Cast
 import androidx.compose.material3.Icon
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import su.afk.yummy.tv.core.designsystem.utils.dubbingDisplayName
 import su.afk.yummy.tv.core.model.anime.EpisodeFlags
+import su.afk.yummy.tv.feature.player.mobile.model.MobilePlayerSettingsPage
 import su.afk.yummy.tv.feature.player.presentation.R
 import su.afk.yummy.tv.core.designsystem.R as DesignSystemR
 
@@ -53,12 +82,9 @@ internal fun MobilePlayerBackButton(
     modifier: Modifier = Modifier,
 ) {
     if (!visible) return
-    androidx.compose.foundation.layout.Box(
+    Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .padding(top = topInset + 8.dp)
-            .size(buttonSize)
-            .clickable(onClick = onBack),
+        modifier = modifier.padding(top = topInset).size(buttonSize).clickable(onClick = onBack),
     ) {
         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(DesignSystemR.string.common_back),
             tint = Color.White, modifier = Modifier.size(24.dp))
@@ -69,163 +95,312 @@ internal fun MobilePlayerBackButton(
 internal fun MobilePlayerTopBar(
     title: String,
     episode: String,
+    episodeTitle: String? = null,
     dubbing: String,
     playerName: String,
+    offlinePlayback: Boolean = false,
     episodeFlags: EpisodeFlags?,
     qualityLabel: String,
+    qualityOptions: List<String>,
+    selectedQuality: String?,
+    adaptiveQuality: Boolean,
+    onAdaptiveQualityChange: (Boolean) -> Unit,
+    onQualitySelected: (String) -> Unit,
+    onAdaptiveLimitSelected: (String) -> Unit,
+    onAdaptiveLimitBestSelected: () -> Unit,
+    speedOptions: List<Float>,
+    onSpeedSelected: (Float) -> Unit,
     titleStartPadding: Dp = 4.dp,
     onEpisodeClick: () -> Unit,
     onDubbingClick: () -> Unit,
-    onMoreActions: () -> Unit,
+    showAudioTracks: Boolean,
+    showSubtitleTracks: Boolean,
+    onMoreMenuItem: (MobilePlayerSettingsPage) -> Unit,
     onQualityClick: () -> Unit,
     selectedSpeed: Float,
     onSpeedClick: () -> Unit,
     onSpeedLongPress: () -> Unit,
     visible: Boolean,
+    episodeExpanded: Boolean = false,
+    dubbingExpanded: Boolean = false,
+    onPopupVisibilityChange: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     if (!visible) return
-    Row(
-        modifier = modifier.fillMaxWidth()
-            .background(Brush.verticalGradient(listOf(
-                Color.Black.copy(alpha = 0.58f), Color.Black.copy(alpha = 0.20f), Color.Transparent,
-            )))
-            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
-            .padding(start = 8.dp, end = 12.dp, top = 6.dp, bottom = 8.dp),
-        verticalAlignment = Alignment.Top,
+    var qualityExpanded by remember { mutableStateOf(false) }
+    var qualityPreviewIndex by remember { mutableIntStateOf(-1) }
+    var moreExpanded by remember { mutableStateOf(false) }
+    var speedExpanded by remember { mutableStateOf(false) }
+    var speedPreviewIndex by remember { mutableIntStateOf(-1) }
+    val density = LocalDensity.current
+    val qualityScrollState = rememberScrollState()
+    val speedScrollState = rememberScrollState()
+    LaunchedEffect(speedExpanded) {
+        if (speedExpanded) speedScrollState.scrollTo(with(density) { 48.dp.roundToPx() })
+    }
+    SideEffect { onPopupVisibilityChange(qualityExpanded || speedExpanded || moreExpanded) }
+    Box(
+        modifier = modifier.fillMaxSize(),
     ) {
         Column(
-            Modifier.weight(1f).padding(start = titleStartPadding, top = 2.dp, end = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(0.94f).padding(top = 36.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             if (title.isNotBlank()) {
                 Text(
-                    title, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(6.dp))
-                        .background(Color.Black.copy(alpha = 0.42f)).padding(horizontal = 4.dp, vertical = 2.dp),
+                    title,
+                    color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Clip,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
             if (episode.isNotBlank()) {
                 Row(
-                    modifier = Modifier.mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape).clickable(onClick = onEpisodeClick)
-                        .padding(start = 8.dp, end = 9.dp, top = 5.dp, bottom = 5.dp),
+                    modifier = Modifier.clickable(onClick = onEpisodeClick),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
-                    Text(stringResource(R.string.player_mobile_episode_number, episode),
-                        color = Color.White.copy(alpha = 0.88f), maxLines = 1, style = MaterialTheme.typography.bodySmall)
-                    Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.player_episodes_list_title),
-                        tint = Color.White.copy(alpha = 0.88f), modifier = Modifier.size(18.dp))
+                    Text(
+                        buildString {
+                            append(stringResource(R.string.player_mobile_episode_number, episode))
+                            episodeTitle?.takeIf { it.isNotBlank() }?.let { append(" * ").append(it) }
+                        },
+                        color = Color.White.copy(alpha = 0.72f),
+                        maxLines = 1,
+                        style = TextStyle(color = Color.White.copy(alpha = 0.72f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                    )
+                    Icon(
+                        imageVector = if (episodeExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.72f),
+                        modifier = Modifier.size(18.dp),
+                    )
                 }
             }
-            if (dubbing.isNotBlank() || playerName.isNotBlank()) {
-                Row(
-                    modifier = Modifier.mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape).clickable(onClick = onDubbingClick)
-                    .padding(horizontal = 9.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(7.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (dubbing.isNotBlank()) {
-                        Row(
-                            modifier = Modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp),
-                        ) {
-                            Text(
-                                dubbing.dubbingDisplayName().removePrefix("Озвучка ").removePrefix("озвучка "),
-                                color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium,
-                            )
-                        }
-                    }
-                    if (dubbing.isNotBlank() && playerName.isNotBlank()) {
-                        Text("|", color = Color.White.copy(alpha = 0.72f), style = MaterialTheme.typography.labelSmall)
-                    }
-                    if (playerName.isNotBlank()) {
-                        Row(
-                            modifier = Modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp),
-                        ) {
-                            Text(
-                                playerName.uppercase(), color = Color.White, maxLines = 1,
-                                overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Medium,
-                            )
-                            Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.player_balancer_name_prefix),
-                                tint = Color.White.copy(alpha = 0.82f), modifier = Modifier.size(16.dp))
-                        }
-                    }
-                }
-            }
-            MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 3.dp))
+            MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
         Row(
-            Modifier.padding(start = 4.dp),
+            Modifier.align(Alignment.BottomEnd).padding(end = 4.dp, bottom = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
-            TopBarQualityAction(qualityLabel, onQualityClick)
-            TopBarSpeedAction(selectedSpeed, onSpeedClick, onSpeedLongPress)
-            TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions), onMoreActions)
+            if (!offlinePlayback && qualityOptions.isNotEmpty()) {
+                Box {
+                    TopBarQualityAction(qualityLabel) { qualityExpanded = true }
+                    DropdownMenu(expanded = qualityExpanded, onDismissRequest = { qualityExpanded = false }) {
+                        val descendingQualities = qualityOptions.asReversed()
+                        val choices = listOf("Адаптивное качество", "Лучшее доступное") +
+                            descendingQualities + "Худшее доступное"
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = minOf(420.dp, 48.dp * choices.size))
+                                .pointerInput(choices) {
+                                    val rowHeight = with(density) { 48.dp.toPx() }
+                                    fun updatePreview(y: Float) {
+                                        qualityPreviewIndex = ((y + qualityScrollState.value) / rowHeight).toInt().coerceIn(0, choices.lastIndex)
+                                    }
+                                    detectDragGestures(
+                                        onDragStart = { updatePreview(it.y) },
+                                        onDrag = { change, _ ->
+                                            change.consume()
+                                            updatePreview(change.position.y)
+                                        },
+                                        onDragEnd = {
+                                            when (qualityPreviewIndex) {
+                                                0 -> onAdaptiveQualityChange(true)
+                                                1 -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    qualityOptions.lastOrNull()?.let(onQualitySelected)
+                                                }
+                                                choices.lastIndex -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    qualityOptions.firstOrNull()?.let(onQualitySelected)
+                                                }
+                                                else -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    descendingQualities.getOrNull(qualityPreviewIndex - 2)
+                                                        ?.let(onQualitySelected)
+                                                }
+                                            }
+                                            qualityPreviewIndex = -1
+                                            qualityExpanded = false
+                                        },
+                                        onDragCancel = { qualityPreviewIndex = -1 },
+                                    )
+                                },
+                        ) {
+                            Column(modifier = Modifier.verticalScroll(qualityScrollState)) {
+                                choices.forEachIndexed { index, choice ->
+                                    DropdownMenuItem(
+                                        modifier = if (index == qualityPreviewIndex) {
+                                            Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp))
+                                        } else Modifier,
+                                        text = { Text(choice) },
+                                        onClick = {
+                                            when (index) {
+                                                0 -> onAdaptiveQualityChange(true)
+                                                1 -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    qualityOptions.lastOrNull()?.let(onQualitySelected)
+                                                }
+                                                choices.lastIndex -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    qualityOptions.firstOrNull()?.let(onQualitySelected)
+                                                }
+                                                else -> {
+                                                    onAdaptiveQualityChange(false)
+                                                    descendingQualities.getOrNull(index - 2)?.let(onQualitySelected)
+                                                }
+                                            }
+                                            qualityExpanded = false
+                                        },
+                                    )
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            Box {
+                Box {
+                    TopBarSpeedAction(selectedSpeed) { speedExpanded = true }
+                }
+                DropdownMenu(expanded = speedExpanded, onDismissRequest = { speedExpanded = false }) {
+                    Box(
+                        modifier = Modifier.pointerInput(speedOptions) {
+                            val rowHeight = with(density) { 48.dp.toPx() }
+                            detectDragGestures(
+                                onDragStart = { position ->
+                                    speedPreviewIndex = ((position.y + speedScrollState.value) / rowHeight).toInt().coerceIn(0, speedOptions.lastIndex)
+                                },
+                                onDrag = { change, _ ->
+                                    change.consume()
+                                    speedPreviewIndex = ((change.position.y + speedScrollState.value) / rowHeight).toInt().coerceIn(0, speedOptions.lastIndex)
+                                },
+                                onDragEnd = {
+                                    speedOptions.getOrNull(speedPreviewIndex)?.let(onSpeedSelected)
+                                    speedPreviewIndex = -1
+                                    speedExpanded = false
+                                },
+                                onDragCancel = { speedPreviewIndex = -1 },
+                            )
+                        },
+                    ) {
+                        Column(
+                            modifier = Modifier.heightIn(max = 420.dp).verticalScroll(speedScrollState),
+                        ) {
+                            speedOptions.forEachIndexed { index, speed ->
+                                val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
+                                DropdownMenuItem(
+                                    modifier = if (index == speedPreviewIndex) {
+                                        Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp))
+                                    } else Modifier,
+                                    text = { Text(label) },
+                                    onClick = {
+                                        onSpeedSelected(speed)
+                                        speedExpanded = false
+                                    },
+                                )
+                            }
+                        }
+ }
+                    }
+                }
+            Box {
+                TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions)) {
+                    moreExpanded = true
+                }
+                DropdownMenu(expanded = moreExpanded, onDismissRequest = { moreExpanded = false }) {
+                    if (showAudioTracks) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_menu_audio_track)) },
+                        leadingIcon = { Icon(Icons.Filled.Audiotrack, contentDescription = null) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.AudioTrack) },
+                    )
+                    if (showSubtitleTracks) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_menu_subtitles)) },
+                        leadingIcon = { Icon(Icons.Filled.Subtitles, contentDescription = null) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Subtitles) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_sleep_title)) },
+                        leadingIcon = { Icon(Icons.Filled.Bedtime, contentDescription = null) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.SleepTimer) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_resize_title)) },
+                        leadingIcon = { Icon(Icons.Filled.AspectRatio, contentDescription = null) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Resize) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_time_display_title)) },
+                        leadingIcon = { Icon(Icons.Filled.AccessTime, contentDescription = null) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.TimeDisplay) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_menu_display)) },
+                        leadingIcon = { Icon(Icons.Filled.BrightnessMedium, contentDescription = null) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.Display) },
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.player_menu_cast_pip)) },
+                        leadingIcon = { Icon(Icons.Filled.Cast, contentDescription = null) },
+                        onClick = { moreExpanded = false; onMoreMenuItem(MobilePlayerSettingsPage.CastAndPip) },
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
 private fun TopBarQualityAction(label: String, onClick: () -> Unit) {
-    androidx.compose.foundation.layout.Box(
+    Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.widthIn(min = 54.dp, max = 72.dp)
-            .size(height = mobilePlayerControlButtonSize(), width = 64.dp)
-            .mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape)
+        modifier = Modifier.widthIn(min = 72.dp, max = 112.dp)
+            .size(height = mobilePlayerControlButtonSize(), width = 92.dp)
             .clickable(onClick = onClick)
-            .padding(horizontal = 5.dp),
+            .padding(horizontal = 4.dp),
     ) {
-        BasicText(
-            text = label,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                background = Color.Transparent,
-            ),
-            maxLines = 1,
-            softWrap = false,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+            Icon(Icons.Filled.HighQuality, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
+            BasicText(
+                text = label,
+                style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                maxLines = 1,
+                softWrap = false,
+            )
+        }
     }
 }
 
 @Composable
-private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit, onLongPress: () -> Unit) {
+private fun TopBarSpeedAction(speed: Float, onClick: () -> Unit) {
     val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
-    androidx.compose.foundation.layout.Box(
+    Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(width = 64.dp, height = mobilePlayerControlButtonSize())
-            .mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape)
-            .pointerInput(onClick, onLongPress) {
-                detectTapGestures(onTap = { onClick() }, onLongPress = { onLongPress() })
-            },
+        modifier = Modifier.size(width = 50.dp, height = mobilePlayerControlButtonSize())
+            .clickable(onClick = onClick),
     ) {
-        BasicText(
-            text = label,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                background = Color.Transparent,
-            ),
-            maxLines = 1,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+            Icon(Icons.Filled.Speed, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
+            BasicText(text = label,
+                style = TextStyle(color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+                maxLines = 1)
+        }
     }
 }
 
 @Composable
 private fun TopBarAction(icon: ImageVector, description: String, onClick: () -> Unit) {
-    androidx.compose.foundation.layout.Box(
+    Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(mobilePlayerControlButtonSize()).mobilePlayerGlassSurface(shape = MobilePlayerInteractiveShape).clickable(onClick = onClick),
+        modifier = Modifier.size(width = 40.dp, height = mobilePlayerControlButtonSize()).clickable(onClick = onClick),
     ) {
         Icon(icon, description, tint = Color.White, modifier = Modifier.size(24.dp))
     }

@@ -62,6 +62,8 @@
     <string name="settings_nav_transition_none">Без анимации</string>
     <string name="settings_nav_transition_none_hint">Экраны меняются мгновенно</string>
     <string name="settings_interface_type">Тип интерфейса</string>
+    <string name="settings_interface_auto">Автоматически</string>
+    <string name="settings_interface_auto_hint">Определять интерфейс по типу устройства</string>
     <string name="settings_interface_mobile">Мобильный</string>
     <string name="settings_interface_mobile_hint">Управление с сенсорного экрана</string>
     <string name="settings_interface_tv">ТВ</string>
@@ -77,6 +79,8 @@
     <string name="settings_show_catalog_title_year_enabled">Год отображается на карточках тайтлов в каталоге</string>
     <string name="settings_show_library_title_year">Отображать год у тайтлов в библиотеке</string>
     <string name="settings_show_library_title_year_enabled">Год отображается на карточках тайтлов в библиотеке</string>
+    <string name="settings_mobile_player_auto_brightness">Автояркость в плеере</string>
+    <string name="settings_mobile_player_auto_brightness_hint">Следовать системной яркости; вертикальный жест переключает на ручную настройку</string>
     <string name="settings_player_orientation_title">Ориентация плеера</string>
     <string name="settings_player_orientation_system">Системный</string>
     <string name="settings_player_orientation_system_hint">Следовать системной настройке поворота экрана</string>

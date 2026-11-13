@@ -23,6 +23,8 @@
     <string name="player_setup_mobile_quality_best_hint">Use the highest stream quality</string>
         <string name="player_setup_mobile_section_timings">Openings and endings</string>
     <string name="player_setup_mobile_section_episodes">Episodes</string>
+    <string name="player_setup_auto_brightness_label">Automatic brightness</string>
+    <string name="player_setup_auto_brightness_hint">Use the system brightness control by default</string>
     <string name="player_setup_mobile_section_playback">Playback</string>
     <string name="player_setup_mobile_orientation_label">Player orientation</string>
     <string name="player_setup_mobile_orientation_hint">System follows auto-rotate; the other modes lock the orientation</string>

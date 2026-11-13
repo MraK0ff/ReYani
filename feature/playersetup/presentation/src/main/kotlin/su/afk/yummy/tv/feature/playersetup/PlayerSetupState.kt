@@ -23,6 +23,7 @@ class PlayerSetupState {
         val preferredVideoQuality: PreferredVideoQuality = PreferredVideoQuality.BEST,
         val playerOrientationMode: PlayerOrientationMode = PlayerOrientationMode.SENSOR_LANDSCAPE,
         val pictureInPictureEnabled: Boolean = true,
+        val autoBrightnessEnabled: Boolean = true,
         val contentLanguage: YaniContentLanguage = YaniContentLanguage.DEFAULT,
         val interfaceLanguage: AppInterfaceLanguage = AppInterfaceLanguage.DEFAULT,
         val appTheme: AppTheme = AppTheme.GRAPHITE,
@@ -35,6 +36,7 @@ class PlayerSetupState {
         data object AutoPlayNextEpisodeToggled : Event
         data object SuggestNextEpisodeOnWatchedToggled : Event
         data object PictureInPictureToggled : Event
+        data object AutoBrightnessToggled : Event
         data object AdaptiveVideoQualityToggled : Event
         data class ContentLanguageSelected(val language: YaniContentLanguage) : Event
         data class InterfaceLanguageSelected(val language: AppInterfaceLanguage) : Event

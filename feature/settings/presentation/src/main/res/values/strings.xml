@@ -62,6 +62,8 @@
     <string name="settings_nav_transition_none">None</string>
     <string name="settings_nav_transition_none_hint">No animation</string>
     <string name="settings_interface_type">Interface type</string>
+    <string name="settings_interface_auto">Automatic</string>
+    <string name="settings_interface_auto_hint">Choose the interface based on the device type</string>
     <string name="settings_interface_mobile">Mobile</string>
     <string name="settings_interface_mobile_hint">Optimized for touchscreen controls</string>
     <string name="settings_interface_tv">TV</string>
@@ -77,6 +79,8 @@
     <string name="settings_show_catalog_title_year_enabled">Year is shown on Catalog title cards</string>
     <string name="settings_show_library_title_year">Show title year in Library</string>
     <string name="settings_show_library_title_year_enabled">Year is shown on Library title cards</string>
+    <string name="settings_mobile_player_auto_brightness">Automatic brightness in player</string>
+    <string name="settings_mobile_player_auto_brightness_hint">Follow the system brightness setting; a vertical brightness gesture switches to manual mode</string>
     <string name="settings_player_orientation_title">Player orientation</string>
     <string name="settings_player_orientation_system">System</string>
     <string name="settings_player_orientation_system_hint">Follow the system rotation setting</string>

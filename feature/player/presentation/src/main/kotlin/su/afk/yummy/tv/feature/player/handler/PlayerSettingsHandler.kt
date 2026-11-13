@@ -37,6 +37,10 @@ internal class PlayerSettingsHandler @Inject constructor(
     val playerSubtitleStyle: Flow<PlayerSubtitleStyleSettings> = settingsStore.playerSubtitleStyle
     val playerPlaybackSpeed: Flow<Float> = settingsStore.playerPlaybackSpeed
 
+    suspend fun savePictureInPictureEnabled(enabled: Boolean) {
+        settingsStore.setPictureInPictureEnabled(enabled)
+    }
+
     suspend fun saveOrientationMode(mode: PlayerOrientationMode) {
         settingsStore.setPlayerOrientationMode(mode)
     }

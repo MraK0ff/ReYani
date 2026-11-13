@@ -12,6 +12,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -20,6 +21,9 @@ import kotlinx.serialization.json.Json
 import su.afk.yummy.tv.core.designsystem.baseScreen.ScreenNavigator
 import su.afk.yummy.tv.core.designsystem.dialog.ChoiceDialogHost
 import su.afk.yummy.tv.core.designsystem.theme.YummyTvTheme
+import su.afk.yummy.tv.core.model.settings.AppTheme
+import su.afk.yummy.tv.core.model.settings.BackgroundStyle
+import su.afk.yummy.tv.core.preferences.settings.AppearanceSettingsStore
 import su.afk.yummy.tv.core.preferences.interface_language.AppInterfaceLanguageContext
 import su.afk.yummy.tv.feature.player.PlayerViewModel
 import su.afk.yummy.tv.feature.player.host.PlayerActivityHost
@@ -44,6 +48,9 @@ class PlayerActivity : ComponentActivity(), PlayerActivityHost {
     @Inject
     lateinit var hostNavigation: PlayerHostNavigation
 
+    @Inject
+    lateinit var appearanceSettingsStore: AppearanceSettingsStore
+
     private var destination: PlayerDestination? by mutableStateOf(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +69,19 @@ class PlayerActivity : ComponentActivity(), PlayerActivityHost {
 
         setContent {
             val dest = destination ?: return@setContent
-            YummyTvTheme(isTelevision = false) {
+            // PlayerActivity is a separate window: it must observe the same selected palette
+            // as MobileActivity instead of silently falling back to Graphite/AMOLED defaults.
+            val appTheme by appearanceSettingsStore.appTheme.collectAsStateWithLifecycle(
+                initialValue = AppTheme.GRAPHITE,
+            )
+            val backgroundStyle by appearanceSettingsStore.backgroundStyle.collectAsStateWithLifecycle(
+                initialValue = BackgroundStyle.AMOLED,
+            )
+            YummyTvTheme(
+                appTheme = appTheme,
+                backgroundStyle = backgroundStyle,
+                isTelevision = false,
+            ) {
                 // Плеер — отдельная Activity: диалоги выбора (смена озвучки на торрент, «Продолжить») рисуем здесь.
                 ChoiceDialogHost(isTelevision = false)
                 val viewModel = hiltViewModel<PlayerViewModel, PlayerViewModel.Factory>(

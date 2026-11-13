@@ -89,6 +89,8 @@ fun PlayerState.State.toPlayerPlaybackUiState(
     return PlayerPlaybackUiState(
         activeIframeUrl = activeIframeUrl(this),
         activeEpisode = activeEpisode,
+        activeEpisodeTitle = episodeTitles[activeEpisode]?.takeIf { it.isNotBlank() }
+            ?: episodeTitle.takeIf { it.isNotBlank() && activeEpisode == activeEpisodeSource(this)?.number },
         activeEpisodeFlags = episodeFlags[activeEpisode.episodeGroupKey()]?.takeIf { it.filler || it.recap },
         activeVideoId = activeVideoId(this),
         activeDubbing = activeDubbingName,
@@ -109,7 +111,10 @@ fun PlayerState.State.toPlayerPlaybackUiState(
                     available = available,
                     screenshotUrl = episode.screenshotUrl,
                     progress = mergedProgress.episodeProgress(episode.number),
-                    durationLabel = episode.durationSeconds?.takeIf { it > 0 }?.times(1_000L)?.millisToClockTime(),
+                    durationLabel = (
+                        episode.durationSeconds?.takeIf { it > 0 }?.times(1_000L)
+                            ?: playbackDurationMs.takeIf { it > 0L && episode.number == activeEpisode }
+                        )?.millisToClockTime(),
                     flags = episodeFlags[episode.number.episodeGroupKey()]?.takeIf { it.filler || it.recap },
                 )
             }.toImmutableList()

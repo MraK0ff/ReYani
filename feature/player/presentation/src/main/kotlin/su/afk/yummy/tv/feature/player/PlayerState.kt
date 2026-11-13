@@ -27,6 +27,8 @@ import su.afk.yummy.tv.feature.player.utils.QualityAdaptationPolicy
 class PlayerState {
     data class State(
         val animeTitle: String = "",
+        val episodeTitle: String = "",
+        val episodeTitles: Map<String, String> = emptyMap(),
         val animeId: Int = 0,
         val posterUrl: String = "",
         /** Обложка медиа-уведомления/медиа-сессии; считает VM через PlayerArtworkHandler. */
@@ -221,6 +223,9 @@ class PlayerState {
 
         /** Пользователь включил или выключил стабилизацию громкости в боковой панели плеера. */
         data class VolumeStabilizationToggled(val enabled: Boolean) : Event
+
+        /** Пользователь включил или выключил поддержку PiP из меню плеера. */
+        data class PictureInPictureToggled(val enabled: Boolean) : Event
 
         /** Пользователь выбрал скорость воспроизведения. */
         data class SpeedSelected(val speed: Float) : Event

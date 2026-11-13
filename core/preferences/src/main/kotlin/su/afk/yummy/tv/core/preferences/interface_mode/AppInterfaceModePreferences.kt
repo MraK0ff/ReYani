@@ -1,6 +1,8 @@
 package su.afk.yummy.tv.core.preferences.interface_mode
 
-/** Хранит только факт показа первичной настройки плеера. */
+/** Synchronous preferences read before the application router selects an Activity. */
 interface AppInterfaceModePreferences {
+    val selectedMode: AppInterfaceMode?
+    fun select(mode: AppInterfaceMode)
     fun consumePlayerSetupPending(): Boolean
 }

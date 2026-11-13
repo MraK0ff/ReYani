@@ -14,6 +14,7 @@ import su.afk.yummy.tv.core.model.settings.PlayerResizeSettings
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleBackground
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleEdge
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleStyleSettings
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.core.model.settings.PlayerSubtitleTextColor
 import su.afk.yummy.tv.core.model.settings.PlayerZoomLevel
 import su.afk.yummy.tv.core.model.settings.PreferredVideoQuality
@@ -26,6 +27,7 @@ import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.autoSkip
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.autoSkipOpeningsEndingsKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.browserUserAgentProfileKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.mobilePlayerBrightnessPercentKey
+import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.mobilePlayerAutoBrightnessEnabledKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.mobilePlayerGestureTutorialDismissedKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.nextEpisodeSwitchDelaySecondsKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.holdToConfirmEnabledKey
@@ -35,6 +37,7 @@ import su.afk.yummy.tv.core.preferences.BuildConfig
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerControlsAutoHideSecondsKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerOrientationModeKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerPlaybackSpeedKey
+import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerTimeDisplaySettingsKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerResizeModeKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.playerZoomLevelKey
 import su.afk.yummy.tv.core.preferences.settings.SettingsPreferenceKeys.adaptiveVideoQualityEnabledKey
@@ -134,10 +137,17 @@ internal class DataStorePlayerSettingsStore @Inject constructor(
         prefs[mobilePlayerBrightnessPercentKey]?.coerceIn(MIN_BRIGHTNESS_PERCENT, MAX_VOLUME_PERCENT)
     }
 
+    override val mobilePlayerAutoBrightnessEnabled: Flow<Boolean> = store.data.map { prefs ->
+        prefs[mobilePlayerAutoBrightnessEnabledKey] ?: (prefs[mobilePlayerBrightnessPercentKey] == null)
+    }
+
     override val playerPlaybackSpeed: Flow<Float> = store.data.map { prefs ->
         (prefs[playerPlaybackSpeedKey] ?: DEFAULT_PLAYBACK_SPEED)
             .coerceIn(MIN_PLAYBACK_SPEED, MAX_PLAYBACK_SPEED)
     }
+
+    override val playerTimeDisplaySettings: Flow<PlayerTimeDisplaySettings> =
+        store.data.map { prefs -> PlayerTimeDisplaySettings.decode(prefs[playerTimeDisplaySettingsKey]) }
 
     override val volumeStabilizationEnabled: Flow<Boolean> =
         store.boolean(volumeStabilizationEnabledKey, false)
@@ -287,17 +297,36 @@ internal class DataStorePlayerSettingsStore @Inject constructor(
         store.edit { prefs ->
             prefs[mobilePlayerBrightnessPercentKey] =
                 percent.coerceIn(MIN_BRIGHTNESS_PERCENT, MAX_VOLUME_PERCENT)
+            prefs[mobilePlayerAutoBrightnessEnabledKey] = false
         }
     }
 
     override suspend fun clearMobilePlayerBrightness() {
-        store.edit { prefs -> prefs.remove(mobilePlayerBrightnessPercentKey) }
+        store.edit { prefs ->
+            prefs.remove(mobilePlayerBrightnessPercentKey)
+            prefs[mobilePlayerAutoBrightnessEnabledKey] = true
+        }
+    }
+
+    override suspend fun setMobilePlayerAutoBrightnessEnabled(enabled: Boolean) {
+        store.edit { prefs ->
+            prefs[mobilePlayerAutoBrightnessEnabledKey] = enabled
+            if (enabled) {
+                prefs.remove(mobilePlayerBrightnessPercentKey)
+            } else if (prefs[mobilePlayerBrightnessPercentKey] == null) {
+                prefs[mobilePlayerBrightnessPercentKey] = MAX_VOLUME_PERCENT
+            }
+        }
     }
 
     override suspend fun setPlayerPlaybackSpeed(speed: Float) {
         store.edit { prefs ->
             prefs[playerPlaybackSpeedKey] = speed.coerceIn(MIN_PLAYBACK_SPEED, MAX_PLAYBACK_SPEED)
         }
+    }
+
+    override suspend fun setPlayerTimeDisplaySettings(settings: PlayerTimeDisplaySettings) {
+        store.edit { prefs -> prefs[playerTimeDisplaySettingsKey] = settings.encode() }
     }
 
     override suspend fun setVolumeStabilizationEnabled(enabled: Boolean) =

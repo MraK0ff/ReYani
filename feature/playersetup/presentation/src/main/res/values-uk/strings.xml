@@ -23,6 +23,8 @@
     <string name="player_setup_mobile_quality_best_hint">Використовувати максимальну якість потоку</string>
         <string name="player_setup_mobile_section_timings">Опенінги та ендінги</string>
     <string name="player_setup_mobile_section_episodes">Серії</string>
+    <string name="player_setup_auto_brightness_label">Автояскравість</string>
+    <string name="player_setup_auto_brightness_hint">Типово використовувати системне керування яскравістю</string>
     <string name="player_setup_mobile_section_playback">Відтворення</string>
     <string name="player_setup_mobile_orientation_label">Орієнтація плеєра</string>
     <string name="player_setup_mobile_orientation_hint">Системна слідує автоповороту; інші режими фіксують орієнтацію</string>

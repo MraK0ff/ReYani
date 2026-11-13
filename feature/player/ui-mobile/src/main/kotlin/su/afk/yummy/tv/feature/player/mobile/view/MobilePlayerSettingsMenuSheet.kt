@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Audiotrack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Cast
 import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.BrightnessMedium
 import androidx.compose.material.icons.filled.GraphicEq
@@ -129,10 +130,14 @@ internal fun MobilePlayerSettingsMenuSheet(
             MobilePlayerSettingsPage.CastAndPip -> MobilePlayerCastPipPage(
                 showPictureInPicture = model.showPictureInPicture,
                 showCast = model.showCast,
-                onPictureInPicture = {
-                    onDismiss()
-                    actions.onPictureInPicture()
-                },
+                pictureInPictureEnabled = model.pictureInPictureEnabled,
+                onPictureInPictureChange = actions.onPictureInPictureChange,
+                onBack = goBack,
+            )
+
+            MobilePlayerSettingsPage.TimeDisplay -> MobilePlayerTimeDisplayPage(
+                settings = model.timeDisplaySettings,
+                onSettingsChange = actions.onTimeDisplaySettingsChange,
                 onBack = goBack,
             )
 
@@ -227,6 +232,12 @@ private fun MobilePlayerMenuRoot(
             label = stringResource(R.string.player_resize_title),
             trailing = MobilePlayerMenuRowTrailing.Navigate(),
             onClick = { onNavigate(MobilePlayerSettingsPage.Resize) },
+        )
+        MobilePlayerMenuRow(
+            icon = Icons.Filled.AccessTime,
+            label = stringResource(R.string.player_time_display_title),
+            trailing = MobilePlayerMenuRowTrailing.Navigate(),
+            onClick = { onNavigate(MobilePlayerSettingsPage.TimeDisplay) },
         )
         MobilePlayerMenuRow(
             icon = Icons.Filled.BrightnessMedium,

@@ -246,4 +246,18 @@
     <string name="player_speed_slower">Повільніше</string>
     <string name="player_speed_faster">Швидше</string>
     <string name="player_menu_cast_pip">PiP і Cast</string>
+    <string name="player_time_display_title">Час на екрані</string>
+    <string name="player_time_display_system_clock">Системний час</string>
+    <string name="player_time_display_duration">Тривалість відео</string>
+    <string name="player_time_display_elapsed">Час перегляду</string>
+    <string name="player_time_display_separate">Розділити час перегляду та тривалість відео</string>
+    <string name="player_time_display_remaining">Час до кінця серії</string>
+    <string name="player_time_display_finish_at">Час завершення серії</string>
+    <string name="player_time_display_always">Завжди</string>
+    <string name="player_time_display_never">Ніколи</string>
+    <string name="player_time_display_controls">Коли панель керування активна</string>
+    <string name="player_time_display_clock_value">Зараз · %1$s</string>
+    <string name="player_time_display_elapsed_value">Переглянуто · %1$s</string>
+    <string name="player_time_display_remaining_value">Залишилося · %1$s</string>
+    <string name="player_time_display_finish_value">Завершиться · %1$s</string>
 </resources>

@@ -8,10 +8,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
@@ -73,20 +72,15 @@ internal fun MobilePlayerUnlockButton(
         exit = fadeOut(),
         modifier = modifier,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
             modifier = Modifier,
+            contentAlignment = Alignment.CenterEnd,
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
+                    .align(Alignment.CenterEnd)
                     .size(buttonSize)
-                    .mobilePlayerGlassSurface(
-                        shape = CircleShape,
-                        fill = Color.Black.copy(alpha = 0.44f),
-                        borderColor = Color.White.copy(alpha = 0.34f),
-                        elevation = 0.dp,
-                    )
                     .semantics {
                         role = Role.Button
                         contentDescription = unlockLabel
@@ -132,13 +126,17 @@ internal fun MobilePlayerUnlockButton(
                     modifier = Modifier.size(minOf(24.dp, buttonSize * 0.56f)),
                 )
             }
-            AnimatedVisibility(visible = hintVisible, enter = fadeIn(), exit = fadeOut()) {
+            AnimatedVisibility(
+                visible = hintVisible,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.align(Alignment.CenterEnd).offset(x = -(buttonSize + 12.dp)),
+            ) {
                 Text(
                     text = stringResource(R.string.player_mobile_unlock_hint),
                     color = Color.White,
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier
-                        .padding(start = 12.dp)
                         .mobilePlayerGlassSurface()
                         .padding(horizontal = 14.dp, vertical = 8.dp),
                 )
@@ -167,7 +165,6 @@ internal fun MobilePlayerLockButton(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(buttonSize)
-                .mobilePlayerGlassSurface(shape = CircleShape, elevation = if (buttonSize < 40.dp) 0.dp else 12.dp)
                 .pointerInput(Unit) { detectTapGestures(onTap = { onLock() }) }
                 .semantics {
                     role = Role.Button

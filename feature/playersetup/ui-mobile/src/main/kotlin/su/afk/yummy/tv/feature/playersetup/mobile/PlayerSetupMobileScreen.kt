@@ -149,6 +149,13 @@ fun PlayerSetupMobileScreen(
             }
 
             PlayerSetupMobileSection(title = stringResource(R.string.player_setup_mobile_section_playback)) {
+                PlayerSetupMobileToggleRow(
+                    label = stringResource(R.string.player_setup_auto_brightness_label),
+                    icon = Icons.Outlined.Lightbulb,
+                    hint = stringResource(R.string.player_setup_auto_brightness_hint),
+                    enabled = state.autoBrightnessEnabled,
+                    onClick = { onEvent(PlayerSetupState.Event.AutoBrightnessToggled) },
+                )
                 PlayerSetupMobileOptionRow(
                     label = stringResource(R.string.player_setup_mobile_orientation_label),
                     icon = Icons.Outlined.ScreenRotation,

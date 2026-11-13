@@ -6,7 +6,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,34 +15,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FastForward
-import androidx.compose.material.icons.filled.FastRewind
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import su.afk.yummy.tv.core.model.settings.PlayerTimeDisplaySettings
 import su.afk.yummy.tv.feature.player.common.model.PlayerPlaybackProgressState
 import su.afk.yummy.tv.feature.player.common.model.StepSeekDirection
 import su.afk.yummy.tv.feature.player.presentation.R
@@ -52,6 +38,7 @@ import su.afk.yummy.tv.feature.player.presentation.R
 internal fun MobilePlayerOverlay(
     visible: Boolean,
     wantsPlay: Boolean,
+    loading: Boolean = false,
     progress: PlayerPlaybackProgressState,
     hasPrevEpisode: Boolean,
     hasNextEpisode: Boolean,
@@ -64,7 +51,6 @@ internal fun MobilePlayerOverlay(
     onPrevEpisode: () -> Unit,
     onNextEpisode: () -> Unit,
     onTrackSettings: () -> Unit,
-    onPlayerSettings: () -> Unit,
     onMoreActions: () -> Unit,
     modifier: Modifier = Modifier,
     episodesAvailable: Boolean = false,
@@ -74,17 +60,13 @@ internal fun MobilePlayerOverlay(
     episodesStrip: @Composable () -> Unit = {},
     videoWidthFraction: Float = 1f,
     videoBottomInset: androidx.compose.ui.unit.Dp = 0.dp,
+    timeDisplaySettings: PlayerTimeDisplaySettings = PlayerTimeDisplaySettings(),
+    showRemainingTime: Boolean = false,
+    onTimeCodeClick: () -> Unit = {},
+    dubbingLabel: String = "",
+    balancerLabel: String = "",
 ) {
     if (!visible) return
-    var holdHintTick by remember { mutableIntStateOf(0) }
-    var holdHintVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(holdHintTick) {
-        if (holdHintTick > 0) {
-            holdHintVisible = true
-            delay(HOLD_HINT_DURATION_MS)
-            holdHintVisible = false
-        }
-    }
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val expandedControlsOffset = minOf(72.dp, maxHeight * 0.12f)
         Box(
@@ -92,67 +74,20 @@ internal fun MobilePlayerOverlay(
                 .offset(y = if (episodesStripVisible) -expandedControlsOffset else 0.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                MobilePlayerActionButton(
-                    icon = Icons.Filled.SkipPrevious,
-                    contentDescription = stringResource(R.string.player_mobile_previous_episode),
-                    enabled = hasPrevEpisode,
-                    onClick = onPrevEpisode,
-                    onHold = onPrevEpisode.takeIf { holdToSwitchEpisode },
-                    onHoldHint = { holdHintTick++ },
-                )
-                MobilePlayerActionButton(
-                    icon = Icons.Filled.FastRewind,
-                    contentDescription = stringResource(R.string.player_mobile_pip_rewind_10),
-                    onClick = { onStepSeek(StepSeekDirection.Backward) },
-                    onLongPress = { onLongPressSeek(StepSeekDirection.Backward) },
-                )
-                MobilePlayerActionButton(
-                    icon = if (wantsPlay) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                    contentDescription = stringResource(if (wantsPlay) R.string.player_mobile_pip_pause else R.string.player_mobile_pip_play),
-                    primary = true,
-                    pauseButton = wantsPlay,
-                    onClick = onPlayPause,
-                )
-                MobilePlayerActionButton(
-                    icon = Icons.Filled.FastForward,
-                    contentDescription = stringResource(R.string.player_mobile_pip_forward_10),
-                    onClick = { onStepSeek(StepSeekDirection.Forward) },
-                    onLongPress = { onLongPressSeek(StepSeekDirection.Forward) },
-                )
-                if (hasNextEpisode) {
-                    MobilePlayerActionButton(
-                        icon = Icons.Filled.SkipNext,
-                        contentDescription = stringResource(R.string.player_mobile_next_episode),
-                        onClick = onNextEpisode,
-                        onHold = onNextEpisode.takeIf { holdToSwitchEpisode },
-                        onHoldHint = { holdHintTick++ },
-                    )
-                }
-            }
-            AnimatedVisibility(
-                visible = holdHintVisible,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier.align(Alignment.BottomCenter).padding(top = 90.dp),
-            ) {
-                Text(
-                    stringResource(R.string.player_mobile_hold_to_switch_episode),
-                    color = Color.White,
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.clip(CircleShape).background(Color.Black.copy(alpha = 0.68f))
-                        .padding(horizontal = 14.dp, vertical = 8.dp),
-                )
-            }
+            MobilePlayerCenterControls(
+                wantsPlay = wantsPlay,
+                hasPrevEpisode = hasPrevEpisode,
+                hasNextEpisode = hasNextEpisode,
+                onPlayPause = onPlayPause,
+                onPrevEpisode = onPrevEpisode,
+                onNextEpisode = onNextEpisode,
+                loading = loading,
+            )
         }
 
         Column(
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
-                .background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.30f), Color.Black.copy(alpha = 0.72f))))
-                .padding(vertical = 12.dp),
+                .padding(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             MobilePlayerProgressRow(
@@ -165,6 +100,12 @@ internal fun MobilePlayerOverlay(
                 onSeekFinished = onSeekFinished,
                 videoWidthFraction = videoWidthFraction,
                 videoBottomInset = videoBottomInset,
+                timeDisplaySettings = timeDisplaySettings,
+                showRemainingTime = showRemainingTime,
+                onTimeCodeClick = onTimeCodeClick,
+                dubbingLabel = dubbingLabel,
+                balancerLabel = balancerLabel,
+                onTrackSettings = onTrackSettings,
             )
             if (episodesAvailable) {
                 AnimatedVisibility(
@@ -192,5 +133,4 @@ private suspend fun PointerInputScope.collapseOnSwipeDown(onExpandedChange: (Boo
 }
 
 private const val SWIPE_THRESHOLD_PX = 40f
-private const val HOLD_HINT_DURATION_MS = 1_800L
 private const val EPISODES_STRIP_ANIMATION_MS = 220
