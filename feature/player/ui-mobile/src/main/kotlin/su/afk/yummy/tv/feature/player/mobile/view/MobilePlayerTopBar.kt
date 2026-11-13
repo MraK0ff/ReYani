@@ -95,6 +95,7 @@ internal fun MobilePlayerBackButton(
 internal fun MobilePlayerTopBar(
     title: String,
     episode: String,
+    episodeTitle: String? = null,
     dubbing: String,
     playerName: String,
     offlinePlayback: Boolean = false,
@@ -159,7 +160,10 @@ internal fun MobilePlayerTopBar(
             }
             if (episode.isNotBlank()) {
                 Text(
-                    stringResource(R.string.player_mobile_episode_number, episode),
+                    buildString {
+                        append(stringResource(R.string.player_mobile_episode_number, episode))
+                        episodeTitle?.takeIf { it.isNotBlank() }?.let { append(" * ").append(it) }
+                    },
                     color = Color.White.copy(alpha = 0.62f),
                     maxLines = 1,
                     style = TextStyle(color = Color.White.copy(alpha = 0.62f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
