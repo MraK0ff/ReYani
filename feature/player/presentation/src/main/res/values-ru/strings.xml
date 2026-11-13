@@ -250,6 +250,7 @@
     <string name="player_time_display_system_clock">Системное время</string>
     <string name="player_time_display_duration">Продолжительность видео</string>
     <string name="player_time_display_elapsed">Время просмотра</string>
+    <string name="player_time_display_separate">Разделить время просмотра и длительность видео</string>
     <string name="player_time_display_remaining">Вместо продолжительности показывать оставшееся время</string>
     <string name="player_time_display_finish_at">Время окончания серии</string>
     <string name="player_time_display_always">Всегда</string>
