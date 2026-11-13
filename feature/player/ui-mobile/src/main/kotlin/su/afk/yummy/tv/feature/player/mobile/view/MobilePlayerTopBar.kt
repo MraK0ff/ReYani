@@ -49,7 +49,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -129,11 +128,11 @@ internal fun MobilePlayerTopBar(
     if (!visible) return
     var qualityExpanded by remember { mutableStateOf(false) }
     var qualityPreviewIndex by remember { mutableIntStateOf(-1) }
-    var qualityPreviewOffsetPx by remember { mutableFloatStateOf(0f) }
     var moreExpanded by remember { mutableStateOf(false) }
     var speedExpanded by remember { mutableStateOf(false) }
     var speedPreviewIndex by remember { mutableIntStateOf(-1) }
     val density = LocalDensity.current
+    val qualityScrollState = rememberScrollState()
     val speedScrollState = rememberScrollState()
     LaunchedEffect(speedExpanded) {
         if (speedExpanded) speedScrollState.scrollTo(with(density) { 48.dp.roundToPx() })
@@ -250,8 +249,7 @@ internal fun MobilePlayerTopBar(
                                 .pointerInput(choices) {
                                     val rowHeight = with(density) { 48.dp.toPx() }
                                     fun updatePreview(y: Float) {
-                                        qualityPreviewOffsetPx = y.coerceIn(0f, size.height.toFloat())
-                                        qualityPreviewIndex = (y / rowHeight).toInt().coerceIn(0, choices.lastIndex)
+                                        qualityPreviewIndex = ((y + qualityScrollState.value) / rowHeight).toInt().coerceIn(0, choices.lastIndex)
                                     }
                                     detectDragGestures(
                                         onDragStart = { updatePreview(it.y) },
@@ -283,7 +281,7 @@ internal fun MobilePlayerTopBar(
                                     )
                                 },
                         ) {
-                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                            Column(modifier = Modifier.verticalScroll(qualityScrollState)) {
                                 choices.forEachIndexed { index, choice ->
                                     DropdownMenuItem(
                                         text = { Text(choice, modifier = if (index == qualityPreviewIndex) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp) else Modifier) },
@@ -323,11 +321,11 @@ internal fun MobilePlayerTopBar(
                             val rowHeight = with(density) { 48.dp.toPx() }
                             detectDragGestures(
                                 onDragStart = { position ->
-                                    speedPreviewIndex = (position.y / rowHeight).toInt().coerceIn(0, speedOptions.lastIndex)
+                                    speedPreviewIndex = ((position.y + speedScrollState.value) / rowHeight).toInt().coerceIn(0, speedOptions.lastIndex)
                                 },
                                 onDrag = { change, _ ->
                                     change.consume()
-                                    speedPreviewIndex = (change.position.y / rowHeight).toInt().coerceIn(0, speedOptions.lastIndex)
+                                    speedPreviewIndex = ((change.position.y + speedScrollState.value) / rowHeight).toInt().coerceIn(0, speedOptions.lastIndex)
                                 },
                                 onDragEnd = {
                                     speedOptions.getOrNull(speedPreviewIndex)?.let(onSpeedSelected)
