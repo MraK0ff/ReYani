@@ -696,6 +696,7 @@ internal fun MobileNativePlayer(
         MobilePlayerTopBar(
             title = state.animeTitle,
             episode = ui.activeEpisode,
+            episodeTitle = ui.activeEpisodeTitle,
             dubbing = ui.activeDubbing,
             playerName = ui.activeBalancerLabel,
             offlinePlayback = state.isOfflinePlayback,
