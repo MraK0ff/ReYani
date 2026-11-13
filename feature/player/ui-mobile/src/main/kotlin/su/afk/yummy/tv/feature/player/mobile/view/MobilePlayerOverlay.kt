@@ -103,39 +103,10 @@ internal fun MobilePlayerOverlay(
                 timeDisplaySettings = timeDisplaySettings,
                 showRemainingTime = showRemainingTime,
                 onTimeCodeClick = onTimeCodeClick,
+                dubbingLabel = dubbingLabel,
+                balancerLabel = balancerLabel,
+                onTrackSettings = onTrackSettings,
             )
-            if (dubbingLabel.isNotBlank() || balancerLabel.isNotBlank()) {
-                Row(
-                    modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth()
-                        .padding(start = 29.dp, end = 20.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (dubbingLabel.isNotBlank()) {
-                        androidx.compose.material3.Text(
-                            text = dubbingLabel,
-                            color = Color.White.copy(alpha = 0.72f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-                            modifier = Modifier.clickable(onClick = onTrackSettings).padding(horizontal = 8.dp, vertical = 4.dp),
-                        )
-                    }
-                    if (dubbingLabel.isNotBlank() && balancerLabel.isNotBlank()) {
-                        androidx.compose.material3.Text("|", color = Color.White.copy(alpha = 0.72f), fontSize = 20.sp, fontWeight = FontWeight.Medium)
-                    }
-                    if (balancerLabel.isNotBlank()) {
-                        androidx.compose.material3.Text(
-                            text = balancerLabel,
-                            color = Color.White.copy(alpha = 0.72f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-                            modifier = Modifier.clickable(onClick = onTrackSettings).padding(horizontal = 8.dp, vertical = 4.dp),
-                        )
-                    }
-                }
-            }
             if (episodesAvailable) {
                 AnimatedVisibility(
                     visible = episodesStripVisible,
