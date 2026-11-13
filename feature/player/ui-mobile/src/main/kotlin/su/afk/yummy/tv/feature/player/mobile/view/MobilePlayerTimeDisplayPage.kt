@@ -83,6 +83,7 @@ private fun TimeDisplayModeRow(
                 when (mode) {
                     PlayerTimeDisplayMode.ALWAYS -> stringResource(R.string.player_time_display_always)
                     PlayerTimeDisplayMode.CONTROLS -> stringResource(R.string.player_time_display_controls)
+                    PlayerTimeDisplayMode.NEVER -> stringResource(R.string.player_time_display_never)
                 },
             ),
             onClick = { expanded = true },
@@ -95,6 +96,10 @@ private fun TimeDisplayModeRow(
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.player_time_display_controls)) },
                 onClick = { onSelected(PlayerTimeDisplayMode.CONTROLS); expanded = false },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.player_time_display_never)) },
+                onClick = { onSelected(PlayerTimeDisplayMode.NEVER); expanded = false },
             )
         }
     }
