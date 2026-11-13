@@ -1,9 +1,7 @@
 package su.afk.yummy.tv.feature.player.mobile.view
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -54,90 +52,75 @@ internal fun MobilePlayerTimeOverlay(
     val showClock = shouldShow(settings.systemClock, controlsActive)
     val showFinish = durationMs > 0L && shouldShow(settings.finishAt, controlsActive)
     val showElapsed = durationMs > 0L && settings.elapsed == PlayerTimeDisplayMode.ALWAYS && !controlsActive
+    val showDuration = durationMs > 0L && settings.duration == PlayerTimeDisplayMode.ALWAYS && !controlsActive
+    val edgeTopPadding = if (videoTopInset > 0.dp) videoTopInset / 2 else 12.dp
+    val edgeBottomPadding = if (videoBottomInset > 0.dp) videoBottomInset / 2 else 12.dp
 
     Box(modifier = modifier.fillMaxSize()) {
-        // При FIT боковые чёрные поля — отдельная зона интерфейса, не часть видеокадра.
-        // Не кладём часы поверх заголовка: используем именно letterbox-поля.
-        if (sideInset >= 32.dp) {
-            if (showClock) {
-                Text(
-                    text = systemClock,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.White,
-                    maxLines = 1,
-                    modifier = Modifier.align(Alignment.TopStart)
-                        .padding(start = 2.dp)
-                        .padding(top = videoTopInset + 96.dp)
-                        .mobilePlayerGlassSurface()
-                        .padding(horizontal = 3.dp, vertical = 4.dp),
-                )
-            }
-            if (showFinish) {
-                Text(
-                    text = finishAt,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color.White,
-                    maxLines = 1,
-                    modifier = Modifier.align(Alignment.TopEnd)
-                        .padding(end = 2.dp)
-                        .padding(top = videoTopInset + 96.dp)
-                        .mobilePlayerGlassSurface()
-                        .padding(horizontal = 3.dp, vertical = 4.dp),
-                )
-            }
-        } else if (showClock || showFinish) {
-            Row(
-                modifier = Modifier.align(Alignment.BottomCenter)
-                    .padding(horizontal = 12.dp, vertical = 58.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                if (showClock) TimeChip(systemClock)
-                if (showFinish) TimeChip(finishAt)
-            }
+        if (showClock) {
+            TimeChip(
+                value = systemClock,
+                modifier = Modifier.align(Alignment.TopStart)
+                    .padding(start = 20.dp, top = edgeTopPadding),
+            )
         }
-
+        if (showFinish) {
+            TimeChip(
+                value = finishAt,
+                modifier = Modifier.align(Alignment.TopEnd)
+                    .padding(end = 20.dp, top = edgeTopPadding),
+            )
+        }
         if (showElapsed) {
-            val remaining = (durationMs - displayTimeMs).coerceAtLeast(0L)
-            Row(
+            TimeValueChip(
+                value = if (showRemainingTime) "-${remainingMs.millisToClockTime().padStart(5, '0')}"
+                    else displayTimeMs.millisToClockTime().padStart(5, '0'),
                 modifier = Modifier.align(Alignment.BottomStart)
-                    .padding(start = 20.dp, bottom = videoBottomInset + 14.dp)
-                    .mobilePlayerGlassSurface()
-                    .clickable(onClick = onTimeCodeClick)
-                    .padding(horizontal = 9.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = if (showRemainingTime) "-${remaining.millisToClockTime().padStart(5, '0')}"
-                        else displayTimeMs.millisToClockTime().padStart(5, '0'),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.96f),
-                )
-                Text("/", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.58f))
-                Text(
-                    text = durationMs.millisToClockTime().padStart(5, '0'),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.62f),
-                )
-            }
+                    .padding(start = 20.dp, bottom = edgeBottomPadding),
+                onClick = onTimeCodeClick,
+            )
+        }
+        if (showDuration) {
+            TimeValueChip(
+                value = durationMs.millisToClockTime().padStart(5, '0'),
+                modifier = Modifier.align(Alignment.BottomEnd)
+                    .padding(end = 20.dp, bottom = edgeBottomPadding),
+                onClick = onTimeCodeClick,
+            )
         }
     }
 }
 
 @Composable
-private fun TimeChip(value: String) {
+private fun TimeChip(value: String, modifier: Modifier = Modifier) {
     Text(
         text = value,
         style = MaterialTheme.typography.labelMedium,
         color = Color.White,
         maxLines = 1,
-        modifier = Modifier.mobilePlayerGlassSurface().padding(horizontal = 7.dp, vertical = 5.dp),
+        modifier = modifier.mobilePlayerGlassSurface().padding(horizontal = 7.dp, vertical = 5.dp),
+    )
+}
+
+@Composable
+private fun TimeValueChip(
+    value: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Text(
+        text = value,
+        style = MaterialTheme.typography.labelSmall,
+        color = Color.White,
+        maxLines = 1,
+        modifier = modifier.mobilePlayerGlassSurface()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 9.dp, vertical = 4.dp),
     )
 }
 
 private fun shouldShow(mode: PlayerTimeDisplayMode, controlsActive: Boolean): Boolean =
     when (mode) {
         PlayerTimeDisplayMode.ALWAYS -> true
-        PlayerTimeDisplayMode.NEVER -> false
         PlayerTimeDisplayMode.CONTROLS -> controlsActive
     }
