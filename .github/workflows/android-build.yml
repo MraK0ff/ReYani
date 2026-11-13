@@ -70,7 +70,7 @@ jobs:
             echo "::error::YUMMY_TV_API_BASE_URL must be an HTTPS URL"
             exit 1
           fi
-          printf 'yummytv.apiBaseUrl=%s\\n' "$API_BASE_URL" >> local.properties
+          printf 'yummytv.apiBaseUrl=%s\n' "$API_BASE_URL" >> local.properties
           echo "Configured YummyTV API base URL."
 
       - name: Build debug APK
