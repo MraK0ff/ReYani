@@ -15,6 +15,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -59,6 +63,9 @@ internal fun MobilePlayerOverlay(
     timeDisplaySettings: PlayerTimeDisplaySettings = PlayerTimeDisplaySettings(),
     showRemainingTime: Boolean = false,
     onTimeCodeClick: () -> Unit = {},
+    dubbingLabel: String = "",
+    balancerLabel: String = "",
+    onTrackSettings: () -> Unit = {},
 ) {
     if (!visible) return
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -98,6 +105,38 @@ internal fun MobilePlayerOverlay(
                 showRemainingTime = showRemainingTime,
                 onTimeCodeClick = onTimeCodeClick,
             )
+            if (dubbingLabel.isNotBlank() || balancerLabel.isNotBlank()) {
+                Row(
+                    modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (dubbingLabel.isNotBlank()) {
+                        androidx.compose.material3.Text(
+                            text = dubbingLabel,
+                            color = Color.White.copy(alpha = 0.72f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                            modifier = Modifier.clickable(onClick = onTrackSettings).padding(horizontal = 8.dp, vertical = 4.dp),
+                        )
+                    }
+                    if (dubbingLabel.isNotBlank() && balancerLabel.isNotBlank()) {
+                        androidx.compose.material3.Text("*", color = Color.White.copy(alpha = 0.72f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    }
+                    if (balancerLabel.isNotBlank()) {
+                        androidx.compose.material3.Text(
+                            text = balancerLabel,
+                            color = Color.White.copy(alpha = 0.72f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                            modifier = Modifier.clickable(onClick = onTrackSettings).padding(horizontal = 8.dp, vertical = 4.dp),
+                        )
+                    }
+                }
+            }
             if (episodesAvailable) {
                 AnimatedVisibility(
                     visible = episodesStripVisible,
