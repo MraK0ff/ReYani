@@ -44,6 +44,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -121,6 +122,7 @@ internal fun MobilePlayerTopBar(
     visible: Boolean,
     episodeExpanded: Boolean = false,
     dubbingExpanded: Boolean = false,
+    onPopupVisibilityChange: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     if (!visible) return
@@ -131,6 +133,7 @@ internal fun MobilePlayerTopBar(
     var speedExpanded by remember { mutableStateOf(false) }
     var speedPreviewIndex by remember { mutableIntStateOf(-1) }
     val density = LocalDensity.current
+    SideEffect { onPopupVisibilityChange(qualityExpanded || speedExpanded || moreExpanded) }
     Box(
         modifier = modifier.fillMaxSize(),
     ) {
