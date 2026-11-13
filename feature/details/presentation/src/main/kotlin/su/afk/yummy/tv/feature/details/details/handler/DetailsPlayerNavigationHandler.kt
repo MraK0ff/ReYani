@@ -56,6 +56,7 @@ internal class DetailsPlayerNavigationHandler @Inject constructor(
         posterUrl: String,
         resumeFromMs: Long = 0L,
         episodeTitle: String = "",
+        episodeTitles: Map<String, String> = emptyMap(),
     ): NavKey =
         playerNavigator.getPlayerDest(
             video = video,
@@ -64,6 +65,7 @@ internal class DetailsPlayerNavigationHandler @Inject constructor(
             posterUrl = posterUrl,
             resumeFromMs = resumeFromMs,
             episodeTitle = episodeTitle,
+            episodeTitles = episodeTitles,
         )
 
     fun getDownloadedPlayerDestination(downloadId: Long): NavKey =
