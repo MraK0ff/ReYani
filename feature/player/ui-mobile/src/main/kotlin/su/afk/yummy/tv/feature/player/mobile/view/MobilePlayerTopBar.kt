@@ -204,7 +204,7 @@ internal fun MobilePlayerTopBar(
                                 style = TextStyle(color = Color.White.copy(alpha = 0.78f), fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
                             )
                             Icon(
-                                if (dubbingExpanded) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                                if (dubbingExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                                 stringResource(R.string.player_balancer_name_prefix),
                                 tint = Color.White.copy(alpha = 0.62f),
                                 modifier = Modifier.size(20.dp),
