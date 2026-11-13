@@ -28,6 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -77,8 +78,7 @@ internal fun MobilePlayerProgressRow(
             Spacer(Modifier.height(8.dp))
             val remaining = (duration - displayTime).coerceAtLeast(0L)
             Box(modifier = Modifier.fillMaxWidth()) {
-                if (!timeDisplaySettings.separateTimecodes) {
-                    Row(
+                Row(
                         modifier = Modifier.align(Alignment.CenterStart)
                             .mobilePlayerGlassSurface()
                             .clickable(onClick = onTimeCodeClick)
@@ -98,7 +98,6 @@ internal fun MobilePlayerProgressRow(
                             color = Color.White.copy(alpha = 0.62f),
                         )
                     }
-                }
                 Row(
                     modifier = Modifier.align(Alignment.Center),
                     horizontalArrangement = Arrangement.spacedBy(7.dp),
@@ -152,10 +151,10 @@ private fun MobilePlayerTimeline(
     onValueChangeFinished: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Muted neutral hierarchy: played < buffer < unplayed, with the thumb matching played.
-    val playedColor = Color(0xFF858D97)
-    val bufferedColor = Color(0xFFB7BEC7)
-    val unplayedColor = Color(0xFFADB4BD)
+    val playedColor = MaterialTheme.colorScheme.primary
+    val bufferedColor = Color.White
+    // Keep the same hue as the active theme accent, but reduce its prominence.
+    val unplayedColor = lerp(playedColor, Color(0xFF858D97), 0.58f)
     val safeProgress = progress.coerceIn(0f, 1f)
     Box(
         modifier = modifier
