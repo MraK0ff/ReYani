@@ -20,19 +20,20 @@ data class PlayerTimeDisplaySettings(
 
     companion object {
         fun decode(value: String?): PlayerTimeDisplaySettings {
-            val parts = value.orEmpty().split('|')
-            fun mode(index: Int): PlayerTimeDisplayMode =
+            if (value.isNullOrBlank()) return PlayerTimeDisplaySettings()
+            val parts = value.split('|')
+            fun mode(index: Int, default: PlayerTimeDisplayMode): PlayerTimeDisplayMode =
                 parts.getOrNull(index)
                     ?.let { runCatching { PlayerTimeDisplayMode.valueOf(it) }.getOrNull() }
-                    ?: PlayerTimeDisplayMode.CONTROLS
+                    ?: default
             // Старый формат содержал три поля: systemClock|elapsed|finishAt.
-            // Старое значение NEVER переводим в CONTROLS, так как отключение времени больше не поддерживается.
             val legacy = parts.size == 3
             return PlayerTimeDisplaySettings(
-                systemClock = mode(0),
-                elapsed = mode(1),
-                duration = if (legacy) mode(1) else mode(2),
-                finishAt = mode(if (legacy) 2 else 3),
+                systemClock = mode(0, PlayerTimeDisplayMode.NEVER),
+                elapsed = mode(1, PlayerTimeDisplayMode.CONTROLS),
+                duration = if (legacy) mode(1, PlayerTimeDisplayMode.CONTROLS)
+                    else mode(2, PlayerTimeDisplayMode.CONTROLS),
+                finishAt = mode(if (legacy) 2 else 3, PlayerTimeDisplayMode.NEVER),
             )
         }
     }
