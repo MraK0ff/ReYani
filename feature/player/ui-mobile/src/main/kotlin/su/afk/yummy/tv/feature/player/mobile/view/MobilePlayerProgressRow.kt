@@ -99,7 +99,7 @@ internal fun MobilePlayerProgressRow(
                 }
                 if (dubbingLabel.isNotBlank()) {
                     Text(
-                        text = dubbingLabel,
+                        text = "$dubbingLabel  ⌄",
                         modifier = Modifier.clickable(onClick = onTrackSettings),
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.White.copy(alpha = 0.78f),
@@ -107,11 +107,11 @@ internal fun MobilePlayerProgressRow(
                     )
                 }
                 if (dubbingLabel.isNotBlank() && balancerLabel.isNotBlank()) {
-                    Text("|", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.38f))
+                    Text("|", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.32f))
                 }
                 if (balancerLabel.isNotBlank()) {
                     Text(
-                        text = balancerLabel,
+                        text = "$balancerLabel  ⌄",
                         modifier = Modifier.clickable(onClick = onTrackSettings),
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.White.copy(alpha = 0.78f),
