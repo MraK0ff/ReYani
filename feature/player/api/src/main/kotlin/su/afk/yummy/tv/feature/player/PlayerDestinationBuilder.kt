@@ -23,6 +23,7 @@ fun IPlayerNavigator.getPlayerDest(
     animeId: Int,
     posterUrl: String = "",
     resumeFromMs: Long = 0L,
+    episodeTitle: String = "",
 ): NavKey {
     return getPlayerDest(
         iframeUrl = video.iframeUrl,
@@ -38,6 +39,7 @@ fun IPlayerNavigator.getPlayerDest(
         animeId = animeId,
         posterUrl = posterUrl,
         resumeFromMs = resumeFromMs,
+        episodeTitle = episodeTitle,
     )
 }
 
