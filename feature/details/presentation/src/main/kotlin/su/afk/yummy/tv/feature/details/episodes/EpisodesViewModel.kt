@@ -837,6 +837,9 @@ class EpisodesViewModel @AssistedInject internal constructor(
                     posterUrl = posterUrl,
                     resumeFromMs = currentState.watchProgress.resumeFromMsFor(video),
                     episodeTitle = currentState.episodeInfo[video.episode]?.title.orEmpty(),
+                    episodeTitles = currentState.episodeInfo.mapNotNull { (number, info) ->
+                        info.title?.takeIf { it.isNotBlank() }?.let { number to it }
+                    }.toMap(),
                 ),
             )
         }
