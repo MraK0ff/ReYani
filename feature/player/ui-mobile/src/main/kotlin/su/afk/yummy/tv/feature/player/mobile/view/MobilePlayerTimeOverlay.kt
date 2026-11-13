@@ -57,7 +57,7 @@ internal fun MobilePlayerTimeOverlay(
     val showFinish = durationMs > 0L && shouldShow(settings.finishAt, controlsActive)
     val showElapsed = durationMs > 0L && settings.elapsed == PlayerTimeDisplayMode.ALWAYS && !controlsActive
     val showDuration = durationMs > 0L && settings.duration == PlayerTimeDisplayMode.ALWAYS && !controlsActive
-    val edgeTopPadding = if (videoTopInset > 0.dp) videoTopInset / 2 else 12.dp
+    val edgeTopPadding = 56.dp + videoTopInset.coerceAtLeast(0.dp)
     val edgeBottomPadding = if (videoBottomInset > 0.dp) videoBottomInset / 2 else 12.dp
 
     Box(modifier = modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top))) {
@@ -65,14 +65,14 @@ internal fun MobilePlayerTimeOverlay(
             TimeChip(
                 value = systemClock,
                 modifier = Modifier.align(Alignment.TopStart)
-                    .padding(start = 20.dp, top = edgeTopPadding),
+                    .padding(start = 8.dp, top = edgeTopPadding),
             )
         }
         if (showFinish) {
             TimeChip(
                 value = finishAt,
                 modifier = Modifier.align(Alignment.TopEnd)
-                    .padding(end = 76.dp, top = edgeTopPadding),
+                    .padding(end = 8.dp, top = edgeTopPadding),
             )
         }
         if (showElapsed) {
@@ -80,7 +80,7 @@ internal fun MobilePlayerTimeOverlay(
                 value = if (showRemainingTime) "-${remainingMs.millisToClockTime().padStart(5, '0')}"
                     else displayTimeMs.millisToClockTime().padStart(5, '0'),
                 modifier = Modifier.align(Alignment.BottomStart)
-                    .padding(start = 20.dp, bottom = edgeBottomPadding),
+                    .padding(start = 8.dp, bottom = edgeBottomPadding),
                 onClick = onTimeCodeClick,
             )
         }
@@ -88,7 +88,7 @@ internal fun MobilePlayerTimeOverlay(
             TimeValueChip(
                 value = durationMs.millisToClockTime().padStart(5, '0'),
                 modifier = Modifier.align(Alignment.BottomEnd)
-                    .padding(end = 20.dp, bottom = edgeBottomPadding),
+                    .padding(end = 8.dp, bottom = edgeBottomPadding),
                 onClick = onTimeCodeClick,
             )
         }
