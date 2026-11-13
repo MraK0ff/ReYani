@@ -23,6 +23,7 @@ internal class PlayerDestinationStateMapper @Inject constructor() {
         return PlayerState.State(
             animeTitle = dest.animeTitle,
             episodeTitle = dest.episodeTitle,
+            episodeTitles = dest.episodeTitles,
             animeId = dest.animeId,
             posterUrl = dest.posterUrl,
             sourceGraph = sourceGraph,
