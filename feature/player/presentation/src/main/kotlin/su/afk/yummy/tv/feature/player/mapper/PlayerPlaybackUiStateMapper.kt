@@ -89,6 +89,7 @@ fun PlayerState.State.toPlayerPlaybackUiState(
     return PlayerPlaybackUiState(
         activeIframeUrl = activeIframeUrl(this),
         activeEpisode = activeEpisode,
+        activeEpisodeTitle = episodeTitle.takeIf { it.isNotBlank() },
         activeEpisodeFlags = episodeFlags[activeEpisode.episodeGroupKey()]?.takeIf { it.filler || it.recap },
         activeVideoId = activeVideoId(this),
         activeDubbing = activeDubbingName,
