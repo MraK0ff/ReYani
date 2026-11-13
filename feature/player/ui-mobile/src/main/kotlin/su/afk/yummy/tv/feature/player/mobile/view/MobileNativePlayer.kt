@@ -671,8 +671,10 @@ internal fun MobileNativePlayer(
         val videoSize = player.videoSize
         val rootSize = gestures.playerSize
         val density = LocalDensity.current
-        val videoAspectRatio = if (videoSize.width > 0 && videoSize.height > 0) videoSize.width.toFloat() / videoSize.height else 16f / 9f
-        val useFittedVideoBounds = state.resizeMode == PlayerResizeMode.FIT && rootSize.width > 0 && rootSize.height > 0
+        // Все элементы интерфейса привязаны к постоянной рамке 16:9.
+        // Реальный размер/режим масштабирования видеокадра не должен сдвигать кнопки и подписи.
+        val videoAspectRatio = 16f / 9f
+        val useFittedVideoBounds = rootSize.width > 0 && rootSize.height > 0
         val videoWidthPx = if (useFittedVideoBounds) minOf(rootSize.width, (rootSize.height * videoAspectRatio).roundToInt()) else rootSize.width
         val videoHeightPx = if (useFittedVideoBounds) minOf(rootSize.height, (rootSize.width / videoAspectRatio).roundToInt()) else rootSize.height
         val videoLeftDp = with(density) { ((rootSize.width - videoWidthPx) / 2).toDp() }
