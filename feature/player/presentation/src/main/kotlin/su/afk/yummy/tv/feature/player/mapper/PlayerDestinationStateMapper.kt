@@ -22,6 +22,7 @@ internal class PlayerDestinationStateMapper @Inject constructor() {
         val selection = sourceGraph.selection.normalizedFor(sourceGraph)
         return PlayerState.State(
             animeTitle = dest.animeTitle,
+            episodeTitle = dest.episodeTitle,
             animeId = dest.animeId,
             posterUrl = dest.posterUrl,
             sourceGraph = sourceGraph,
