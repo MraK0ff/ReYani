@@ -65,7 +65,6 @@ internal fun MobilePlayerOverlay(
     onTimeCodeClick: () -> Unit = {},
     dubbingLabel: String = "",
     balancerLabel: String = "",
-    onTrackSettings: () -> Unit = {},
 ) {
     if (!visible) return
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
