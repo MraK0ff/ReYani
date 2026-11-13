@@ -359,7 +359,6 @@ internal fun MobilePlayerTopBar(
  }
                     }
                 }
-            }
             Box {
                 TopBarAction(Icons.Filled.MoreVert, stringResource(R.string.player_mobile_actions)) {
                     moreExpanded = true
