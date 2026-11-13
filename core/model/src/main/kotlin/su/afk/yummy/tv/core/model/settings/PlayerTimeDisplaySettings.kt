@@ -15,8 +15,9 @@ data class PlayerTimeDisplaySettings(
     val elapsed: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
     val duration: PlayerTimeDisplayMode = PlayerTimeDisplayMode.CONTROLS,
     val finishAt: PlayerTimeDisplayMode = PlayerTimeDisplayMode.NEVER,
+    val separateTimecodes: Boolean = false,
 ) {
-    fun encode(): String = listOf(systemClock, elapsed, duration, finishAt).joinToString("|")
+    fun encode(): String = listOf(systemClock, elapsed, duration, finishAt, separateTimecodes).joinToString("|")
 
     companion object {
         fun decode(value: String?): PlayerTimeDisplaySettings {
@@ -26,7 +27,7 @@ data class PlayerTimeDisplaySettings(
                 parts.getOrNull(index)
                     ?.let { runCatching { PlayerTimeDisplayMode.valueOf(it) }.getOrNull() }
                     ?: default
-            // Старый формат содержал три поля: systemClock|elapsed|finishAt.
+            // Старый формат содержал три поля; текущий до этого изменения — четыре.
             val legacy = parts.size == 3
             return PlayerTimeDisplaySettings(
                 systemClock = mode(0, PlayerTimeDisplayMode.NEVER),
@@ -34,6 +35,7 @@ data class PlayerTimeDisplaySettings(
                 duration = if (legacy) mode(1, PlayerTimeDisplayMode.CONTROLS)
                     else mode(2, PlayerTimeDisplayMode.CONTROLS),
                 finishAt = mode(if (legacy) 2 else 3, PlayerTimeDisplayMode.NEVER),
+                separateTimecodes = parts.getOrNull(4)?.toBooleanStrictOrNull() ?: false,
             )
         }
     }
