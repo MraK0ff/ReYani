@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -73,51 +76,66 @@ internal fun MobilePlayerProgressRow(
             )
             Spacer(Modifier.height(8.dp))
             val remaining = (duration - displayTime).coerceAtLeast(0L)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                if (!timeDisplaySettings.separateTimecodes) {
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterStart)
+                            .mobilePlayerGlassSurface()
+                            .clickable(onClick = onTimeCodeClick)
+                            .padding(horizontal = 9.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = (if (showRemainingTime) "-${remaining.millisToClockTime().padStart(5, '0')}" else displayTime.millisToClockTime().padStart(5, '0')),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White.copy(alpha = 0.96f),
+                        )
+                        Text("/", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.58f))
+                        Text(
+                            text = duration.millisToClockTime().padStart(5, '0'),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White.copy(alpha = 0.62f),
+                        )
+                    }
+                }
                 Row(
-                    modifier = Modifier
-                        .mobilePlayerGlassSurface()
-                        .clickable(onClick = onTimeCodeClick)
-                        .padding(horizontal = 9.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalArrangement = Arrangement.spacedBy(7.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        text = (if (showRemainingTime) "-${remaining.millisToClockTime().padStart(5, '0')}" else displayTime.millisToClockTime().padStart(5, '0')),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.White.copy(alpha = 0.96f),
-                    )
-                    Text("/", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.58f))
-                    Text(
-                        text = duration.millisToClockTime().padStart(5, '0'),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.White.copy(alpha = 0.62f),
-                    )
-                }
-                if (dubbingLabel.isNotBlank()) {
-                    Text(
-                        text = "$dubbingLabel  ⌄",
-                        modifier = Modifier.clickable(onClick = onTrackSettings),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.78f),
-                        maxLines = 1,
-                    )
-                }
-                if (dubbingLabel.isNotBlank() && balancerLabel.isNotBlank()) {
-                    Text("|", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.32f))
-                }
-                if (balancerLabel.isNotBlank()) {
-                    Text(
-                        text = "$balancerLabel  ⌄",
-                        modifier = Modifier.clickable(onClick = onTrackSettings),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.78f),
-                        maxLines = 1,
-                    )
+                    if (dubbingLabel.isNotBlank()) {
+                        Text(
+                            text = dubbingLabel,
+                            modifier = Modifier.clickable(onClick = onTrackSettings),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White.copy(alpha = 0.78f),
+                            maxLines = 1,
+                        )
+                    }
+                    if (dubbingLabel.isNotBlank() && balancerLabel.isNotBlank()) {
+                        Text("|", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.32f))
+                    }
+                    if (balancerLabel.isNotBlank()) {
+                        Row(
+                            modifier = Modifier.clickable(onClick = onTrackSettings),
+                            horizontalArrangement = Arrangement.spacedBy(1.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = balancerLabel,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color.White.copy(alpha = 0.78f),
+                                maxLines = 1,
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowDown,
+                                contentDescription = null,
+                                tint = Color.White.copy(alpha = 0.72f),
+                                modifier = Modifier.size(18.dp),
+                            )
+                        }
+                    }
                 }
             }
         }
