@@ -284,7 +284,10 @@ internal fun MobilePlayerTopBar(
                             Column(modifier = Modifier.verticalScroll(qualityScrollState)) {
                                 choices.forEachIndexed { index, choice ->
                                     DropdownMenuItem(
-                                        text = { Text(choice, modifier = if (index == qualityPreviewIndex) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp) else Modifier) },
+                                        modifier = if (index == qualityPreviewIndex) {
+                                            Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp))
+                                        } else Modifier,
+                                        text = { Text(choice) },
                                         onClick = {
                                             when (index) {
                                                 0 -> onAdaptiveQualityChange(true)
@@ -342,7 +345,10 @@ internal fun MobilePlayerTopBar(
                             speedOptions.forEachIndexed { index, speed ->
                                 val label = if (speed % 1f == 0f) "${speed.toInt()}x" else "${speed}x"
                                 DropdownMenuItem(
-                                    text = { Text(label, modifier = if (index == speedPreviewIndex) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp) else Modifier) },
+                                    modifier = if (index == speedPreviewIndex) {
+                                        Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f), RoundedCornerShape(8.dp))
+                                    } else Modifier,
+                                    text = { Text(label) },
                                     onClick = {
                                         onSpeedSelected(speed)
                                         speedExpanded = false
