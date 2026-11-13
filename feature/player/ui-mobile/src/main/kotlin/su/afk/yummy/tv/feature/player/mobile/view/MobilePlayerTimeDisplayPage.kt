@@ -35,20 +35,9 @@ internal fun MobilePlayerTimeDisplayPage(
         )
         MobilePlayerMenuRow(
             label = stringResource(R.string.player_time_display_separate),
-            trailing = MobilePlayerMenuRowTrailing.Navigate(
-                if (settings.elapsed == PlayerTimeDisplayMode.ALWAYS && settings.duration == PlayerTimeDisplayMode.ALWAYS) {
-                    stringResource(R.string.player_time_display_always)
-                } else {
-                    stringResource(R.string.player_time_display_controls)
-                },
-            ),
+            trailing = MobilePlayerMenuRowTrailing.Toggle(settings.separateTimecodes),
             onClick = {
-                val mode = if (settings.elapsed == PlayerTimeDisplayMode.ALWAYS && settings.duration == PlayerTimeDisplayMode.ALWAYS) {
-                    PlayerTimeDisplayMode.CONTROLS
-                } else {
-                    PlayerTimeDisplayMode.ALWAYS
-                }
-                onSettingsChange(settings.copy(elapsed = mode, duration = mode))
+                onSettingsChange(settings.copy(separateTimecodes = !settings.separateTimecodes))
             },
         )
         TimeDisplayModeRow(
