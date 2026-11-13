@@ -184,7 +184,7 @@ internal fun MobilePlayerTopBar(
             MobilePlayerEpisodeFlagLabel(episodeFlags, Modifier.padding(top = 2.dp))
         }
         Row(
-            Modifier.align(Alignment.BottomEnd).padding(end = 4.dp, bottom = 14.dp),
+            Modifier.align(Alignment.BottomEnd).padding(end = 4.dp, bottom = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(0.dp),
         ) {
