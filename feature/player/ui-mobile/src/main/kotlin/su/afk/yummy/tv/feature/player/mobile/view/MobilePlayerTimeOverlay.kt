@@ -61,14 +61,14 @@ internal fun MobilePlayerTimeOverlay(
             TimeChip(
                 value = systemClock,
                 modifier = Modifier.align(Alignment.TopStart)
-                    .padding(start = 20.dp, top = edgeTopPadding),
+                    .padding(start = sideInset + 20.dp, top = edgeTopPadding),
             )
         }
         if (showFinish) {
             TimeChip(
                 value = finishAt,
                 modifier = Modifier.align(Alignment.TopEnd)
-                    .padding(end = 20.dp, top = edgeTopPadding),
+                    .padding(end = sideInset + 20.dp, top = edgeTopPadding),
             )
         }
         if (showElapsed) {
@@ -76,7 +76,7 @@ internal fun MobilePlayerTimeOverlay(
                 value = if (showRemainingTime) "-${remainingMs.millisToClockTime().padStart(5, '0')}"
                     else displayTimeMs.millisToClockTime().padStart(5, '0'),
                 modifier = Modifier.align(Alignment.BottomStart)
-                    .padding(start = 20.dp, bottom = edgeBottomPadding),
+                    .padding(start = sideInset + 20.dp, bottom = edgeBottomPadding),
                 onClick = onTimeCodeClick,
             )
         }
@@ -84,7 +84,7 @@ internal fun MobilePlayerTimeOverlay(
             TimeValueChip(
                 value = durationMs.millisToClockTime().padStart(5, '0'),
                 modifier = Modifier.align(Alignment.BottomEnd)
-                    .padding(end = 20.dp, bottom = edgeBottomPadding),
+                    .padding(end = sideInset + 20.dp, bottom = edgeBottomPadding),
                 onClick = onTimeCodeClick,
             )
         }
