@@ -58,6 +58,21 @@ jobs:
           (yes || true) | sdkmanager --licenses >/dev/null
           sdkmanager --install "platforms;android-$platform_version"
 
+      # BuildConfig reads this value from local.properties via yummytv.apiBaseUrl.
+      # A repository Actions variable can override the default API host.
+      - name: Configure YummyTV API base URL
+        env:
+          API_BASE_URL: ${{ vars.YUMMY_TV_API_BASE_URL || 'https://v2.yummytv.afk.su/api' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$API_BASE_URL" =~ ^https:// ]]; then
+            echo "::error::YUMMY_TV_API_BASE_URL must be an HTTPS URL"
+            exit 1
+          fi
+          printf 'yummytv.apiBaseUrl=%s\\n' "$API_BASE_URL" >> local.properties
+          echo "Configured YummyTV API base URL."
+
       - name: Build debug APK
         shell: bash
         run: |
